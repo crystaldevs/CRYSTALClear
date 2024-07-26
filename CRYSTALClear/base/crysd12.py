@@ -4,7 +4,6 @@
 Classes and methods of keywords used in 'crystal' input file (d12).
 """
 from CRYSTALClear.base.inputbase import BlockBASE
-#from CRYSTALpytools.base.inputbase import BlockBASE
 
 class Crystal_inputBASE(BlockBASE):
     """
@@ -33,7 +32,6 @@ class Crystal_inputBASE(BlockBASE):
                 in CRYSTAL d12 format.
         """
         from CRYSTALClear.base.crysd12 import Geom
-        #from CRYSTALpytools.base.crysd12 import Geom
 
         self._block_geom = Geom()
         if obj == None:  # Initialize block
@@ -68,7 +66,6 @@ class Crystal_inputBASE(BlockBASE):
                 string in CRYSTAL d12 format
         """
         from CRYSTALClear.base.crysd12 import BasisSet
-        #from CRYSTALpytools.base.crysd12 import BasisSet
 
         self._block_basisset = BasisSet()
         if obj == None:  # Initialize block
@@ -96,7 +93,6 @@ class Crystal_inputBASE(BlockBASE):
                 CRYSTAL d12 format
         """
         from CRYSTALClear.base.crysd12 import SCF
-        #from CRYSTALpytools.base.crysd12 import SCF
 
         self._block_scf = SCF()
         if obj == None:  # Initialize block
@@ -541,7 +537,6 @@ class Geom(BlockBASE):
                 string in CRYSTAL d12 format
         """
         from CRYSTALClear.base.crysd12 import Optgeom
-        #from CRYSTALpytools.base.crysd12 import Optgeom
 
         conflict = ['_block_optgeom', '_block_freqcalc', '_testgeom']
         super(Geom, self).clean_conflict('_block_optgeom', conflict)
@@ -575,7 +570,6 @@ class Geom(BlockBASE):
                 string in CRYSTAL d12 format
         """
         from CRYSTALClear.base.crysd12 import Freqcalc
-        #from CRYSTALpytools.base.crysd12 import Freqcalc
 
         conflict = ['_block_optgeom', '_block_freqcalc', '_testgeom']
         super(Geom, self).clean_conflict('_block_freqcalc', conflict)
@@ -882,7 +876,6 @@ class BasisSet(BlockBASE):
                 contains 'BASISSET', it will be removed anyway.
         """
         from CRYSTALClear.base.basisset import BasisSetBASE
-        #from CRYSTALpytools.base.basisset import BasisSetBASE
 
         self._check_bs(append)
         if type(element[0]) == list or type(element[0]) == tuple:
@@ -910,7 +903,6 @@ class BasisSet(BlockBASE):
             append (bool): See ``from_bse``
         """
         from CRYSTALClear.base.basisset import BasisSetBASE
-        #from CRYSTALpytools.base.basisset import BasisSetBASE
 
         self._check_bs(append)
         bs_obj = BasisSetBASE.from_string(string, fmt)
@@ -932,7 +924,6 @@ class BasisSet(BlockBASE):
             append (bool): See ``from_bse``
         """
         from CRYSTALClear.base.basisset import BasisSetBASE
-        #from CRYSTALpytools.base.basisset import BasisSetBASE
 
         self._check_bs(append)
         bs_obj = BasisSetBASE.from_file(file, fmt)
@@ -946,7 +937,7 @@ class BasisSet(BlockBASE):
         Define basis set from a BasisSetBASE object.
 
         Args:
-            bs_obj (BasisSetBASE): A CRYSTALpytools.base.basisset.BasisSetBASE
+            bs_obj (BasisSetBASE): A CRYSTALClear.base.basisset.BasisSetBASE
                 object.
             filename (None | str): See ``from_bse``
             append (bool): See ``from_bse``
@@ -1054,7 +1045,6 @@ class SCF(BlockBASE):
                 CRYSTAL d12 format
         """
         from CRYSTALClear.base.crysd12 import DFT
-        #from CRYSTALpytools.base.crysd12 import DFT
 
         self._block_dft = DFT()
         if obj == None:  # Initialize block
@@ -1085,7 +1075,6 @@ class SCF(BlockBASE):
                 in CRYSTAL d12 format
         """
         from CRYSTALClear.base.crysd12 import DFTD3
-        #from CRYSTALpytools.base.crysd12 import DFTD3
 
         self._block_dftd3 = DFTD3()
         if obj == None:  # Initialize block
@@ -1116,7 +1105,6 @@ class SCF(BlockBASE):
                 CRYSTAL d12 format.
         """
         from CRYSTALClear.base.crysd12 import GCP
-        #from CRYSTALpytools.base.crysd12 import GCP
 
         self._block_gcp = GCP()
         if obj == None:  # Initialize block

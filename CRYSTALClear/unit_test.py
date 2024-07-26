@@ -5,7 +5,7 @@ def crystal_input_test(folder_path):
     # folder_path is the path to the folder that contains the test files
 
     from crystal_io import Crystal_input
-    #from CRYSTALpytools.crystal_io import Crystal_input
+    from CRYSTALClear.crystal_io import Crystal_input
 
     import os
 
@@ -172,7 +172,7 @@ def crystal_output_test(folder_path):
 
     # folder_path is the path to the folder that contains the test files
     from crystal_io import Crystal_output
-    #from CRYSTALpytools.crystal_io import Crystal_output
+    from CRYSTALClear.crystal_io import Crystal_output
 
     import numpy as np
     import os
@@ -358,9 +358,9 @@ def convert_test(folder_path):
     import os
     import numpy as np
     from crystal_io import Crystal_output, Crystal_gui
-    #from CRYSTALpytools.crystal_io import Crystal_output, Crystal_gui
+    from CRYSTALClear.crystal_io import Crystal_output, Crystal_gui
     from convert import cry_out2pmg, cry_gui2pmg
-    #from CRYSTALpytools.convert import cry_out2pmg, cry_gui2pmg
+    from CRYSTALClear.convert import cry_out2pmg, cry_gui2pmg
 
     test_attr = []
     test_result = []

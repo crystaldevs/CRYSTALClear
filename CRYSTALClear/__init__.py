@@ -8,7 +8,7 @@ from CRYSTALClear import crystal_io
 from CRYSTALClear import plot
 from CRYSTALClear import thermodynamics
 from CRYSTALClear import units
-from CRYSTALClear import utils
+#from CRYSTALClear import utils
 
 import sys
 
