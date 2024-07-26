@@ -40,7 +40,6 @@ The following will be installed if not already present:
     ```sh
     pip install CRYSTALClear
     ```
-8. Any other steps to get up and running
 
 ## Usage 🚀
 TO BE POPULATED 
