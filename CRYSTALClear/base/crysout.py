@@ -140,8 +140,7 @@ class SCFBASE():
         import re
         import warnings
         import numpy as np
-        #from CRYSTALClear.units import H_to_eV
-        #from CRYSTALpytools.units import H_to_eV
+        from CRYSTALClear.units import H_to_eV
 
         e = []
         de = []
@@ -191,8 +190,7 @@ class SCFBASE():
         import re
         import warnings
         import numpy as np
-        #from CRYSTALClear.units import H_to_eV
-        #from CRYSTALpytools.units import H_to_eV
+        from CRYSTALClear.units import H_to_eV
 
         if history == True:
             efermi = []
@@ -356,10 +354,8 @@ class OptBASE():
         import re
         import warnings
         import numpy as np
-        #from CRYSTALClear.units import H_to_eV
-        #from CRYSTALpytools.units import H_to_eV
-        #from CRYSTALClear.base.crysout import GeomBASE
-        #from CRYSTALpytools.base.crysout import GeomBASE
+        from CRYSTALClear.units import H_to_eV
+        from CRYSTALClear.base.crysout import GeomBASE
 
         e = []
         de = []
@@ -551,8 +547,7 @@ class PhononBASE():
             classic_a (array): nfreq\*3natom\*3natom array, or 3natom\*3natom
                 if ``freq`` is float. The diagonal matrix of classical amplitude.
         """
-        #from CRYSTALClear.units import amu_to_me, thz_to_hartree
-        #from CRYSTALpytools.units import amu_to_me, thz_to_hartree
+        from CRYSTALClear.units import amu_to_me, thz_to_hartree
         import numpy as np
 
         if type(freq) == float:
@@ -604,7 +599,7 @@ class PhononBASE():
         dispersion is read. The weight of q points will be updated here.
 
         Args:
-            crysout (Crystal_output): :code:`CRYSTALpytools.crystal_io.Crystal_output` object
+            crysout (Crystal_output): :code:`CRYSTALClear.crystal_io.Crystal_output` object
             threshold (float): The q point overlap threshold.
         """
         import numpy as np
@@ -656,7 +651,7 @@ class PhononBASE():
         NaN format and print warning message.
 
         Args:
-            crysout (Crystal_output): :code:`CRYSTALpytools.crystal_io.Crystal_output` object
+            crysout (Crystal_output): :code:`CRYSTALClear.crystal_io.Crystal_output` object
             threshold (float): The threshold to identify a phonon mode as negative.
         """
         import numpy as np

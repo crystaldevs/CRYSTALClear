@@ -51,8 +51,8 @@ class BS_Shell():
     """
 
     def __init__(self, ITYB, LAT, NG, CHE, SCAL, info):
-        #from CRYSTALClear.base.basisset import BS_GTF
-        #from CRYSTALpytools.base.basisset import BS_GTF
+
+        from CRYSTALClear.base.basisset import BS_GTF
 
         if ITYB != 0:
             raise ValueError(
@@ -105,8 +105,7 @@ class BS_Atom():
 
     def __init__(self, z, info):
         import re
-        #from CRYSTALClear.base.basisset import BS_Shell
-        #from CRYSTALpytools.base.basisset import BS_Shell
+        from CRYSTALClear.base.basisset import BS_Shell
 
         if z > 99:
             self.z = z % 100
@@ -178,11 +177,10 @@ class BS_Atom():
             print("module basis_set_exchange unavailable: please install to activate")
 #        import basis_set_exchange as bse
 
-        #from CRYSTALClear.base.basisset import Basisset
-        #from CRYSTALpytools.base.basisset import Basisset
+        from CRYSTALClear.base.basisset import Basisset
 
         warnings.warn('''The built-in standard STO-3G / 3(6)-21G basis set is used.
-CRYSTALpytools will substract basis set definition from Basis Set Exchange.
+CRYSTALClear will substract basis set definition from Basis Set Exchange.
 That might lead to discripencies in basis set definitions.''')
 
         # set a general 1-atom BS template
@@ -336,8 +334,7 @@ class BasisSetBASE():
                 with basis set's
         """
         import re
-        #from CRYSTALClear.base.basisset import BS_Atom
-        #from CRYSTALpytools.base.basisset import BS_Atom
+        from CRYSTALClear.base.basisset import BS_Atom
 
         info = info.strip().split('\n')
         info = [i.strip() for i in info]

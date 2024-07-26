@@ -86,8 +86,7 @@ class OutBASE():
         Returns:
             matrix (array): 3\*3 lattice matrix
         """
-        #from CRYSTALClear.base.propout import OutBASE
-        #from CRYSTALpytools.base.propout import OutBASE
+        from CRYSTALClear.base.propout import OutBASE
 
         struc = OutBASE.get_geometry(filename)
         return struc.lattice.matrix
@@ -103,8 +102,7 @@ class OutBASE():
         Returns:
             matrix (array): 3\*3 reciprocal lattice matrix
         """
-        #from CRYSTALClear.base.propout import OutBASE
-        #from CRYSTALpytools.base.propout import OutBASE
+        from CRYSTALClear.base.propout import OutBASE
 
         struc = OutBASE.get_geometry(filename)
         return struc.lattice.reciprocal_lattice.matrix
@@ -200,8 +198,7 @@ class DOSBASE():
 
         import numpy as np
 
-        #from CRYSTALClear.units import H_to_eV, cm_to_thz, eV_to_H, thz_to_cm
-        #from CRYSTALpytools.units import H_to_eV, cm_to_thz, eV_to_H, thz_to_cm
+        from CRYSTALClear.units import H_to_eV, cm_to_thz, eV_to_H, thz_to_cm
 
         # Read the information about the file
         n_energy = int(data[0].split()[2])
@@ -257,8 +254,7 @@ class DOSBASE():
 
         import numpy as np
 
-        #from CRYSTALClear.units import H_to_eV, cm_to_thz, eV_to_H, thz_to_cm
-        #from CRYSTALpytools.units import H_to_eV, cm_to_thz, eV_to_H, thz_to_cm
+        from CRYSTALClear.units import H_to_eV, cm_to_thz, eV_to_H, thz_to_cm
 
         data_in_block = []
         energy_in_block = []
@@ -364,10 +360,10 @@ class BandsBASE():
         self.n_kpoints = n_kpoints
         self.k_point_plot = k_point_plot
         self.unit = unit
-        # To set the following attributes use 'CRYSTALpytools.base.propout.OutBASE.get_geometry'
+        # To set the following attributes use 'CRYSTALClear.base.propout.OutBASE.get_geometry'
         self.geometry = None
         self.reciprocal_latt = None
-        # To set the following attributes use 'CRYSTALpytools.base.propout.OutBASE.get_3dkcoord'
+        # To set the following attributes use 'CRYSTALClear.base.propout.OutBASE.get_3dkcoord'
         self.k_point_pos3d = None
         self.tick_pos3d = None
 
@@ -384,8 +380,7 @@ class BandsBASE():
 
         import numpy as np
 
-        #from CRYSTALClear.units import H_to_eV, cm_to_thz
-        #from CRYSTALpytools.units import H_to_eV, cm_to_thz
+        from CRYSTALClear.units import H_to_eV, cm_to_thz
 
         # Read the information about the file
         # number of k points in the calculation
@@ -455,11 +450,8 @@ class BandsBASE():
             data (list[str]): A list of string (fort.25).
         """
         import re
-
         import numpy as np
-
-        #from CRYSTALClear.units import H_to_eV, cm_to_thz
-        #from CRYSTALpytools.units import H_to_eV, cm_to_thz
+        from CRYSTALClear.units import H_to_eV, cm_to_thz
 
         data_in_block = []
         k_in_block = []

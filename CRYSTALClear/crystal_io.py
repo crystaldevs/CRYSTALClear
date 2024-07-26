@@ -5,9 +5,7 @@ Objects of input / output files of CRYSTAL. Methods to edit or substract data
 from corresponding files are provided.
 """
 from CRYSTALClear import units
-#from CRYSTALpytools import units
 from CRYSTALClear.base.crysd12 import Crystal_inputBASE
-#from CRYSTALpytools.base.crysd12 import Crystal_inputBASE
 
 
 class Crystal_input(Crystal_inputBASE):
@@ -77,10 +75,8 @@ class Crystal_input(Crystal_inputBASE):
         """
         import re
 
-        from convert import cry_pmg2gui
-        #from CRYSTALpytools.convert import cry_pmg2gui
-        from geometry import refine_geometry
-        #from CRYSTALpytools.geometry import refine_geometry
+        from CRYSTALClear.convert import cry_pmg2gui
+        from CRYSTALClear.geometry import refine_geometry
 
         if re.match(r'^EXTERNAL$', keyword, re.IGNORECASE):
             super(Crystal_input, self).geom.external()
@@ -115,8 +111,7 @@ class Crystal_input(Crystal_inputBASE):
                 Its length must be the same as element. Its sequence must be
                 consistent with basis set's
         """
-        from base.basisset import BasisSetBASE
-        #from CRYSTALpytools.base.basisset import BasisSetBASE
+        from CRYSTALClear.base.basisset import BasisSetBASE
 
         return BasisSetBASE.from_bse(name=name, element=element, zconv=zconv)
 
@@ -128,8 +123,7 @@ class Crystal_input(Crystal_inputBASE):
             bs_str (str)
             fmt (str): Format string. Consistent with BSE python API.
         """
-        from base.basisset import BasisSetBASE
-        #from CRYSTALpytools.base.basisset import BasisSetBASE
+        from CRYSTALClear.base.basisset import BasisSetBASE
 
         return BasisSetBASE.from_string(bs_str=bs_str, fmt=fmt)
 
@@ -137,8 +131,7 @@ class Crystal_input(Crystal_inputBASE):
         """
         Define a basis set from a file. A wrapper of BasisSetBASE.from_file.
         """
-        from base.basisset import BasisSetBASE
-        #from CRYSTALpytools.base.basisset import BasisSetBASE
+        from CRYSTALClear.base.basisset import BasisSetBASE
 
         return BasisSetBASE.from_file(file=file, fmt=fmt)
 
@@ -316,14 +309,10 @@ class Crystal_output:
 
         import numpy as np
 
-        from base.crysout import GeomBASE
-        #from CRYSTALpytools.base.crysout import GeomBASE
-        from convert import cry_pmg2gui
-        #from CRYSTALpytools.convert import cry_pmg2gui
-        from crystal_io import Crystal_gui
-        #from CRYSTALpytools.crystal_io import Crystal_gui
-        from geometry import rotate_lattice
-        #from CRYSTALpytools.geometry import rotate_lattice
+        from CRYSTALClear.base.crysout import GeomBASE
+        from CRYSTALClear.convert import cry_pmg2gui
+        from CRYSTALClear.crystal_io import Crystal_gui
+        from CRYSTALClear.geometry import rotate_lattice
 
         # Get geometry
         bg_line = -1
@@ -576,8 +565,7 @@ class Crystal_output:
         """
         Conventional atom numbers. After geometry editing.
         """
-        from base.crysout import GeomBASE
-        #from CRYSTALpytools.base.crysout import GeomBASE
+        from CRYSTALClear.base.crysout import GeomBASE
 
         _, conv_z = GeomBASE.read_conv_z(self.data, 0)
         return conv_z
@@ -698,12 +686,9 @@ class Crystal_output:
 
         import numpy as np
 
-        from convert import cry_pmg2gui
-        #from CRYSTALpytools.convert import cry_pmg2gui
-        from crystal_io import Crystal_gui
-        #from CRYSTALpytools.crystal_io import Crystal_gui
-        from geometry import get_pcel
-        #from CRYSTALpytools.geometry import get_pcel
+        from CRYSTALClear.convert import cry_pmg2gui
+        from CRYSTALClear.crystal_io import Crystal_gui
+        from CRYSTALClear.geometry import get_pcel
 
         ndimen = self.get_dimensionality()
         self.get_geometry(initial=initial, write_gui=False)
@@ -951,7 +936,7 @@ class Crystal_output:
     def get_scf_convergence(self, all_cycles=False):
         """
         Returns the scf convergence energy and energy difference. A wrapper of
-        ``CRYSTALpytools.base.SCFBASE.read_convergence``.
+        ``CRYSTALClear.base.SCFBASE.read_convergence``.
 
         Args:
             all_cycles (bool, optional): Return all SCF steps for a geometry
@@ -968,8 +953,7 @@ class Crystal_output:
         """
         import numpy as np
 
-        from base.crysout import SCFBASE
-        #from CRYSTALpytools.base.crysout import SCFBASE
+        from CRYSTALClear.base.crysout import SCFBASE
 
         if all_cycles == True:
             self.scf_cycles = []
@@ -1014,8 +998,7 @@ class Crystal_output:
                 be either a 2\*1 array (``history=False``) or a nCYC\*2 array
                 (``history=True``).
         """
-        from base.crysout import SCFBASE
-        #from CRYSTALpytools.base.crysout import SCFBASE
+        from CRYSTALClear.base.crysout import SCFBASE
 
         output = SCFBASE.read_fermi_energy(
             self.data[:self.eoo], self.eoo - 1, history=history)
@@ -1037,8 +1020,7 @@ class Crystal_output:
                 2\*1 array (``history=False``) or a nCYC\*2 array
                 (``history=True``).
         """
-        from base.crysout import SCFBASE
-        #from CRYSTALpytools.base.crysout import SCFBASE
+        from CRYSTALClear.base.crysout import SCFBASE
 
         output = SCFBASE.read_band_gap(
             self.data[:self.eoo], self.eoo - 1, history=history)
@@ -1140,7 +1122,7 @@ class Crystal_output:
                             symmetry='pymatgen', **kwargs):
         """
         Returns optimisation convergence. A wrapper of
-        ``CRYSTALpytools.base.OptBASE.read_convergence``.
+        ``CRYSTALClear.base.OptBASE.read_convergence``.
 
         Args:
             primitive (bool): Restore the primitive cell (multiply by the
@@ -1179,14 +1161,10 @@ class Crystal_output:
         import numpy as np
         from pymatgen.core.lattice import Lattice
 
-        from base.crysout import OptBASE
-        #from CRYSTALpytools.base.crysout import OptBASE
-        from convert import cry_pmg2gui
-        #from CRYSTALpytools.convert import cry_pmg2gui
-        from crystal_io import Crystal_gui
-        #from CRYSTALpytools.crystal_io import Crystal_gui
-        from geometry import get_pcel, rotate_lattice
-        #from CRYSTALpytools.geometry import get_pcel, rotate_lattice
+        from CRYSTALClear.base.crysout import OptBASE
+        from CRYSTALClear.convert import cry_pmg2gui
+        from CRYSTALClear.crystal_io import Crystal_gui
+        from CRYSTALClear.geometry import get_pcel, rotate_lattice
 
         ndimen = self.get_dimensionality()
         countline = 0
@@ -1729,9 +1707,8 @@ class Crystal_output:
         attributes have been listed here, but the yy, zz, xy, xz, yz components
         are available as well.  
         """
-
+        
         import re
-
         import numpy as np
 
         # Initialize some logical variables
@@ -1751,8 +1728,17 @@ class Crystal_output:
         VCI_Ram_0K_comp = False
         VCI_Ram_T_tot = False
         VCI_Ram_T_comp = False
+        # anscan
+        imode_IR = []
+        imode_Ram = []
+        anscan_IR = False
+        anscan_Ram_0K_tot = False
+        anscan_Ram_0K_comp = False
+        anscan_Ram_T_tot = False
+        anscan_Ram_T_comp = False
+        # anscan
 
-        # Initialize some member variables
+        #Initialize some member variables
         IR_HO = []
         IR_VSCF = []
         IR_VCI = []
@@ -1768,8 +1754,15 @@ class Crystal_output:
         Ram_VCI_T_tot = []
         Ram_VCI_0K_comp = []
         Ram_VCI_T_comp = []
+        # anscan
+        IR_anscan = []
+        Ram_anscan_0K_tot = []
+        Ram_anscan_T_tot = []
+        Ram_anscan_0K_comp = []
+        Ram_anscan_T_comp = []
+        # anscan
 
-        # Initialize some buffers
+        # Initialize some buffers 
         bufferHO_IR = []
         bufferHO_Ram_0K_tot = []
         bufferHO_Ram_T_tot = []
@@ -1779,21 +1772,25 @@ class Crystal_output:
         bufferVSCF_Ram_0K_tot = []
         bufferVSCF_Ram_T_tot = []
         bufferVSCF_Ram_0K_comp = []
-        bufferVSCF_Ram_T_comp = []
+        bufferVSCF_Ram_T_comp= []
         bufferVCI_IR = []
         bufferVCI_Ram_0K_tot = []
         bufferVCI_Ram_T_tot = []
         bufferVCI_Ram_0K_comp = []
         bufferVCI_Ram_T_comp = []
+        #anscan
+        bufferanscan_IR = []
+        bufferanscan_Ram_0K_tot = []
+        bufferanscan_Ram_T_tot = []
+        bufferanscan_Ram_0K_comp = []
+        bufferanscan_Ram_T_comp = []
+        #anscan
 
         # Big loop over lines of CRYSTAL output file -->
         for i, line in enumerate(self.data):
 
             if re.match(r'\s*HARMONIC IR SPECTRUM', line):
-                if re.match(r'\s*HO', self.data[i-1]):
-                    HO_IR = True
-                else:
-                    print('Something went wrong with your CRYSTAL output file.')
+                HO_IR = True
                 save = True
 
             if re.match(r'\s*ANHARMONIC IR SPECTRUM', line):
@@ -1801,10 +1798,13 @@ class Crystal_output:
                     VSCF_IR = True
                 elif re.match(r'\s*VCI*', self.data[i-1]):
                     VCI_IR = True
-                else:
-                    print('Something went wrong with your CRYSTAL output file.')
+                # anscan
+                elif re.match(r'\s*MODE*', self.data[i-1]):
+                    anscan_IR = True
+                    imode_IR.append(int(self.data[i-1].split()[1])) 
+                # anscan
                 save = True
-
+                
             if re.match(r'\s*HARMONIC RAMAN SPECTRUM', line):
                 if re.match(r'\s*\[ 0 K \]', self.data[i+1]):
                     if re.match(r'\s*I_TOT', self.data[i+4]):
@@ -1817,7 +1817,7 @@ class Crystal_output:
                     else:
                         HO_Ram_T_comp = True
                 save = True
-
+            
             if re.match(r'\s*ANHARMONIC RAMAN SPECTRUM', line):
                 if re.match(r'\s*VSCF', self.data[i-1]):
                     if re.match(r'\s*\[ 0 K \]', self.data[i+1]):
@@ -1842,8 +1842,23 @@ class Crystal_output:
                             VCI_Ram_T_tot = True
                         else:
                             VCI_Ram_T_comp = True
-                save = True
+                # anscan
+                if re.match(r'\s*MODE*', self.data[i-1]): 
+                    if re.match(r'\s*\[ 0 K \]', self.data[i+1]):
+                        if re.match(r'\s*I_TOT', self.data[i+4]):
+                            imode_Ram.append(int(self.data[i-1].split()[1]))
+                            anscan_Ram_0K_tot = True
+                        else:
+                            anscan_Ram_0K_comp = True
+                    else:
+                        if re.match(r'\s*I_TOT', self.data[i+4]):
+                            anscan_Ram_T_tot = True
+                        else:
+                            anscan_Ram_T_comp = True
+                # anscan
 
+                save = True   
+            
             if re.match(r'\s*HHHHHHHHHHHHH', line):
                 save = False
                 HO_IR = False
@@ -1861,7 +1876,14 @@ class Crystal_output:
                 VCI_Ram_0K_comp = False
                 VCI_Ram_T_tot = False
                 VCI_Ram_T_comp = False
-
+                # anscan
+                anscan_IR = False
+                anscan_Ram_0K_tot = False
+                anscan_Ram_0K_comp = False
+                anscan_Ram_T_tot = False
+                anscan_Ram_T_comp = False
+                # anscan
+                
             if save:
                 if HO_IR:
                     bufferHO_IR.append(line)
@@ -1893,66 +1915,113 @@ class Crystal_output:
                     bufferVCI_Ram_0K_comp.append(line)
                 if VCI_Ram_T_comp:
                     bufferVCI_Ram_T_comp.append(line)
-        # <--
+                # anscan
+                if anscan_IR: 
+                    bufferanscan_IR.append([])
+                    idx = len(imode_IR) - 1
+                    bufferanscan_IR[idx].append(line) 
+                if anscan_Ram_0K_tot:
+                    bufferanscan_Ram_0K_tot.append([])
+                    idx = len(imode_Ram) - 1
+                    bufferanscan_Ram_0K_tot[idx].append(line)
+                if anscan_Ram_T_tot:
+                    bufferanscan_Ram_T_tot.append([])
+                    idx = len(imode_Ram) - 1
+                    bufferanscan_Ram_T_tot[idx].append(line)
+                if anscan_Ram_0K_comp:
+                    bufferanscan_Ram_0K_comp.append([])
+                    idx = len(imode_Ram) - 1
+                    bufferanscan_Ram_0K_comp[idx].append(line)
+                if anscan_Ram_T_comp:
+                    bufferanscan_Ram_T_comp.append([])
+                    idx = len(imode_Ram) - 1
+                    bufferanscan_Ram_T_comp[idx].append(line)
+                # anscan
 
-        # Save and parse VSCF data for IR spectrum
+        # <-- Big loop over lines of CRYSTAL output file 
+
+        # debug
+        #for i in range(len(imode_IR)):
+        #    print(bufferanscan_IR[i])
+        #for i in range(len(imode_Ram)):
+        #    print(bufferanscan_Ram_0K_tot[i])
+        # debug
+
+        # Save and parse VSCF data for IR spectrum 
         n_VSCF_ir = len(bufferVSCF_IR)
         if n_VSCF_ir > 0:
-            for i, line in enumerate(bufferVSCF_IR[5:n_VSCF_ir-1]):
-                IR_VSCF.append(line.split()[3:6])
-                for j in range(3):
-                    IR_VSCF[i][j] = float(IR_VSCF[i][j])
-            IR_VSCF = np.array(IR_VSCF)
-            self.IR_VSCF_T = IR_VSCF[:, 0:3:2]
-            self.IR_VSCF_0K = IR_VSCF[:, 0:2]
-
-        # Save and parse VCI data for IR spectrum
+           for i, line in enumerate(bufferVSCF_IR[5:n_VSCF_ir-1]):
+              IR_VSCF.append(line.split()[3:6])
+              for j in range(3):
+                  IR_VSCF[i][j] = float(IR_VSCF[i][j])
+           IR_VSCF = np.array(IR_VSCF)
+           self.IR_VSCF_T = IR_VSCF[:,0:3:2]
+           self.IR_VSCF_0K = IR_VSCF[:,0:2]
+           
+        # Save and parse VCI data for IR spectrum 
         n_VCI_ir = len(bufferVCI_IR)
         if n_VCI_ir > 0:
-            for i, line in enumerate(bufferVCI_IR[5:n_VCI_ir-1]):
+           for i, line in enumerate(bufferVCI_IR[5:n_VCI_ir-1]):
                 IR_VCI.append(line.split()[3:6])
-                for j in range(3):
+                for j in range(3): 
                     IR_VCI[i][j] = float(IR_VCI[i][j])
-            IR_VCI = np.array(IR_VCI)
-            self.IR_VCI_T = IR_VCI[:, 0:3:2]
-            self.IR_VCI_0K = IR_VCI[:, 0:2]
-
+           IR_VCI = np.array(IR_VCI)
+           self.IR_VCI_T = IR_VCI[:, 0:3:2]
+           self.IR_VCI_0K = IR_VCI[:, 0:2]
+           
         # Save and parse HO data for IR spectrum
         n_HO_ir = len(bufferHO_IR)
-        if n_HO_ir > 0:
-            for i, line in enumerate(bufferHO_IR[5:n_HO_ir-1]):
-                IR_HO.append(line.split()[3:6])
-                for j in range(3):
-                    IR_HO[i][j] = float(IR_HO[i][j])
-            IR_HO = np.array(IR_HO)
-            self.IR_HO_T = IR_HO[:, 0:3:2]
-            self.IR_HO_0K = IR_HO[:, 0:2]
+        if n_HO_ir > 0: 
+           for i, line in enumerate(bufferHO_IR[5:n_HO_ir-1]):
+              IR_HO.append(line.split()[3:6])
+              for j in range(3):
+                  IR_HO[i][j] = float(IR_HO[i][j])
+           IR_HO = np.array(IR_HO)
+           self.IR_HO_T = IR_HO[:, 0:3:2]
+           self.IR_HO_0K = IR_HO[:, 0:2]
 
-        # Save and parse HO data for Raman spectrum (0K, tot)
+        # anscan
+        self.IR_anscan_T = []
+        self.IR_anscan_0K = []
+        # Save and parse anscan data for IR spectrum
+        for k in range(len(imode_IR)):
+            n_anscan_IR = len(bufferanscan_IR[k])
+            if n_anscan_IR > 0:
+                IR_anscan = []
+                for i, line in enumerate(bufferanscan_IR[k][5:n_anscan_IR-1]):
+                    IR_anscan.append(line.split()[3:6])
+                    for j in range(3):
+                        IR_anscan[i][j] = float(IR_anscan[i][j])
+                IR_anscan = np.array(IR_anscan)
+                self.IR_anscan_T.append(IR_anscan[:, 0:3:2])
+                self.IR_anscan_0K.append(IR_anscan[:, 0:2])
+            # anscan
+         
+       # Save and parse HO data for Raman spectrum (0K, tot)   
         n_HO_Ram_0K_tot = len(bufferHO_Ram_0K_tot)
         if n_HO_Ram_0K_tot > 0:
-            for i, line in enumerate(bufferHO_Ram_0K_tot[6:n_HO_Ram_0K_tot-1]):
-                Ram_HO_0K_tot.append(line.split()[3:7])
-                for j in range(4):
-                    Ram_HO_0K_tot[i][j] = float(Ram_HO_0K_tot[i][j])
-            Ram_HO_0K_tot = np.array(Ram_HO_0K_tot)
-            self.Ram_HO_0K_tot = Ram_HO_0K_tot[:, 0:2]
-            self.Ram_HO_0K_per = Ram_HO_0K_tot[:, 0:3:2]
-            self.Ram_HO_0K_par = Ram_HO_0K_tot[:, 0:4:3]
+           for i, line in enumerate(bufferHO_Ram_0K_tot[6:n_HO_Ram_0K_tot-1]):
+               Ram_HO_0K_tot.append(line.split()[3:7])
+               for j in range(4):
+                  Ram_HO_0K_tot[i][j] = float(Ram_HO_0K_tot[i][j])
+           Ram_HO_0K_tot = np.array(Ram_HO_0K_tot)
+           self.Ram_HO_0K_tot = Ram_HO_0K_tot[:, 0:2]
+           self.Ram_HO_0K_per = Ram_HO_0K_tot[:, 0:3:2]
+           self.Ram_HO_0K_par = Ram_HO_0K_tot[:, 0:4:3]
 
-        # Save and parse HO data for Raman spectrum (T, tot)
-        n_HO_Ram_T_tot = len(bufferHO_Ram_T_tot)
+       # Save and parse HO data for Raman spectrum (T, tot)   
+        n_HO_Ram_T_tot = len(bufferHO_Ram_T_tot) 
         if n_HO_Ram_T_tot > 0:
             for i, line in enumerate(bufferHO_Ram_T_tot[6:n_HO_Ram_T_tot-1]):
-                Ram_HO_T_tot.append(line.split()[3:7])
+                Ram_HO_T_tot.append(line.split()[3:7]) 
                 for j in range(4):
                     Ram_HO_T_tot[i][j] = float(Ram_HO_T_tot[i][j])
             Ram_HO_T_tot = np.array(Ram_HO_T_tot)
             self.Ram_HO_T_tot = Ram_HO_T_tot[:, 0:2]
             self.Ram_HO_T_per = Ram_HO_T_tot[:, 0:3:2]
             self.Ram_HO_T_par = Ram_HO_T_tot[:, 0:4:3]
-
-        # Save and parse HO data for Raman spectrum (0K, comp)
+                
+       # Save and parse HO data for Raman spectrum (0K, comp)   
         n_HO_Ram_0K_comp = len(bufferHO_Ram_0K_comp)
         if n_HO_Ram_0K_comp > 0:
             for i, line in enumerate(bufferHO_Ram_0K_comp[6:n_HO_Ram_0K_comp-1]):
@@ -1966,8 +2035,8 @@ class Crystal_output:
             self.Ram_HO_0K_comp_yy = Ram_HO_0K_comp[:, 0:5:4]
             self.Ram_HO_0K_comp_yz = Ram_HO_0K_comp[:, 0:6:5]
             self.Ram_HO_0K_comp_zz = Ram_HO_0K_comp[:, 0:7:6]
-
-        # Save and parse HO data for Raman spectrum (T, comp)
+            
+       # Save and parse HO data for Raman spectrum (T, comp)   
         n_HO_Ram_T_comp = len(bufferHO_Ram_T_comp)
         if n_HO_Ram_T_comp > 0:
             for i, line in enumerate(bufferHO_Ram_T_comp[6:n_HO_Ram_T_comp-1]):
@@ -1981,8 +2050,8 @@ class Crystal_output:
             self.Ram_HO_T_comp_yy = Ram_HO_T_comp[:, 0:5:4]
             self.Ram_HO_T_comp_yz = Ram_HO_T_comp[:, 0:6:5]
             self.Ram_HO_T_comp_zz = Ram_HO_T_comp[:, 0:7:6]
-
-        # Save and parse VSCF data for Raman spectrum (0K, tot)
+                
+       # Save and parse VSCF data for Raman spectrum (0K, tot)   
         n_VSCF_Ram_0K_tot = len(bufferVSCF_Ram_0K_tot)
         if n_VSCF_Ram_0K_tot > 0:
             for i, line in enumerate(bufferVSCF_Ram_0K_tot[6:n_VSCF_Ram_0K_tot-1]):
@@ -1993,35 +2062,35 @@ class Crystal_output:
             self.Ram_VSCF_0K_tot = Ram_VSCF_0K_tot[:, 0:2]
             self.Ram_VSCF_0K_per = Ram_VSCF_0K_tot[:, 0:3:2]
             self.Ram_VSCF_0K_par = Ram_VSCF_0K_tot[:, 0:4:3]
-
-        # Save and parse VSCF data for Raman spectrum (T, tot)
+          
+       # Save and parse VSCF data for Raman spectrum (T, tot)   
         n_VSCF_Ram_T_tot = len(bufferVSCF_Ram_T_tot)
         if n_VSCF_Ram_T_tot > 0:
-            for i, line in enumerate(bufferVSCF_Ram_T_tot[6:n_VSCF_Ram_T_tot-1]):
-                Ram_VSCF_T_tot.append(line.split()[3:7])
-                for j in range(4):
-                    Ram_VSCF_T_tot[i][j] = float(Ram_VSCF_T_tot[i][j])
-            Ram_VSCF_T_tot = np.array(Ram_VSCF_T_tot)
-            self.Ram_VSCF_T_tot = Ram_VSCF_T_tot[:, 0:2]
-            self.Ram_VSCF_T_per = Ram_VSCF_T_tot[:, 0:3:2]
-            self.Ram_VSCF_T_par = Ram_VSCF_T_tot[:, 0:4:3]
-
-        # Save and parse VSCF data for Raman spectrum (0K, comp)
+              for i, line in enumerate(bufferVSCF_Ram_T_tot[6:n_VSCF_Ram_T_tot-1]):
+                  Ram_VSCF_T_tot.append(line.split()[3:7])
+                  for j in range(4):
+                      Ram_VSCF_T_tot[i][j] = float(Ram_VSCF_T_tot[i][j])
+              Ram_VSCF_T_tot = np.array(Ram_VSCF_T_tot)
+              self.Ram_VSCF_T_tot = Ram_VSCF_T_tot[:, 0:2]
+              self.Ram_VSCF_T_per = Ram_VSCF_T_tot[:, 0:3:2]
+              self.Ram_VSCF_T_par = Ram_VSCF_T_tot[:, 0:4:3] 
+        
+       # Save and parse VSCF data for Raman spectrum (0K, comp)   
         n_VSCF_Ram_0K_comp = len(bufferVSCF_Ram_0K_comp)
         if n_VSCF_Ram_0K_comp > 0:
-            for i, line in enumerate(bufferVSCF_Ram_0K_comp[6:n_VSCF_Ram_0K_comp-1]):
-                Ram_VSCF_0K_comp.append(line.split()[3:10])
-                for j in range(7):
-                    Ram_VSCF_0K_comp[i][j] = float(Ram_VSCF_0K_comp[i][j])
-            Ram_VSCF_0K_comp = np.array(Ram_VSCF_0K_comp)
-            self.Ram_VSCF_0K_comp_xx = Ram_VSCF_0K_comp[:, 0:2]
-            self.Ram_VSCF_0K_comp_xy = Ram_VSCF_0K_comp[:, 0:3:2]
-            self.Ram_VSCF_0K_comp_xz = Ram_VSCF_0K_comp[:, 0:4:3]
-            self.Ram_VSCF_0K_comp_yy = Ram_VSCF_0K_comp[:, 0:5:4]
-            self.Ram_VSCF_0K_comp_yz = Ram_VSCF_0K_comp[:, 0:6:5]
-            self.Ram_VSCF_0K_comp_zz = Ram_VSCF_0K_comp[:, 0:7:6]
-
-        # Save and parse VSCF data for Raman spectrum (T, comp)
+              for i, line in enumerate(bufferVSCF_Ram_0K_comp[6:n_VSCF_Ram_0K_comp-1]):
+                  Ram_VSCF_0K_comp.append(line.split()[3:10])
+                  for j in range(7):
+                      Ram_VSCF_0K_comp[i][j] = float(Ram_VSCF_0K_comp[i][j])
+              Ram_VSCF_0K_comp = np.array(Ram_VSCF_0K_comp)
+              self.Ram_VSCF_0K_comp_xx = Ram_VSCF_0K_comp[:, 0:2]
+              self.Ram_VSCF_0K_comp_xy = Ram_VSCF_0K_comp[:, 0:3:2]
+              self.Ram_VSCF_0K_comp_xz = Ram_VSCF_0K_comp[:, 0:4:3]
+              self.Ram_VSCF_0K_comp_yy = Ram_VSCF_0K_comp[:, 0:5:4]
+              self.Ram_VSCF_0K_comp_yz = Ram_VSCF_0K_comp[:, 0:6:5]
+              self.Ram_VSCF_0K_comp_zz = Ram_VSCF_0K_comp[:, 0:7:6]
+            
+       # Save and parse VSCF data for Raman spectrum (T, comp)   
         n_VSCF_Ram_T_comp = len(bufferVSCF_Ram_T_comp)
         if n_VSCF_Ram_T_comp > 0:
             for i, line in enumerate(bufferVSCF_Ram_T_comp[6:n_VSCF_Ram_T_comp-1]):
@@ -2035,8 +2104,8 @@ class Crystal_output:
             self.Ram_VSCF_T_comp_yy = Ram_VSCF_T_comp[:, 0:5:4]
             self.Ram_VSCF_T_comp_yz = Ram_VSCF_T_comp[:, 0:6:5]
             self.Ram_VSCF_T_comp_zz = Ram_VSCF_T_comp[:, 0:7:6]
-
-        # Save and parse VCI data for Raman spectrum (0K, tot)
+            
+       # Save and parse VCI data for Raman spectrum (0K, tot)   
         n_VCI_Ram_0K_tot = len(bufferVCI_Ram_0K_tot)
         if n_VCI_Ram_0K_tot > 0:
             for i, line in enumerate(bufferVCI_Ram_0K_tot[6:n_VCI_Ram_0K_tot-1]):
@@ -2047,8 +2116,8 @@ class Crystal_output:
             self.Ram_VCI_0K_tot = Ram_VCI_0K_tot[:, 0:2]
             self.Ram_VCI_0K_per = Ram_VCI_0K_tot[:, 0:3:2]
             self.Ram_VCI_0K_par = Ram_VCI_0K_tot[:, 0:4:3]
-
-        # Save and parse VCI data for Raman spectrum (T, tot)
+        
+       # Save and parse VCI data for Raman spectrum (T, tot)   
         n_VCI_Ram_T_tot = len(bufferVCI_Ram_T_tot)
         if n_VCI_Ram_T_tot > 0:
             for i, line in enumerate(bufferVCI_Ram_T_tot[6:n_VCI_Ram_T_tot-1]):
@@ -2059,8 +2128,8 @@ class Crystal_output:
             self.Ram_VCI_T_tot = Ram_VCI_T_tot[:, 0:2]
             self.Ram_VCI_T_per = Ram_VCI_T_tot[:, 0:3:2]
             self.Ram_VCI_T_par = Ram_VCI_T_tot[:, 0:4:3]
-
-        # Save and parse VCI data for Raman spectrum (0K, comp)
+       
+       # Save and parse VCI data for Raman spectrum (0K, comp)   
         n_VCI_Ram_0K_comp = len(bufferVCI_Ram_0K_comp)
         if n_VCI_Ram_0K_comp > 0:
             for i, line in enumerate(bufferVCI_Ram_0K_comp[6:n_VCI_Ram_0K_comp-1]):
@@ -2074,8 +2143,8 @@ class Crystal_output:
             self.Ram_VCI_0K_comp_yy = Ram_VCI_0K_comp[:, 0:5:4]
             self.Ram_VCI_0K_comp_yz = Ram_VCI_0K_comp[:, 0:6:5]
             self.Ram_VCI_0K_comp_zz = Ram_VCI_0K_comp[:, 0:7:6]
-
-        # Save and parse VCI data for Raman spectrum (T, comp)
+            
+       # Save and parse VCI data for Raman spectrum (T, comp)   
         n_VCI_Ram_T_comp = len(bufferVCI_Ram_T_comp)
         if n_VCI_Ram_T_comp > 0:
             for i, line in enumerate(bufferVCI_Ram_T_comp[6:n_VCI_Ram_T_comp-1]):
@@ -2090,462 +2159,89 @@ class Crystal_output:
             self.Ram_VCI_T_comp_yz = Ram_VCI_T_comp[:, 0:6:5]
             self.Ram_VCI_T_comp_zz = Ram_VCI_T_comp[:, 0:7:6]
 
-        return self
+        # anscan
+        # Save and parse anscan data for Raman spectrum (0K, tot)
+        self.Ram_anscan_0K_tot = []
+        self.Ram_anscan_0K_per = []
+        self.Ram_anscan_0K_par = []
+        for k in range(len(imode_Ram)):
+            n_anscan_Ram_0K_tot = len(bufferanscan_Ram_0K_tot[k])
+            if n_anscan_Ram_0K_tot > 0:
+                Ram_anscan = []
+                for i, line in enumerate(bufferanscan_Ram_0K_tot[k][6:n_anscan_Ram_0K_tot-1]):
+                    Ram_anscan.append(line.split()[3:7])
+                    for j in range(4):
+                        Ram_anscan[i][j] = float(Ram_anscan[i][j])
+                Ram_anscan = np.array(Ram_anscan)
+                self.Ram_anscan_0K_tot.append(Ram_anscan[:, 0:2])
+                self.Ram_anscan_0K_per.append(Ram_anscan[:, 0:3:2])
+                self.Ram_anscan_0K_par.append(Ram_anscan[:, 0:4:3])
 
-    def get_anh_spectra(self):
-        """
-        This method reads data from a CRYSTAL output file and processes it to 
-        extract anharmonic (VSCF and VCI) IR and Raman spectra.
+        # Save and parse anscan data for Raman spectrum (T, tot)
+        self.Ram_anscan_T_tot = []
+        self.Ram_anscan_T_per = []
+        self.Ram_anscan_T_par = []
+        for k in range(len(imode_Ram)):
+            n_anscan_Ram_T_tot = len(bufferanscan_Ram_T_tot[k])
+            if n_anscan_Ram_T_tot > 0:
+                Ram_anscan = []
+                for i, line in enumerate(bufferanscan_Ram_T_tot[k][6:n_anscan_Ram_T_tot-1]):
+                    Ram_anscan.append(line.split()[3:7])
+                    for j in range(4):
+                        Ram_anscan[i][j] = float(Ram_anscan[i][j])
+                Ram_anscan = np.array(Ram_anscan)
+                self.Ram_anscan_T_tot.append(Ram_anscan[:, 0:2])
+                self.Ram_anscan_T_per.append(Ram_anscan[:, 0:3:2])
+                self.Ram_anscan_T_par.append(Ram_anscan[:, 0:4:3])
 
-        Returns:
-        self.IR_HO_0K (array[float]): 2D numpy array containing harmonic IR
-        frequency and intensities computed at 0 K. 
-        self.IR_HO_T (array[float]): 2D numpy array containing harmonic IR
-        frequency and intensities computed at temperature T. 
-        self.IR_VSCF_0K (array[float]): 2D numpy array containing VSCF IR
-        frequency and intensities computed at 0 K. 
-        self.IR_VSCF_T (array[float]): 2D numpy array containing VSCF IR 
-        frequency and intensities computed at temperature T.
-        self.IR_VCI_0K (array[float]): 2D numpy array containing VCI IR
-        frequency and intensities computed at 0 K. 
-        self.IR_VCI_T (array[float]): 2D numpy array containing VCI IR 
-        frequency and intensities computed at temperature T.
+        # Save and parse anscan data for Raman spectrum (0K, comp)
+        self.Ram_anscan_0K_xx = []
+        self.Ram_anscan_0K_xy = []
+        self.Ram_anscan_0K_xz = []
+        self.Ram_anscan_0K_yy = []
+        self.Ram_anscan_0K_yz = []
+        self.Ram_anscan_0K_zz = []
+        for k in range(len(imode_Ram)):
+            n_anscan_Ram_0K_comp = len(bufferanscan_Ram_0K_comp[k])
+            if n_anscan_Ram_0K_comp > 0:
+                Ram_anscan = []
+                for i, line in enumerate(bufferanscan_Ram_0K_comp[k][6:n_anscan_Ram_0K_comp-1]):
+                    Ram_anscan.append(line.split()[3:10])
+                    for j in range(7):
+                        Ram_anscan[i][j] = float(Ram_anscan[i][j])
+                Ram_anscan = np.array(Ram_anscan)
+                self.Ram_anscan_0K_xx.append(Ram_anscan[:, 0:2])
+                self.Ram_anscan_0K_xy.append(Ram_anscan[:, 0:3:2])
+                self.Ram_anscan_0K_xz.append(Ram_anscan[:, 0:4:3])
+                self.Ram_anscan_0K_yy.append(Ram_anscan[:, 0:5:4])
+                self.Ram_anscan_0K_yz.append(Ram_anscan[:, 0:6:5])
+                self.Ram_anscan_0K_zz.append(Ram_anscan[:, 0:7:6])
 
-        self.Ram_HO_0K_tot (array[float]): 2D numpy array containing harmonic
-        Raman frequency and intensities (total) computed at 0 K. 
-        self.Ram_HO_0K_per (array[float]): 2D numpy array containing harmonic
-        Raman frequency and intensities (perpendicular component ) computed at 
-        temperature 0 K. 
-        self.Ram_HO_0K_par (array[float]): 2D numpy array containing harmonic
-        Raman frequency and intensities (parallel component ) computed at 
-        temperature 0 K. 
-        self.Ram_HO_T_tot (array[float]): 2D numpy array containing harmonic
-        Raman frequency and intensities (total) computed at temperature T. 
-        self.Ram_HO_T_per (array[float]): 2D numpy array containing harmonic
-        Raman frequency and intensities (perpendicular component ) computed at 
-        temperature T. 
-        self.Ram_HO_T_par (array[float]): 2D numpy array containing harmonic
-        Raman frequency and intensities (parallel component ) computed at 
-        temperature T. 
+        # Save and parse anscan data for Raman spectrum (T, comp)
+        self.Ram_anscan_T_xx = []
+        self.Ram_anscan_T_xy = []
+        self.Ram_anscan_T_xz = []
+        self.Ram_anscan_T_yy = []
+        self.Ram_anscan_T_yz = []
+        self.Ram_anscan_T_zz = []
+        for k in range(len(imode_Ram)):
+            n_anscan_Ram_T_comp = len(bufferanscan_Ram_T_comp[k])
+            if n_anscan_Ram_T_comp > 0:
+                Ram_anscan = []
+                for i, line in enumerate(bufferanscan_Ram_T_comp[k][6:n_anscan_Ram_T_comp-1]):
+                    Ram_anscan.append(line.split()[3:10])
+                    for j in range(7):
+                        Ram_anscan[i][j] = float(Ram_anscan[i][j])
+                Ram_anscan = np.array(Ram_anscan)
+                self.Ram_anscan_T_xx.append(Ram_anscan[:, 0:2])
+                self.Ram_anscan_T_xy.append(Ram_anscan[:, 0:3:2])
+                self.Ram_anscan_T_xz.append(Ram_anscan[:, 0:4:3])
+                self.Ram_anscan_T_yy.append(Ram_anscan[:, 0:5:4])
+                self.Ram_anscan_T_yz.append(Ram_anscan[:, 0:6:5])
+                self.Ram_anscan_T_zz.append(Ram_anscan[:, 0:7:6])
+        # anscan
 
-        self.Ram_VSCF_0K_tot (array[float]): 2D numpy array containing VSCF
-        Raman frequency and intensities (total) computed at 0 K. 
-        self.Ram_VSCF_0K_per (array[float]): 2D numpy array containing VSCF
-        Raman frequency and intensities (perpendicular component) computed at 
-        0 K. 
-        self.Ram_VSCF_0K_par (array[float]): 2D numpy array containing VSCF
-        Raman frequency and intensities (parallel component) computed at 
-        0 K. 
-        self.Ram_VSCF_T_tot (array[float]): 2D numpy array containing VSCF
-        Raman frequency and intensities (total) computed at temperature T. 
-        self.Ram_VSCF_T_per (array[float]): 2D numpy array containing VSCF
-        Raman frequency and intensities (perpendicular component) computed at 
-        temperature T. 
-        self.Ram_VSCF_T_par (array[float]): 2D numpy array containing VSCF
-        Raman frequency and intensities (parallel component) computed at 
-        temperature T. 
-
-        self.Ram_VCI_0K_tot (array[float]): 2D numpy array containing VCI
-        Raman frequency and intensities (total) computed at 0 K. 
-        self.Ram_VCI_0K_per (array[float]): 2D numpy array containing VCI
-        Raman frequency and intensities (perpendicular component) computed at 
-        0 K. 
-        self.Ram_VCI_0K_par (array[float]): 2D numpy array containing VCI
-        Raman frequency and intensities (parallel component) computed at 
-        0 K. 
-        self.Ram_VCI_T_tot (array[float]): 2D numpy array containing VCI
-        Raman frequency and intensities (total) computed at temperature T. 
-        self.Ram_VCI_T_per (array[float]): 2D numpy array containing VCI
-        Raman frequency and intensities (perpendicular component) computed at 
-        temperature T. 
-        self.Ram_VCI_T_par (array[float]): 2D numpy array containing VCI
-        Raman frequency and intensities (parallel component) computed at 
-        temperature T.
-
-        self.Ram_HO_0K_comp_xx (array[float]): 2D numpy array containing
-        harmonic Raman frequency and intensities (xx component) computed at 0
-        K.
-        self.Ram_HO_T_comp_xx (array[float]): 2D numpy array containing
-        harmonic Raman frequency and intensities (xx component) computed at
-        temperature T.
-        self.Ram_VSCF_0K_comp_xx (array[float]): 2D numpy array containing
-        VSCF Raman frequency and intensities (xx component) computed at 0 K.
-        self.Ram_VSCF_T_comp_xx (array[float]): 2D numpy array containing
-        VSCF Raman frequency and intensities (xx component) computed at
-        temperature T.
-        self.Ram_VCI_0K_comp_xx (array[float]): 2D numpy array containing
-        VCI Raman frequency and intensities (xx component) computed at 0 K.
-        self.Ram_VCI_T_comp_xx (array[float]): 2D numpy array containing
-        VCI Raman frequency and intensities (xx component) computed at
-        temperature T.
-
-        .. note::
-        Please, note that for the sake of brevity, only the xx Raman component
-        attributes have been listed here, but the yy, zz, xy, xz, yz components
-        are available as well.  
-        """
-
-        import re
-
-        import numpy as np
-
-        # Initialize some logical variables
-        save = False
-        HO_IR = False
-        HO_Ram_0K_tot = False
-        HO_Ram_T_tot = False
-        HO_Ram_0K_comp = False
-        HO_Ram_T_comp = False
-        VSCF_IR = False
-        VSCF_Ram_0K_tot = False
-        VSCF_Ram_0K_comp = False
-        VSCF_Ram_T_tot = False
-        VSCF_Ram_T_comp = False
-        VCI_IR = False
-        VCI_Ram_0K_tot = False
-        VCI_Ram_0K_comp = False
-        VCI_Ram_T_tot = False
-        VCI_Ram_T_comp = False
-
-        # Initialize some member variables
-        IR_HO = []
-        IR_VSCF = []
-        IR_VCI = []
-        Ram_HO_0K_tot = []
-        Ram_HO_T_tot = []
-        Ram_HO_0K_comp = []
-        Ram_HO_T_comp = []
-        Ram_VSCF_0K_tot = []
-        Ram_VSCF_T_tot = []
-        Ram_VSCF_0K_comp = []
-        Ram_VSCF_T_comp = []
-        Ram_VCI_0K_tot = []
-        Ram_VCI_T_tot = []
-        Ram_VCI_0K_comp = []
-        Ram_VCI_T_comp = []
-
-        # Initialize some buffers
-        bufferHO_IR = []
-        bufferHO_Ram_0K_tot = []
-        bufferHO_Ram_T_tot = []
-        bufferHO_Ram_0K_comp = []
-        bufferHO_Ram_T_comp = []
-        bufferVSCF_IR = []
-        bufferVSCF_Ram_0K_tot = []
-        bufferVSCF_Ram_T_tot = []
-        bufferVSCF_Ram_0K_comp = []
-        bufferVSCF_Ram_T_comp = []
-        bufferVCI_IR = []
-        bufferVCI_Ram_0K_tot = []
-        bufferVCI_Ram_T_tot = []
-        bufferVCI_Ram_0K_comp = []
-        bufferVCI_Ram_T_comp = []
-
-        # Big loop over lines of CRYSTAL output file -->
-        for i, line in enumerate(self.data):
-
-            if re.match(r'\s*HARMONIC IR SPECTRUM', line):
-                if re.match(r'\s*HO', self.data[i-1]):
-                    HO_IR = True
-                else:
-                    print('Something went wrong with your CRYSTAL output file.')
-                save = True
-
-            if re.match(r'\s*ANHARMONIC IR SPECTRUM', line):
-                if re.match(r'\s*VSCF', self.data[i-1]):
-                    VSCF_IR = True
-                elif re.match(r'\s*VCI*', self.data[i-1]):
-                    VCI_IR = True
-                else:
-                    print('Something went wrong with your CRYSTAL output file.')
-                save = True
-
-            if re.match(r'\s*HARMONIC RAMAN SPECTRUM', line):
-                if re.match(r'\s*\[ 0 K \]', self.data[i+1]):
-                    if re.match(r'\s*I_TOT', self.data[i+4]):
-                        HO_Ram_0K_tot = True
-                    else:
-                        HO_Ram_0K_comp = True
-                else:
-                    if re.match(r'\s*I_TOT', self.data[i+4]):
-                        HO_Ram_T_tot = True
-                    else:
-                        HO_Ram_T_comp = True
-                save = True
-
-            if re.match(r'\s*ANHARMONIC RAMAN SPECTRUM', line):
-                if re.match(r'\s*VSCF', self.data[i-1]):
-                    if re.match(r'\s*\[ 0 K \]', self.data[i+1]):
-                        if re.match(r'\s*I_TOT', self.data[i+4]):
-                            VSCF_Ram_0K_tot = True
-                        else:
-                            VSCF_Ram_0K_comp = True
-                    else:
-                        if re.match(r'\s*I_TOT', self.data[i+4]):
-                            VSCF_Ram_T_tot = True
-                        else:
-                            VSCF_Ram_T_comp = True
-                save = True
-                if re.match(r'\s*VCI*', self.data[i-1]):
-                    if re.match(r'\s*\[ 0 K \]', self.data[i+1]):
-                        if re.match(r'\s*I_TOT', self.data[i+4]):
-                            VCI_Ram_0K_tot = True
-                        else:
-                            VCI_Ram_0K_comp = True
-                    else:
-                        if re.match(r'\s*I_TOT', self.data[i+4]):
-                            VCI_Ram_T_tot = True
-                        else:
-                            VCI_Ram_T_comp = True
-                save = True
-
-            if re.match(r'\s*HHHHHHHHHHHHH', line):
-                save = False
-                HO_IR = False
-                HO_Ram_0K_tot = False
-                HO_Ram_T_tot = False
-                HO_Ram_0K_comp = False
-                HO_Ram_T_comp = False
-                VSCF_IR = False
-                VSCF_Ram_0K_tot = False
-                VSCF_Ram_0K_comp = False
-                VSCF_Ram_T_tot = False
-                VSCF_Ram_T_comp = False
-                VCI_IR = False
-                VCI_Ram_0K_tot = False
-                VCI_Ram_0K_comp = False
-                VCI_Ram_T_tot = False
-                VCI_Ram_T_comp = False
-
-            if save:
-                if HO_IR:
-                    bufferHO_IR.append(line)
-                if HO_Ram_0K_tot:
-                    bufferHO_Ram_0K_tot.append(line)
-                if HO_Ram_T_tot:
-                    bufferHO_Ram_T_tot.append(line)
-                if HO_Ram_0K_comp:
-                    bufferHO_Ram_0K_comp.append(line)
-                if HO_Ram_T_comp:
-                    bufferHO_Ram_T_comp.append(line)
-                if VSCF_IR:
-                    bufferVSCF_IR.append(line)
-                if VSCF_Ram_0K_tot:
-                    bufferVSCF_Ram_0K_tot.append(line)
-                if VSCF_Ram_T_tot:
-                    bufferVSCF_Ram_T_tot.append(line)
-                if VSCF_Ram_0K_comp:
-                    bufferVSCF_Ram_0K_comp.append(line)
-                if VSCF_Ram_T_comp:
-                    bufferVSCF_Ram_T_comp.append(line)
-                if VCI_IR:
-                    bufferVCI_IR.append(line)
-                if VCI_Ram_0K_tot:
-                    bufferVCI_Ram_0K_tot.append(line)
-                if VCI_Ram_T_tot:
-                    bufferVCI_Ram_T_tot.append(line)
-                if VCI_Ram_0K_comp:
-                    bufferVCI_Ram_0K_comp.append(line)
-                if VCI_Ram_T_comp:
-                    bufferVCI_Ram_T_comp.append(line)
-        # <--
-
-        # Save and parse VSCF data for IR spectrum
-        n_VSCF_ir = len(bufferVSCF_IR)
-        if n_VSCF_ir > 0:
-            for i, line in enumerate(bufferVSCF_IR[5:n_VSCF_ir-1]):
-                IR_VSCF.append(line.split()[3:6])
-                for j in range(3):
-                    IR_VSCF[i][j] = float(IR_VSCF[i][j])
-            IR_VSCF = np.array(IR_VSCF)
-            self.IR_VSCF_T = IR_VSCF[:, 0:3:2]
-            self.IR_VSCF_0K = IR_VSCF[:, 0:2]
-
-        # Save and parse VCI data for IR spectrum
-        n_VCI_ir = len(bufferVCI_IR)
-        if n_VCI_ir > 0:
-            for i, line in enumerate(bufferVCI_IR[5:n_VCI_ir-1]):
-                IR_VCI.append(line.split()[3:6])
-                for j in range(3):
-                    IR_VCI[i][j] = float(IR_VCI[i][j])
-            IR_VCI = np.array(IR_VCI)
-            self.IR_VCI_T = IR_VCI[:, 0:3:2]
-            self.IR_VCI_0K = IR_VCI[:, 0:2]
-
-        # Save and parse HO data for IR spectrum
-        n_HO_ir = len(bufferHO_IR)
-        if n_HO_ir > 0:
-            for i, line in enumerate(bufferHO_IR[5:n_HO_ir-1]):
-                IR_HO.append(line.split()[3:6])
-                for j in range(3):
-                    IR_HO[i][j] = float(IR_HO[i][j])
-            IR_HO = np.array(IR_HO)
-            self.IR_HO_T = IR_HO[:, 0:3:2]
-            self.IR_HO_0K = IR_HO[:, 0:2]
-
-        # Save and parse HO data for Raman spectrum (0K, tot)
-        n_HO_Ram_0K_tot = len(bufferHO_Ram_0K_tot)
-        if n_HO_Ram_0K_tot > 0:
-            for i, line in enumerate(bufferHO_Ram_0K_tot[6:n_HO_Ram_0K_tot-1]):
-                Ram_HO_0K_tot.append(line.split()[3:7])
-                for j in range(4):
-                    Ram_HO_0K_tot[i][j] = float(Ram_HO_0K_tot[i][j])
-            Ram_HO_0K_tot = np.array(Ram_HO_0K_tot)
-            self.Ram_HO_0K_tot = Ram_HO_0K_tot[:, 0:2]
-            self.Ram_HO_0K_per = Ram_HO_0K_tot[:, 0:3:2]
-            self.Ram_HO_0K_par = Ram_HO_0K_tot[:, 0:4:3]
-
-        # Save and parse HO data for Raman spectrum (T, tot)
-        n_HO_Ram_T_tot = len(bufferHO_Ram_T_tot)
-        if n_HO_Ram_T_tot > 0:
-            for i, line in enumerate(bufferHO_Ram_T_tot[6:n_HO_Ram_T_tot-1]):
-                Ram_HO_T_tot.append(line.split()[3:7])
-                for j in range(4):
-                    Ram_HO_T_tot[i][j] = float(Ram_HO_T_tot[i][j])
-            Ram_HO_T_tot = np.array(Ram_HO_T_tot)
-            self.Ram_HO_T_tot = Ram_HO_T_tot[:, 0:2]
-            self.Ram_HO_T_per = Ram_HO_T_tot[:, 0:3:2]
-            self.Ram_HO_T_par = Ram_HO_T_tot[:, 0:4:3]
-
-        # Save and parse HO data for Raman spectrum (0K, comp)
-        n_HO_Ram_0K_comp = len(bufferHO_Ram_0K_comp)
-        if n_HO_Ram_0K_comp > 0:
-            for i, line in enumerate(bufferHO_Ram_0K_comp[6:n_HO_Ram_0K_comp-1]):
-                Ram_HO_0K_comp.append(line.split()[3:10])
-                for j in range(7):
-                    Ram_HO_0K_comp[i][j] = float(Ram_HO_0K_comp[i][j])
-            Ram_HO_0K_comp = np.array(Ram_HO_0K_comp)
-            self.Ram_HO_0K_comp_xx = Ram_HO_0K_comp[:, 0:2]
-            self.Ram_HO_0K_comp_xy = Ram_HO_0K_comp[:, 0:3:2]
-            self.Ram_HO_0K_comp_xz = Ram_HO_0K_comp[:, 0:4:3]
-            self.Ram_HO_0K_comp_yy = Ram_HO_0K_comp[:, 0:5:4]
-            self.Ram_HO_0K_comp_yz = Ram_HO_0K_comp[:, 0:6:5]
-            self.Ram_HO_0K_comp_zz = Ram_HO_0K_comp[:, 0:7:6]
-
-        # Save and parse HO data for Raman spectrum (T, comp)
-        n_HO_Ram_T_comp = len(bufferHO_Ram_T_comp)
-        if n_HO_Ram_T_comp > 0:
-            for i, line in enumerate(bufferHO_Ram_T_comp[6:n_HO_Ram_T_comp-1]):
-                Ram_HO_T_comp.append(line.split()[3:10])
-                for j in range(7):
-                    Ram_HO_T_comp[i][j] = float(Ram_HO_T_comp[i][j])
-            Ram_HO_T_comp = np.array(Ram_HO_T_comp)
-            self.Ram_HO_T_comp_xx = Ram_HO_T_comp[:, 0:2]
-            self.Ram_HO_T_comp_xy = Ram_HO_T_comp[:, 0:3:2]
-            self.Ram_HO_T_comp_xz = Ram_HO_T_comp[:, 0:4:3]
-            self.Ram_HO_T_comp_yy = Ram_HO_T_comp[:, 0:5:4]
-            self.Ram_HO_T_comp_yz = Ram_HO_T_comp[:, 0:6:5]
-            self.Ram_HO_T_comp_zz = Ram_HO_T_comp[:, 0:7:6]
-
-        # Save and parse VSCF data for Raman spectrum (0K, tot)
-        n_VSCF_Ram_0K_tot = len(bufferVSCF_Ram_0K_tot)
-        if n_VSCF_Ram_0K_tot > 0:
-            for i, line in enumerate(bufferVSCF_Ram_0K_tot[6:n_VSCF_Ram_0K_tot-1]):
-                Ram_VSCF_0K_tot.append(line.split()[3:7])
-                for j in range(4):
-                    Ram_VSCF_0K_tot[i][j] = float(Ram_VSCF_0K_tot[i][j])
-            Ram_VSCF_0K_tot = np.array(Ram_VSCF_0K_tot)
-            self.Ram_VSCF_0K_tot = Ram_VSCF_0K_tot[:, 0:2]
-            self.Ram_VSCF_0K_per = Ram_VSCF_0K_tot[:, 0:3:2]
-            self.Ram_VSCF_0K_par = Ram_VSCF_0K_tot[:, 0:4:3]
-
-        # Save and parse VSCF data for Raman spectrum (T, tot)
-        n_VSCF_Ram_T_tot = len(bufferVSCF_Ram_T_tot)
-        if n_VSCF_Ram_T_tot > 0:
-            for i, line in enumerate(bufferVSCF_Ram_T_tot[6:n_VSCF_Ram_T_tot-1]):
-                Ram_VSCF_T_tot.append(line.split()[3:7])
-                for j in range(4):
-                    Ram_VSCF_T_tot[i][j] = float(Ram_VSCF_T_tot[i][j])
-            Ram_VSCF_T_tot = np.array(Ram_VSCF_T_tot)
-            self.Ram_VSCF_T_tot = Ram_VSCF_T_tot[:, 0:2]
-            self.Ram_VSCF_T_per = Ram_VSCF_T_tot[:, 0:3:2]
-            self.Ram_VSCF_T_par = Ram_VSCF_T_tot[:, 0:4:3]
-
-        # Save and parse VSCF data for Raman spectrum (0K, comp)
-        n_VSCF_Ram_0K_comp = len(bufferVSCF_Ram_0K_comp)
-        if n_VSCF_Ram_0K_comp > 0:
-            for i, line in enumerate(bufferVSCF_Ram_0K_comp[6:n_VSCF_Ram_0K_comp-1]):
-                Ram_VSCF_0K_comp.append(line.split()[3:10])
-                for j in range(7):
-                    Ram_VSCF_0K_comp[i][j] = float(Ram_VSCF_0K_comp[i][j])
-            Ram_VSCF_0K_comp = np.array(Ram_VSCF_0K_comp)
-            self.Ram_VSCF_0K_comp_xx = Ram_VSCF_0K_comp[:, 0:2]
-            self.Ram_VSCF_0K_comp_xy = Ram_VSCF_0K_comp[:, 0:3:2]
-            self.Ram_VSCF_0K_comp_xz = Ram_VSCF_0K_comp[:, 0:4:3]
-            self.Ram_VSCF_0K_comp_yy = Ram_VSCF_0K_comp[:, 0:5:4]
-            self.Ram_VSCF_0K_comp_yz = Ram_VSCF_0K_comp[:, 0:6:5]
-            self.Ram_VSCF_0K_comp_zz = Ram_VSCF_0K_comp[:, 0:7:6]
-
-        # Save and parse VSCF data for Raman spectrum (T, comp)
-        n_VSCF_Ram_T_comp = len(bufferVSCF_Ram_T_comp)
-        if n_VSCF_Ram_T_comp > 0:
-            for i, line in enumerate(bufferVSCF_Ram_T_comp[6:n_VSCF_Ram_T_comp-1]):
-                Ram_VSCF_T_comp.append(line.split()[3:10])
-                for j in range(7):
-                    Ram_VSCF_T_comp[i][j] = float(Ram_VSCF_T_comp[i][j])
-            Ram_VSCF_T_comp = np.array(Ram_VSCF_T_comp)
-            self.Ram_VSCF_T_comp_xx = Ram_VSCF_T_comp[:, 0:2]
-            self.Ram_VSCF_T_comp_xy = Ram_VSCF_T_comp[:, 0:3:2]
-            self.Ram_VSCF_T_comp_xz = Ram_VSCF_T_comp[:, 0:4:3]
-            self.Ram_VSCF_T_comp_yy = Ram_VSCF_T_comp[:, 0:5:4]
-            self.Ram_VSCF_T_comp_yz = Ram_VSCF_T_comp[:, 0:6:5]
-            self.Ram_VSCF_T_comp_zz = Ram_VSCF_T_comp[:, 0:7:6]
-
-        # Save and parse VCI data for Raman spectrum (0K, tot)
-        n_VCI_Ram_0K_tot = len(bufferVCI_Ram_0K_tot)
-        if n_VCI_Ram_0K_tot > 0:
-            for i, line in enumerate(bufferVCI_Ram_0K_tot[6:n_VCI_Ram_0K_tot-1]):
-                Ram_VCI_0K_tot.append(line.split()[3:7])
-                for j in range(4):
-                    Ram_VCI_0K_tot[i][j] = float(Ram_VCI_0K_tot[i][j])
-            Ram_VCI_0K_tot = np.array(Ram_VCI_0K_tot)
-            self.Ram_VCI_0K_tot = Ram_VCI_0K_tot[:, 0:2]
-            self.Ram_VCI_0K_per = Ram_VCI_0K_tot[:, 0:3:2]
-            self.Ram_VCI_0K_par = Ram_VCI_0K_tot[:, 0:4:3]
-
-        # Save and parse VCI data for Raman spectrum (T, tot)
-        n_VCI_Ram_T_tot = len(bufferVCI_Ram_T_tot)
-        if n_VCI_Ram_T_tot > 0:
-            for i, line in enumerate(bufferVCI_Ram_T_tot[6:n_VCI_Ram_T_tot-1]):
-                Ram_VCI_T_tot.append(line.split()[3:7])
-                for j in range(4):
-                    Ram_VCI_T_tot[i][j] = float(Ram_VCI_T_tot[i][j])
-            Ram_VCI_T_tot = np.array(Ram_VCI_T_tot)
-            self.Ram_VCI_T_tot = Ram_VCI_T_tot[:, 0:2]
-            self.Ram_VCI_T_per = Ram_VCI_T_tot[:, 0:3:2]
-            self.Ram_VCI_T_par = Ram_VCI_T_tot[:, 0:4:3]
-
-        # Save and parse VCI data for Raman spectrum (0K, comp)
-        n_VCI_Ram_0K_comp = len(bufferVCI_Ram_0K_comp)
-        if n_VCI_Ram_0K_comp > 0:
-            for i, line in enumerate(bufferVCI_Ram_0K_comp[6:n_VCI_Ram_0K_comp-1]):
-                Ram_VCI_0K_comp.append(line.split()[3:10])
-                for j in range(7):
-                    Ram_VCI_0K_comp[i][j] = float(Ram_VCI_0K_comp[i][j])
-            Ram_VCI_0K_comp = np.array(Ram_VCI_0K_comp)
-            self.Ram_VCI_0K_comp_xx = Ram_VCI_0K_comp[:, 0:2]
-            self.Ram_VCI_0K_comp_xy = Ram_VCI_0K_comp[:, 0:3:2]
-            self.Ram_VCI_0K_comp_xz = Ram_VCI_0K_comp[:, 0:4:3]
-            self.Ram_VCI_0K_comp_yy = Ram_VCI_0K_comp[:, 0:5:4]
-            self.Ram_VCI_0K_comp_yz = Ram_VCI_0K_comp[:, 0:6:5]
-            self.Ram_VCI_0K_comp_zz = Ram_VCI_0K_comp[:, 0:7:6]
-
-        # Save and parse VCI data for Raman spectrum (T, comp)
-        n_VCI_Ram_T_comp = len(bufferVCI_Ram_T_comp)
-        if n_VCI_Ram_T_comp > 0:
-            for i, line in enumerate(bufferVCI_Ram_T_comp[6:n_VCI_Ram_T_comp-1]):
-                Ram_VCI_T_comp.append(line.split()[3:10])
-                for j in range(7):
-                    Ram_VCI_T_comp[i][j] = float(Ram_VCI_T_comp[i][j])
-            Ram_VCI_T_comp = np.array(Ram_VCI_T_comp)
-            self.Ram_VCI_T_comp_xx = Ram_VCI_T_comp[:, 0:2]
-            self.Ram_VCI_T_comp_xy = Ram_VCI_T_comp[:, 0:3:2]
-            self.Ram_VCI_T_comp_xz = Ram_VCI_T_comp[:, 0:4:3]
-            self.Ram_VCI_T_comp_yy = Ram_VCI_T_comp[:, 0:5:4]
-            self.Ram_VCI_T_comp_yz = Ram_VCI_T_comp[:, 0:6:5]
-            self.Ram_VCI_T_comp_zz = Ram_VCI_T_comp[:, 0:7:6]
-
-        return self
+        return self  
 
     # ANSCAN+DWELL
     def get_anscan(self, anscanwf):
@@ -3151,8 +2847,7 @@ class Properties_output:
         Returns:
             self.bands (BandsBASE): A Bands base object
         """
-        from base.propout import BandsBASE, OutBASE
-        #from CRYSTALpytools.base.propout import BandsBASE, OutBASE
+        from CRYSTALClear.base.propout import BandsBASE, OutBASE
 
         self.read_file(band_file)
         if '-%-' in self.data[0]:  # fort.25 file format
@@ -3179,8 +2874,7 @@ class Properties_output:
         Returns:
             self.doss (DOSBASE): A DOS base object
         """
-        from base.propout import DOSBASE
-        #from CRYSTALpytools.base.propout import DOSBASE
+        from CRYSTALClear.base.propout import DOSBASE
 
         self.read_file(properties_output)
         if '-%-' in self.data[0]:  # fort.25 file format
