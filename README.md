@@ -1,8 +1,5 @@
 # CRYSTALClear 💎 
 
-![Project Logo](url-to-logo)
-
-
 ## Description 📄
 
 A python framework for the [CRYSTAL](https://www.crystal.unito.it) code. Forked from [CRYSTALpytools](https://github.com/crystal-code-tools/CRYSTALpytools).
@@ -62,5 +59,5 @@ Distributed under the  `MIT`  License. See  `LICENSE.txt`  for more information.
 ## Contact 📬
 - Website: https://www.crystal.unito.it
 - Email: crystalunito@gmail.com
-- Instagram:  [@crystaldevs](https://www.instagram.com/crystaldevs/)# CRYSTALClear 💎 
+- Instagram:  [@crystaldevs](https://www.instagram.com/crystaldevs/)
 
