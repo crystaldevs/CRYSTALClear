@@ -3758,8 +3758,8 @@ class Properties_output:
         self.read_file(properties_output)
         data = self.data
 
-        points_ab = int(data[0].split()[1])
-        points_bc = int(data[0].split()[2])
+        self.nrow = int(data[0].split()[1])
+        self.ncol = int(data[0].split()[2])
         self.cosxy = float(data[0][42:54])
         self.a = np.array([data[1][0:12],
                            data[1][12:24],
@@ -3771,9 +3771,9 @@ class Properties_output:
                            data[2][12:24],
                            data[2][24:36]], dtype=float)
 
-        self.density_map = np.zeros((points_ab, points_bc), dtype=float)
+        self.density_map = np.zeros((self.nrow, self.ncol), dtype=float)
 
-        number_points = points_ab * points_bc
+        number_points = self.nrow * self.ncol
         lines = int(number_points / 6)
         if number_points % 6 != 0:
             lines = lines + 1
@@ -3786,8 +3786,8 @@ class Properties_output:
                 j += 1
 
         k = 0
-        for j in range(0, points_bc):
-            for i in range(points_ab - 1, -1, -1):
+        for j in range(0, self.ncol):
+            for i in range(self.nrow - 1, -1, -1):
                 self.density_map[i, j] = density_temp[k]
                 k += 1
 
