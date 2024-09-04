@@ -4,3 +4,4 @@ pymatgen>=2022
 numpy
 mendeleev
 ase
+-e .
