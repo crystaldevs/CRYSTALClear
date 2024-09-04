@@ -13,18 +13,18 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 
-import datetime
 import os
 import sys
 
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../..'))
-sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('../../CRYSTALClear'))
+sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../CRYSTALClear'))
 
 # -- Project information -----------------------------------------------------
 
 from CRYSTALClear import __author__, __version__
+import datetime
 
 year = datetime.datetime.now().date().strftime("%Y")
 project = 'CRYSTALClear'
