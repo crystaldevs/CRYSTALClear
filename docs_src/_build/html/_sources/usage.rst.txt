@@ -1,5 +1,5 @@
 .. image:: _static/CRYSTAL_logo.png
-   :width: 200 px
+   :width: 400 px
    :alt: CRYSTALpytools
    :align: center
 
