@@ -12,7 +12,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-from CRYSTALClear import __author__, __version__
+
 import datetime
 import os
 import sys
@@ -20,10 +20,11 @@ import sys
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('../../CRYSTALpytools'))
+sys.path.insert(0, os.path.abspath('../../CRYSTALClear'))
 
 # -- Project information -----------------------------------------------------
 
+from CRYSTALClear import __author__, __version__
 
 year = datetime.datetime.now().date().strftime("%Y")
 project = 'CRYSTALClear'
