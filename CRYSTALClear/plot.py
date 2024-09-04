@@ -3059,6 +3059,7 @@ def plot_cry_ela(choose, ndeg, *args, dpi=200, filetype=".png",
     # <--
 
     # Create plot for each tensor -->
+    ax_list = []
     for k in range(i):
         X = R[k] * np.sin(theta_2D) * np.cos(phi_2D)
         Y = R[k] * np.sin(theta_2D) * np.sin(phi_2D)
@@ -3101,9 +3102,13 @@ def plot_cry_ela(choose, ndeg, *args, dpi=200, filetype=".png",
 
         ax.set_box_aspect(aspect=(1, 1, 1))  # Fix aspect ratio
 
-        plt.show()
-        fig.savefig(choose + time.strftime("%Y-%m-%d_%H%M%S.") +
-                    filetype, dpi=dpi, transparent=transparency)
+        #plt.show()
+        #fig.savefig(choose + time.strftime("%Y-%m-%d_%H%M%S.") +
+        #            filetype, dpi=dpi, transparent=transparency)
+
+        ax_list.append(ax)
+
+    return ax_list
 
         # <--
 
