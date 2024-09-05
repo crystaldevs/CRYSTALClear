@@ -54,7 +54,7 @@ The following will be installed if not already present:
 ## Usage 🚀
 
 TO BE POPULATED
-For further information check the [Documentqation](https://crystaldevs.github.io/CRYSTALClear/)
+For further information check the [Documentation](https://crystaldevs.github.io/CRYSTALClear/)
 
 ## Contributing 🤝
 
