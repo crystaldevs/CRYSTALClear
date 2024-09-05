@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Nov 19 18:29:35 2021
-
-@author: brunocamino
-"""
 
 
 def cry_ads_energy(e_full_system, e_substrate, e_adsorbate):
@@ -35,11 +30,9 @@ def cry_shrink(structure, spacing=0.2):
     Returns:
         int: The number of unit cells (rounded up) needed to achieve the desired spacing.
     """
-    
+
     import numpy as np
 
     vector = np.average(structure.lattice.reciprocal_lattice.lengths)
 
     return int(np.ceil(vector/spacing))
-
-
