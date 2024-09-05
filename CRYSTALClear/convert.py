@@ -4,6 +4,7 @@
 Functions that do conversion between data / file formats
 """
 
+
 def cry_ase2gui(structure, gui_file=None, vacuum=None, symmetry=True):
     """
     Transform an ASE Structure object into a Pymatgen structure object and then
@@ -19,12 +20,14 @@ def cry_ase2gui(structure, gui_file=None, vacuum=None, symmetry=True):
     """
     # First transform into pmg and then write the gui
 
-    from pymatgen.io.ase import AseAtomsAdaptor
     from convert import cry_pmg2gui
+    from pymatgen.io.ase import AseAtomsAdaptor
+
     from CRYSTALClear.convert import cry_pmg2gui
 
     pmg_structure = AseAtomsAdaptor().get_structure(structure)
-    gui = cry_pmg2gui(pmg_structure, gui_file, vacuum=vacuum, symmetry=symmetry)
+    gui = cry_pmg2gui(pmg_structure, gui_file,
+                      vacuum=vacuum, symmetry=symmetry)
 
     return gui
 
@@ -43,13 +46,16 @@ def cry_bands2pmg(band, output, labels=None):
     Returns:
         BandStructureSymmLine: Pymatgen band structure object.
     """
-    import numpy as np
     import warnings
+
+    import numpy as np
     from crystal_io import Properties_output
-    from CRYSTALClear.crystal_io import Properties_output
-    from pymatgen.electronic_structure.bandstructure import BandStructureSymmLine
     from pymatgen.core.lattice import Lattice
+    from pymatgen.electronic_structure.bandstructure import \
+        BandStructureSymmLine
     from pymatgen.electronic_structure.core import Spin
+
+    from CRYSTALClear.crystal_io import Properties_output
 
     # Generate the Band object
     if type(band) == str:
@@ -84,18 +90,17 @@ The redundant labels will be omitted.'''.format(band.n_tick, len(labels)),
     for i in range(band.n_tick):
         labels_dict[labels[i]] = band.tick_pos3d[i]
 
-
     # Energy eigenvalues
     # pymatgen will plot the bands wrt to the Fermi Energy
     band_energy = band.bands + band.efermi
     if band.spin == 1:
         eigenvals = {
-            Spin.up : band_energy[:, :, 0]
+            Spin.up: band_energy[:, :, 0]
         }
     else:
         eigenvals = {
-            Spin.up   : band_energy[:, :, 0],
-            Spin.down : band_energy[:, :, 1]
+            Spin.up: band_energy[:, :, 0],
+            Spin.down: band_energy[:, :, 1]
         }
 
     return BandStructureSymmLine(kpoints=band.k_point_pos3d,
@@ -119,8 +124,9 @@ def cry_gui2ase(gui, vacuum=None, **kwargs):
         Atoms: ASE atoms object.
     """
     from convert import cry_gui2pmg
-    from CRYSTALClear.convert import cry_gui2pmg
     from pymatgen.io.ase import AseAtomsAdaptor
+
+    from CRYSTALClear.convert import cry_gui2pmg
 
     struc = cry_gui2pmg(gui, vacuum=vacuum)
 
@@ -140,8 +146,9 @@ def cry_gui2cif(gui, cif_file_name, vacuum=None, **kwargs):
         **kwargs: Passed to Pymatgen CifWriter.
     """
     from convert import cry_gui2pmg
-    from CRYSTALClear.convert import cry_gui2pmg
     from pymatgen.io.cif import CifWriter
+
+    from CRYSTALClear.convert import cry_gui2pmg
 
     structure = cry_gui2pmg(gui, vacuum=vacuum, molecule=False)
     if len(kwargs) == 0:
@@ -161,25 +168,15 @@ def cry_gui2pmg(gui, vacuum=None, molecule=True):
         vacuum (float): Vacuum distance. Unit: Angstrom. If none, set the
             ``pbc`` attribute of Pymatgen object. Low dimensional systems only.
         molecule (bool): Generate a Molecule Pymatgen object for 0D structures.
-<<<<<<< HEAD
-<<<<<<< HEAD
-        pseudo_atoms (list): Pseudoatom list. The number is the atom number+200
-        
-=======
-
->>>>>>> upstream/main
-=======
-        pseudo_atoms (list): Pseudoatom list. The number is the atom number+200
-
->>>>>>> origin/main
     Returns:
         Structure or Molecule: Pymatgen Structure or Molecule object.
     """
-    from crystal_io import Crystal_gui
-    from CRYSTALClear.crystal_io import Crystal_gui
-    from pymatgen.core.structure import Structure, Molecule
-    from pymatgen.core.lattice import Lattice
     import numpy as np
+    from crystal_io import Crystal_gui
+    from pymatgen.core.lattice import Lattice
+    from pymatgen.core.structure import Molecule, Structure
+
+    from CRYSTALClear.crystal_io import Crystal_gui
 
     # Generate the gui object
     if type(gui) == str:
@@ -194,11 +191,11 @@ def cry_gui2pmg(gui, vacuum=None, molecule=True):
                 pbc = (True, True, True)
 #                gui.lattice.setflags(write=1)
                 thickness_x = np.amax(np.array(gui.atom_positions)[:, 0]) - \
-                        np.amin(np.array(gui.atom_positions)[:, 0])
+                    np.amin(np.array(gui.atom_positions)[:, 0])
                 thickness_y = np.amax(np.array(gui.atom_positions)[:, 1]) - \
-                        np.amin(np.array(gui.atom_positions)[:, 1])
+                    np.amin(np.array(gui.atom_positions)[:, 1])
                 thickness_z = np.amax(np.array(gui.atom_positions)[:, 2]) - \
-                        np.amin(np.array(gui.atom_positions)[:, 2])
+                    np.amin(np.array(gui.atom_positions)[:, 2])
 
                 gui.lattice[0][0] = thickness_x + vacuum
                 gui.lattice[1][1] = thickness_y + vacuum
@@ -211,9 +208,9 @@ def cry_gui2pmg(gui, vacuum=None, molecule=True):
             pbc = (True, True, True)
 #            gui.lattice.setflags(write=1)
             thickness_y = np.amax(np.array(gui.atom_positions)[:, 1]) - \
-                        np.amin(np.array(gui.atom_positions)[:, 1])
+                np.amin(np.array(gui.atom_positions)[:, 1])
             thickness_z = np.amax(np.array(gui.atom_positions)[:, 2]) - \
-                        np.amin(np.array(gui.atom_positions)[:, 2])
+                np.amin(np.array(gui.atom_positions)[:, 2])
 
             gui.lattice[1][1] = thickness_y + vacuum
             gui.lattice[2][2] = thickness_z + vacuum
@@ -225,14 +222,14 @@ def cry_gui2pmg(gui, vacuum=None, molecule=True):
             pbc = (True, True, True)
 #            gui.lattice.setflags(write=1)
             thickness_z = np.amax(np.array(gui.atom_positions)[:, 2]) - \
-                        np.amin(np.array(gui.atom_positions)[:, 2])
+                np.amin(np.array(gui.atom_positions)[:, 2])
 
             gui.lattice[2][2] = thickness_z + vacuum
         else:
             pbc = (True, True, False)
 
-    #Convert the pseudopotential atoms to their original atomic number
-    atomic_numbers = np.array(gui.atom_number)%200
+    # Convert the pseudopotential atoms to their original atomic number
+    atomic_numbers = np.array(gui.atom_number) % 200
 
     return Structure(gui.lattice, atomic_numbers, gui.atom_positions, coords_are_cartesian=True)
 
@@ -254,11 +251,13 @@ def cry_gui2xyz(gui, xyz_file_name, **kwargs):
         **kwargs: Passed to Pymatgen XYZ object.
     """
 
-    from pymatgen.io.xyz import XYZ
     from convert import cry_gui2pmg
+    from pymatgen.io.xyz import XYZ
+
     from CRYSTALClear.convert import cry_gui2pmg
 
-    structure = cry_gui2pmg(gui, molecule=True) #this returns a pmg Molecule object
+    # this returns a pmg Molecule object
+    structure = cry_gui2pmg(gui, molecule=True)
     XYZ(structure, **kwargs).write_file(xyz_file_name)
 
 
@@ -276,8 +275,9 @@ def cry_out2ase(output, vacuum=None, initial=False, **kwargs):
     Returns:
         Atoms: ASE atoms object.
     """
-    from pymatgen.io.ase import AseAtomsAdaptor
     from convert import cry_out2pmg
+    from pymatgen.io.ase import AseAtomsAdaptor
+
     from CRYSTALClear.convert import cry_out2pmg
 
     struc = cry_out2pmg(output, vacuum=vacuum, initial=initial)
@@ -300,10 +300,12 @@ def cry_out2cif(output, cif_file_name, vacuum=None, initial=False, **kwargs):
         **kwargs: Passed to Pymatgen CifWriter.
     """
     from convert import cry_out2pmg
-    from CRYSTALClear.convert import cry_out2pmg
     from pymatgen.io.cif import CifWriter
 
-    structure = cry_out2pmg(output, vacuum=vacuum, initial=initial, molecule=False)
+    from CRYSTALClear.convert import cry_out2pmg
+
+    structure = cry_out2pmg(output, vacuum=vacuum,
+                            initial=initial, molecule=False)
     if len(kwargs) == 0:
         CifWriter(structure, symprec=0.01, **kwargs).write_file(cif_file_name)
     else:
@@ -325,14 +327,16 @@ def cry_out2pmg(output, vacuum=None, initial=False, molecule=True):
     Returns:
         Structure: Pymatgen Structure object.
     """
-    from crystal_io import Crystal_output
-    from CRYSTALClear.crystal_io import Crystal_output
-    from pymatgen.core.lattice import Lattice
-    from pymatgen.core.structure import Structure
-    import numpy as np
     import copy
 
-    #Extract information from the output file
+    import numpy as np
+    from crystal_io import Crystal_output
+    from pymatgen.core.lattice import Lattice
+    from pymatgen.core.structure import Structure
+
+    from CRYSTALClear.crystal_io import Crystal_output
+
+    # Extract information from the output file
     if type(output) == str:
         out = Crystal_output(output)
     else:
@@ -352,9 +356,12 @@ def cry_out2pmg(output, vacuum=None, initial=False, molecule=True):
         elif molecule == False:
             if vacuum != None:
                 pbc = (True, True, True)
-                thickness_x = np.amax(struc.cart_coords[:, 0]) - np.amin(struc.cart_coords[:, 0])
-                thickness_y = np.amax(struc.cart_coords[:, 1]) - np.amin(struc.cart_coords[:, 1])
-                thickness_z = np.amax(struc.cart_coords[:, 2]) - np.amin(struc.cart_coords[:, 2])
+                thickness_x = np.amax(
+                    struc.cart_coords[:, 0]) - np.amin(struc.cart_coords[:, 0])
+                thickness_y = np.amax(
+                    struc.cart_coords[:, 1]) - np.amin(struc.cart_coords[:, 1])
+                thickness_z = np.amax(
+                    struc.cart_coords[:, 2]) - np.amin(struc.cart_coords[:, 2])
 
                 latt_mx[0, 0] = thickness_x + vacuum
                 latt_mx[1, 1] = thickness_y + vacuum
@@ -365,8 +372,10 @@ def cry_out2pmg(output, vacuum=None, initial=False, molecule=True):
     if ndimen == 1:
         if vacuum != None:
             pbc = (True, True, True)
-            thickness_y = np.amax(struc.cart_coords[:, 1]) - np.amin(struc.cart_coords[:, 1])
-            thickness_z = np.amax(struc.cart_coords[:, 2]) - np.amin(struc.cart_coords[:, 2])
+            thickness_y = np.amax(
+                struc.cart_coords[:, 1]) - np.amin(struc.cart_coords[:, 1])
+            thickness_z = np.amax(
+                struc.cart_coords[:, 2]) - np.amin(struc.cart_coords[:, 2])
 
             latt_mx[1, 1] = thickness_y + vacuum
             latt_mx[2, 2] = thickness_z + vacuum
@@ -376,7 +385,8 @@ def cry_out2pmg(output, vacuum=None, initial=False, molecule=True):
     if ndimen == 2:
         if vacuum != None:
             pbc = (True, True, True)
-            thickness_z = np.amax(struc.cart_coords[:, 2]) - np.amin(struc.cart_coords[:, 2])
+            thickness_z = np.amax(
+                struc.cart_coords[:, 2]) - np.amin(struc.cart_coords[:, 2])
 
             latt_mx[2, 2] = thickness_z + vacuum
         else:
@@ -400,11 +410,13 @@ def cry_out2xyz(output, xyz_file_name, initial=False, **kwargs):
         initial (bool): Read the last geometry of the output file.
         **kwargs: Passed to Pymatgen XYZ object.
     """
-    from pymatgen.io.xyz import XYZ
     from convert import cry_out2pmg
+    from pymatgen.io.xyz import XYZ
+
     from CRYSTALClear.convert import cry_out2pmg
 
-    structure = cry_out2pmg(output, initial=initial, molecule=True) #this returns a pmg Molecule object
+    # this returns a pmg Molecule object
+    structure = cry_out2pmg(output, initial=initial, molecule=True)
     XYZ(structure, **kwargs).write_file(xyz_file_name)
 
 
@@ -428,18 +440,19 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
         **kwargs: Passed to Pymatgen SpacegroupAnalyzer object. Valid only
             if ``symmetry=True``.
     """
-    from crystal_io import Crystal_gui
-    from CRYSTALClear.crystal_io import Crystal_gui
-    from pymatgen.symmetry.analyzer import SpacegroupAnalyzer,PointGroupAnalyzer
-    from geometry import get_sg_symmops
-    from CRYSTALClear.geometry import get_sg_symmops
-    from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-    from pymatgen.core.surface import center_slab
-    from pymatgen.core.structure import Structure, Molecule
+    import copy
+    import warnings
 
     import numpy as np
-    import warnings
-    import copy
+    from crystal_io import Crystal_gui
+    from geometry import get_sg_symmops
+    from pymatgen.core.structure import Molecule, Structure
+    from pymatgen.core.surface import center_slab
+    from pymatgen.symmetry.analyzer import (PointGroupAnalyzer,
+                                            SpacegroupAnalyzer)
+
+    from CRYSTALClear.crystal_io import Crystal_gui
+    from CRYSTALClear.geometry import get_sg_symmops
 
     # dimensionality
     if pbc == None:
@@ -457,24 +470,26 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
 
     if dimensionality == 0 and 'Molecule' in str(type(structure)):
         molecule = structure
-        is_molecule = True # 0D object called as molecule
+        is_molecule = True  # 0D object called as molecule
     elif dimensionality > 0:
-        is_molecule = False # >0D object called as structure
+        is_molecule = False  # >0D object called as structure
     elif dimensionality == 0 and 'Molecule' not in str(type(structure)):
-        warnings.warn('Dimensionality is set to 0, but the structure is not a molecule. Periodicity will be removed.')
+        warnings.warn(
+            'Dimensionality is set to 0, but the structure is not a molecule. Periodicity will be removed.')
         molecule = Molecule(structure.species,
                             [i.coords for i in structure.sites],
                             structure.charge,
                             [i.properties for i in struc.sites])
-        is_molecule = True # 0D object called as molecule
+        is_molecule = True  # 0D object called as molecule
     elif dimensionality > 0 and 'Molecule' in str(type(structure)):
-        warnings.warn('Dimensionality is set to 1-3, but the structure is a molecule. Periodicity will be added.')
+        warnings.warn(
+            'Dimensionality is set to 1-3, but the structure is a molecule. Periodicity will be added.')
         structure = structure.get_boxed_structure(500., 500., 500.)
-        is_molecule = False # >0D object called as structure
+        is_molecule = False  # >0D object called as structure
 
     gui.dimensionality = dimensionality
 
-    if is_molecule == True: # 0D
+    if is_molecule == True:  # 0D
         lattice_vectors = np.identity(3)*500.
         gui.lattice = lattice_vectors
         gui.n_atoms = molecule.num_sites
@@ -497,50 +512,58 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
             gui.symmops = []
             gui.n_symmops = 1
             gui.symmops.extend(np.identity(3).tolist())
-            gui.symmops.append([0.0,0.0,0.0])
+            gui.symmops.append([0.0, 0.0, 0.0])
         gui.atom_number = list(molecule.atomic_numbers)
         gui.atom_positions = molecule.cart_coords.tolist()
-    else: # 1-3D
+    else:  # 1-3D
         if dimensionality == 2:
-            if pbc[0] == False: # X no periodicity
-                warnings.warn('The non-periodic direction will be rotated to z axis.')
+            if pbc[0] == False:  # X no periodicity
+                warnings.warn(
+                    'The non-periodic direction will be rotated to z axis.')
                 rot = np.array([[0, 0, 1], [1, 0, 0], [0, 1, 0]], dtype=float)
                 lattice_vectors = copy.deepcopy(structure.lattice.matrix) @ rot
-                lattice_vectors[2, 1] = latt_mx[0, 0] # Perpendicular elements are not on diagonal after rotation
+                # Perpendicular elements are not on diagonal after rotation
+                lattice_vectors[2, 1] = latt_mx[0, 0]
                 atom_coords = copy.deepcopy(structure.cart_coords) @ rot
 
-            elif pbc[1] == False: # Y no periodicity
-                warnings.warn('The non-periodic direction will be rotated to z axis.')
+            elif pbc[1] == False:  # Y no periodicity
+                warnings.warn(
+                    'The non-periodic direction will be rotated to z axis.')
                 rot = np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]], dtype=float)
                 lattice_vectors = copy.deepcopy(structure.lattice.matrix) @ rot
-                lattice_vectors[2, 0] = latt_mx[1, 1] # Perpendicular elements are not on diagonal after rotation
+                # Perpendicular elements are not on diagonal after rotation
+                lattice_vectors[2, 0] = latt_mx[1, 1]
                 atom_coords = copy.deepcopy(structure.cart_coords) @ rot
 
-            else: # Z no periodicity
+            else:  # Z no periodicity
                 lattice_vectors = copy.deepcopy(structure.lattice.matrix)
                 lattice_vectors[2, 2] = latt_mx[2, 2]
                 atom_coords = copy.deepcopy(structure.cart_coords)
 
         elif gui.dimensionality == 1:
-            if pbc[0] == True: # X periodic
+            if pbc[0] == True:  # X periodic
                 lattice_vectors = copy.deepcopy(structure.lattice.matrix)
                 lattice_vectors[1, 1] = latt_mx[1, 1]
                 lattice_vectors[2, 2] = latt_mx[2, 2]
                 atom_coords = copy.deepcopy(structure.cart_coords)
 
-            elif pbc[1] == True: # Y periodic
-                warnings.warn('The periodic direction will be rotated to x axis.')
+            elif pbc[1] == True:  # Y periodic
+                warnings.warn(
+                    'The periodic direction will be rotated to x axis.')
                 rot = np.array([[0, 0, 1], [1, 0, 0], [0, 1, 0]], dtype=float)
                 lattice_vectors = copy.deepcopy(structure.lattice.matrix) @ rot
-                lattice_vectors[1, 0] = latt_mx[2, 2] # Perpendicular elements are not on diagonal after rotation
+                # Perpendicular elements are not on diagonal after rotation
+                lattice_vectors[1, 0] = latt_mx[2, 2]
                 lattice_vectors[2, 1] = latt_mx[0, 0]
                 atom_coords = copy.deepcopy(structure.cart_coords) @ rot
 
-            else: # Z periodic
-                warnings.warn('The periodic direction will be rotated to x axis.')
+            else:  # Z periodic
+                warnings.warn(
+                    'The periodic direction will be rotated to x axis.')
                 rot = np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]], dtype=float)
                 lattice_vectors = copy.deepcopy(structure.lattice.matrix) @ rot
-                lattice_vectors[1, 2] = latt_mx[0, 0] # Perpendicular elements are not on diagonal after rotation
+                # Perpendicular elements are not on diagonal after rotation
+                lattice_vectors[1, 2] = latt_mx[0, 0]
                 lattice_vectors[2, 0] = latt_mx[1, 1]
                 atom_coords = copy.deepcopy(structure.cart_coords) @ rot
 
@@ -556,12 +579,15 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
 
         if symmetry == True:
             if gui.dimensionality == 3:
-                structure = SpacegroupAnalyzer(structure, **kwargs).get_refined_structure()
-                gui.space_group, gui.n_symmops, gui.symmops = get_sg_symmops(structure, **kwargs)
+                structure = SpacegroupAnalyzer(
+                    structure, **kwargs).get_refined_structure()
+                gui.space_group, gui.n_symmops, gui.symmops = get_sg_symmops(
+                    structure, **kwargs)
             elif gui.dimensionality == 2:
                 # Get group number before editing- inheriated from previous version
-                gui.space_group = SpacegroupAnalyzer(structure, **kwargs).get_space_group_number()
-                #center the slab first
+                gui.space_group = SpacegroupAnalyzer(
+                    structure, **kwargs).get_space_group_number()
+                # center the slab first
                 structure = center_slab(structure)
                 # Then center at z=0.0
                 translation = np.array([0.0, 0.0, -0.5])
@@ -578,13 +604,13 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
 
                 gui.n_symmops = n_symmops
 
-
             else:
-                warnings.warn('Check the polymer is correctly centered in the cell and that the correct symmops are used.')
+                warnings.warn(
+                    'Check the polymer is correctly centered in the cell and that the correct symmops are used.')
         else:
             gui.space_group = 1
             gui.n_symmops = 1
-            gui.symmops = np.vstack([np.eye(3), [0.0,0.0,0.0]])
+            gui.symmops = np.vstack([np.eye(3), [0.0, 0.0, 0.0]])
             gui.symmops = np.reshape(np.array(gui.symmops, dtype=float),
                                      [gui.n_symmops, 4, 3])
 

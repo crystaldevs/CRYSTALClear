@@ -1,6 +1,5 @@
-.. image:: _static/CRYSTAL_logo.png
-   :width: 400 px
-   :alt: CRYSTALpytools
-   :align: center
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
 
    modules

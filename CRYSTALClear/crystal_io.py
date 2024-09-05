@@ -4158,7 +4158,7 @@ class External_unit:
         """
         from CRYSTALClear.base.propout import BandsBASE, OutBASE
 
-        self.read_external_unit(band_file)
+        self.read_external_uni(band_file)
         if '-%-' in self.data[0]:  # fort.25 file format
             self.bands = BandsBASE.f25_parser(self.data)
         else:  # BAND.DAT file format
