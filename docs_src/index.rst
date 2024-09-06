@@ -19,6 +19,3 @@ CRYSTALClear documentation
    cite
    
 .. include:: introduction.rst
-.. include:: installation.rst
-.. include:: usage.rst
-.. include:: cite.rst

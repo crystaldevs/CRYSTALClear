@@ -18,7 +18,7 @@ The easiest way to install CRYSTALClear is by using pip. This method
 automatically handles all dependencies, ensuring a smooth installation process. 
 Open your terminal and run the following command:
 
-.. code-block::
+.. code-block:: bash
 
        pip install CRYSTALClear
 
@@ -34,7 +34,7 @@ development of CRYSTALClear, you can clone the repository from GitHub and
 install it manually. Navigate to the directory where you want to store the 
 CRYSTALClear project, then run:
 
-.. code-block::
+.. code-block:: bash
 
         git clone https://github.com/crystaldevs/CRYSTALClear.git
 
@@ -49,7 +49,7 @@ ____________
 To verify that CRYSTALClear is installed correctly, you can try importing it in 
 a Python session:
 
-.. code-block::
+.. code-block:: bash
 
         import crystalclear
         print(crystalclear.__version__)

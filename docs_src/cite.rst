@@ -1,11 +1,11 @@
-How to Cite CRYSTALpytools
+How to Cite CRYSTALClear
 ==========================
 
 If CRYSTALClear happens to be helpful to you, please do consider citing it,
 which is important for the continuation of this project.
 
-General Structure and Usage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Reference
+---------
 
 **CRYSTALpytools: A Python infrastructure for the CRYSTAL code**
 
