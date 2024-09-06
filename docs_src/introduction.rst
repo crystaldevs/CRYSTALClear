@@ -28,27 +28,27 @@ calculations or exploring the mechanical properties of materials,
 CRYSTALClear provides intuitive and customizable solutions tailored to your needs. 
 The framework supports:
 
-#. Ease of Use: CRYSTALClear is designed with usability in mind, offering an 
+#. **Ease of Use**: CRYSTALClear is designed with usability in mind, offering an 
    intuitive interface that minimizes the learning curve. With straightforward 
    commands and comprehensive documentation, users can quickly set up and 
    execute their analysis workflows without needing to write complex code from 
    scratch.
-#. Extraction of Quantities from Output Files: Seamlessly retrieve and 
+#. **Extraction of Quantities from Output Files**: Seamlessly retrieve and 
    manipulate data from CRYSTAL output files, reducing the need for manual 
    parsing and data handling.
-#. Band Structure and Density of States (DOSS): Generate detailed plots of band 
+#. **Band Structure and Density of States (DOSS)**: Generate detailed plots of band 
    structures and density of states, providing insights into the electronic 
    properties of materials.
-#. Elastic Properties: Calculate and visualize key mechanical properties such as 
+#. **Elastic Properties**: Calculate and visualize key mechanical properties such as 
    Young's modulus, shear modulus, linear compressibility, and Poisson ratio, 
    aiding in the characterization of material strength and elasticity.
-#. Vibrational Spectroscopy (IR and Raman): Analyze both harmonic and anharmonic 
+#. **Vibrational Spectroscopy (IR and Raman)**: Analyze both harmonic and anharmonic 
    infrared (IR) and Raman spectra, enabling the study of vibrational modes in 
    crystals.
-#. Quantum Theory of Atoms in Molecules (QTAIM) Analysis: Perform sophisticated 
+#. **Quantum Theory of Atoms in Molecules (QTAIM) Analysis**: Perform sophisticated 
    analyses of electron density and related properties, crucial for 
    understanding chemical bonding and reactivity in solids.
-#. Electron Transport Properties: Investigate the electron transport 
+#. **Electron Transport Properties**: Investigate the electron transport 
    characteristics of materials, essential for the design of semiconductors and 
    other electronic devices.
 
