@@ -12,13 +12,17 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+
+
+
 import os
 import sys
 
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../..'))
-sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath('../../CRYSTALpytools'))
+sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../CRYSTALClear'))
+
 
 # -- Project information -----------------------------------------------------
 
@@ -40,7 +44,7 @@ release = __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary',
-			  'sphinx.ext.napoleon', 'sphinx.ext.githubpages']
+              'sphinx.ext.napoleon', 'sphinx.ext.githubpages']
 # Set `Returns` section to behave like the `Args` section
 # For Google Doc format
 napoleon_custom_sections = [('Returns', 'params_style')]
@@ -83,21 +87,21 @@ rst_prolog = u"""\
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'classic'
+html_theme = 'sphinx_rtd_theme'
 
-# Other configuration setups for html. 
+# Other configuration setups for html.
 # https://sphinx-rtd-theme.readthedocs.io/en/latest/configuring.html
 html_theme_options = {
-    'navigation_depth'    : 3,
-    'collapse_navigation' : False,
+    'navigation_depth': 3,
+    'collapse_navigation': False,
 }
 
 html_context = {
-    'display_github'  : True,
-    'github_user'     : 'crystaldevs',
-    'github_repo'     : 'CRYSTALClear',
-    'github_version'  : 'main',
-    'conf_py_path'    : '/docs_src/',
+    'display_github': True,
+    'github_user': 'crystaldevs',
+    'github_repo': 'CRYSTALClear',
+    'github_version': 'main',
+    'conf_py_path': '/docs_src/',
 }
 
 # favicon

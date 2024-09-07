@@ -1,4 +1,8 @@
+sphinx
+sphinx_rtd_theme
 pymatgen>=2022
 numpy
 mendeleev
 ase
+ghp-import
+-e .
