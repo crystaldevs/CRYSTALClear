@@ -2995,9 +2995,7 @@ def plot_cry_ela(choose, ndeg, *args):
 
     Returns:
         list of :class:`matplotlib.pyplot`
-        A list of matplotlib objects to be further saved and plotted. Note
-        that the number of elements of such list corresponds to the number of
-        elastic tensors provided as argument.
+        A list of matplotlib objects to be further saved and plotted. Note that the number of elements of such list corresponds to the number of elastic tensors provided as argument.
     """
     import math
 
@@ -3134,6 +3132,8 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
         dpi (int, optional): Resolution of the saved file. Defaults to 300.
         transparency (bool, optional): Enables the transparency of the saved file background. Defaults to False.
 
+    Returns:
+        Matplotlib object
     Raises:
         ValueError: The function raises an error when the object to be plotted does not have the required y_mode  
     """
@@ -3308,6 +3308,8 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
         save_to_file (str, optional): Filename of the spectra to be saved. Defaults to None.
         dpi (int, optional): Resolution of the saved file. Defaults to 300.
         transparency (bool, optional): Enables the transparency of the saved file background. Defaults to False.
+    Returns:
+        Matplotlib object
     """
 
     import sys
