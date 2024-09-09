@@ -4093,6 +4093,15 @@ class External_unit:
                 'EXITING: a CRYSTAL generated .DAT unit file needs to be specified')
 
     def read_cry_irspec(self, external_unit):
+        """
+        Reads the IRSPEC.DAT unit produced by CRYSTAL ir spectra computation
+
+        Args:
+            external_unit(str): path to the IRSPEC.DAT file
+
+        Returns:
+            The crystal_object necessary to plot the simulated spectra with plot_cry_irspec()
+        """
         import numpy as np
 
         self.read_external_unit(external_unit)
@@ -4121,6 +4130,15 @@ class External_unit:
         return self
 
     def read_cry_ramspec(self, external_unit):
+        """
+        Reads the RAMSPEC.DAT unit produced by CRYSTAL raman spectra computation
+
+        Args:
+            external_unit(str): path to the RAMSPEC.DAT file
+
+        Returns:
+            The crystal_object necessary to plot the simulated spectra with plot_cry_ramspec()
+        """
         import numpy as np
 
         self.read_external_unit(external_unit)
@@ -4145,11 +4163,11 @@ class External_unit:
 
     def read_phonon_band(self, band_file, output=None):
         """
-        Generate bands object from CRYSTAL BAND.DAT or fort.25 file.
+        Generate bands object from CRYSTAL PHONBAND.DAT or fort.25 file.
         Energy unit: eV. E Fermi is aligned to 0.
 
         Args:
-            band_file (str): Name of BAND.DAT or fort.25 file
+            band_file (str): Name of PHONBAND.DAT or fort.25 file
             output (str): Properties output file (.outp or .out). For 3D k
                 coordinates and geometry information.
 

@@ -485,7 +485,7 @@ def plot_phonon_band(bands, unit='cm-1', k_labels=None, mode='single',
         transparency(bool): Background transparency of the saved file,
 
     Returns:
-        None
+        Matplotlib object
 
     Raises:
         ValueError: If the specified unit is unknown.
@@ -570,7 +570,7 @@ def plot_electron_band(bands, unit='eV', k_labels=None, mode='single',
         transparency: Background Transparency of the saved file.
 
     Returns:
-        None
+        Matplolib object
 
     Raises:
         ValueError: If the specified unit is unknown.
@@ -650,7 +650,7 @@ def plot_electron_dos(doss, unit='eV', beta='up', overlap=False, prj=None,
         save_to_file (str): File name.
 
     Returns:
-        None
+        Matplotlib object
     """
     import re
 
@@ -726,7 +726,7 @@ def plot_phonon_dos(doss, unit='cm-1', overlap=False, prj=None,
         save_to_file (str): File name.
 
     Returns:
-        None
+        Matplotlib object
     """
     import re
 
@@ -815,7 +815,7 @@ def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down'
         legend (bool): Enables or disables the legend of the density of states (DOS).
 
     Returns:
-        None
+        Matplotlib object
 
     Raises:
         ValueError: If the unit parameter is unknown.
@@ -897,7 +897,7 @@ def plot_phonon_banddos(bands, doss, unit='cm-1', k_labels=None, dos_prj=None,
         save_to_file (str): File name to save the plot.
 
     Returns:
-        None
+        Matplotlib object
 
     Raises:
         ValueError: If the unit parameter is unknown.
@@ -2990,8 +2990,7 @@ def plot_cry_ela(choose, ndeg, *args, dpi=200, filetype=".png",
     multiple plots in one shot, establishing a fixed color scale among them.
 
     Args:
-        choose (str): Property to plot. Options: "young", "comp", "shear avg", 
-        "shear min", "shear max", "poisson avg", "poisson min", "poisson max".
+        choose (str): Property to plot. Options: "young", "comp", "shear avg", "shear min", "shear max", "poisson avg", "poisson min", "poisson max".
         ndeg (int): Number of degrees for discretization.
         *args: Variable number of elastic tensors.
         dpi (int, optional): Dots per inch for saving the plot. Default is 200.
@@ -3719,9 +3718,10 @@ def plot_cry_spec_multi(files, typeS, components=False, bwidth=5, stdev=3,
         None
     """
 
+    import time
+
     import matplotlib.pyplot as plt
     from numpy import genfromtxt
-    import time
 
     plt.figure(figsize=figsize)
     plt.xlabel(xlabel, fontsize=fontsize)
@@ -3782,8 +3782,9 @@ def plot_cry_anscan(harm_freq, alpha, force_const, rangescan, energy=None, wf=No
                     Nlevel=None, Nwf=None):
 
     import math
-    import numpy as np
+
     import matplotlib.pyplot as plt
+    import numpy as np
     from scipy import special
 
     # Matplotlib aspect ratio
