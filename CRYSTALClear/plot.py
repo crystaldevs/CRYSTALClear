@@ -479,7 +479,6 @@ def plot_phonon_band(bands, unit='cm-1', k_labels=None, mode='single',
         scheme (list|tuple): The layout of subplots.
         sharex (bool): Whether to share the x-axis among subplots.
         sharey (bool): Whether to share the y-axis among subplots.
-        save_to_file (str): The file name to save the plot.
         dpi (int): Dots per inch resolution of the saved file.
         fontsize (int): Fontsize of the axis labels.            
         transparency(bool): Background transparency of the saved file,
@@ -564,7 +563,6 @@ def plot_electron_band(bands, unit='eV', k_labels=None, mode='single',
         scheme (list|tuple): The layout of subplots.
         sharex (bool): Whether to share the x-axis among subplots.
         sharey (bool): Whether to share the y-axis among subplots.
-        save_to_file (str): The file name to save the plot.
         dpi (int): Dots per inch resolution of the saved file.
         fontsize (int): Fontsize of the axis labels 
         transparency: Background Transparency of the saved file.
@@ -647,7 +645,6 @@ def plot_electron_dos(doss, unit='eV', beta='up', overlap=False, prj=None,
         fermi (str): Color of Fermi level line.
         title (str)
         figsize (list[float])
-        save_to_file (str): File name.
 
     Returns:
         Matplotlib object
@@ -723,7 +720,6 @@ def plot_phonon_dos(doss, unit='cm-1', overlap=False, prj=None,
         line_freq0 (str): Color of frequency = 0 line.
         title (str)
         figsize (list[float])
-        save_to_file (str): File name.
 
     Returns:
         Matplotlib object
@@ -811,7 +807,6 @@ def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down'
         fermi (str): Color of the Fermi level line.
         title (str): Title of the plot.
         figsize (list[float]): Size of the figure in inches (width, height).
-        save_to_file (str): File name to save the plot.
         legend (bool): Enables or disables the legend of the density of states (DOS).
 
     Returns:
@@ -894,7 +889,6 @@ def plot_phonon_banddos(bands, doss, unit='cm-1', k_labels=None, dos_prj=None,
         freq0_line (str): Color of the frequency=0 line.
         title (str): Title of the plot.
         figsize (list[float]): Size of the figure in inches (width, height).
-        save_to_file (str): File name to save the plot.
 
     Returns:
         Matplotlib object
@@ -965,7 +959,6 @@ def plot_cry_contour(contour_obj):
 
     Args:
         contour_obj (object): Contour object representing the contour plot.
-        save_to_file (bool, optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -979,7 +972,6 @@ def plot_cry_contour(contour_obj):
         - Defines contour levels, colors, linestyles, and fmt.
         - Plots the contour plot.
         - Saves the plot to a file named 'figure_TIPO_YYYY-MM-DD_HHMMSS.jpg' in the current directory.
-        - If save_to_file is True, saves the plot to a file specified by save_to_file parameter.
 
     """
     import os
@@ -1033,8 +1025,6 @@ def plot_cry_contour(contour_obj):
     plt.savefig(path, bbox_inches='tight', dpi=600)
     print('\nThe image has been saved in the current directory')
 
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
     plt.show()
 
@@ -1046,7 +1036,6 @@ def plot_cry_contour_differences(contour_obj, contour_obj_ref):
     Args:
         contour_obj (object): Contour object representing the original contour plot.
         contour_obj_ref (object): Contour object representing the reference contour plot.
-        save_to_file (bool, optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -1061,7 +1050,6 @@ def plot_cry_contour_differences(contour_obj, contour_obj_ref):
         - Defines contour levels, colors, and linestyles.
         - Plots the contour differences.
         - Saves the plot to a file named 'figure_diff_TIPO_YYYY-MM-DD_HHMMSS.jpg' in the current directory.
-        - If save_to_file is True, saves the plot to a file specified by save_to_file parameter.
 
     """
     import os
@@ -1135,8 +1123,6 @@ def plot_cry_contour_differences(contour_obj, contour_obj_ref):
     plt.savefig(path, bbox_inches='tight', dpi=600)
     print('\nThe image has been saved in the current directory')
 
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
     plt.show()
 
@@ -1149,7 +1135,6 @@ def plot_cry_xrd(xrd_obj):
 
     Args:
         xrd_obj (object): XRD object containing the data for the X-ray diffraction pattern.
-        save_to_file (bool, optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -1159,7 +1144,6 @@ def plot_cry_xrd(xrd_obj):
         - Sets the figure size to [16, 9].
         - Sets the x-axis limit to (0, 30).
         - Saves the plot to a file named 'figure_XRD_YYYY-MM-DD_HHMMSS.jpg' in the current directory.
-        - If save_to_file is True, saves the plot to a file specified by save_to_file parameter.
 
     """
     import os
@@ -1178,8 +1162,6 @@ def plot_cry_xrd(xrd_obj):
     plt.title(xrd_obj.title, fontsize=20)
     plt.savefig(path, bbox_inches='tight', dpi=600)
 
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
     plt.show()
 
@@ -1192,7 +1174,6 @@ def plot_cry_rholine(rholine_obj):
 
     Args:
         rholine_obj (object): Rholine object containing the data for the resistivity.
-        save_to_file (bool, optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -1201,7 +1182,6 @@ def plot_cry_rholine(rholine_obj):
         - Plots the resistivity as a function of distance.
         - Sets the x-axis label as 'd  [$\AA$]' and the y-axis label as r'$\rho$  [$\frac{e}{\AA^3}$]'.
         - Saves the plot to a file named 'figure_rholine_YYYY-MM-DD_HHMMSS.jpg' in the current directory.
-        - If save_to_file is True, saves the plot to a file specified by save_to_file parameter.
     """
     import os
     import time
@@ -1218,8 +1198,6 @@ def plot_cry_rholine(rholine_obj):
     plt.title(rholine_obj.title, fontsize=15)
     plt.savefig(path, bbox_inches='tight', dpi=600)
 
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
     plt.show()
 
@@ -1232,7 +1210,6 @@ def plot_cry_lapl_profile(lapl_obj):
 
     Args:
         lapl_obj (object): Laplacian object containing the data for the Laplacian profile.
-        save_to_file (bool, optional): Indicates whether to save the plot to a file. Defaults to False.
 
     Returns:
         None
@@ -1243,7 +1220,6 @@ def plot_cry_lapl_profile(lapl_obj):
         - The y-axis represents the Laplacian in electrons per cubic angstrom to the fifth power (e/A^5).
         - The area under the curve where the Laplacian is negative is filled with a light blue color.
         - The area under the curve where the Laplacian is positive is filled with a light coral color.
-        - If save_to_file is set to a file path, the plot is saved to that file.
     """
     import time
 
@@ -1262,8 +1238,6 @@ def plot_cry_lapl_profile(lapl_obj):
     plt.xlabel('Distance [A]')
     plt.ylabel('Laplacian [e/A^5]')
 
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
     plt.show()
 
@@ -1275,7 +1249,6 @@ def plot_cry_density_profile(lapl_obj):
 
     Args:
         lapl_obj (object): Laplacian object containing the data for the density profile.
-        save_to_file (bool, optional): Indicates whether to save the plot to a file. Defaults to False.
 
     Returns:
         None
@@ -1284,7 +1257,6 @@ def plot_cry_density_profile(lapl_obj):
         - Plots the density profile using the data from the Laplacian object.
         - The x-axis represents the distance in angstroms.
         - The y-axis represents the density in electrons per cubic angstrom (e/A^3).
-        - If save_to_file is set to a file path, the plot is saved to that file.
     """
     import time
 
@@ -1295,8 +1267,6 @@ def plot_cry_density_profile(lapl_obj):
     plt.xlabel('Distance [A]')
     plt.ylabel('Density [e/A^3]')
 
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
     plt.show()
 
@@ -1315,7 +1285,6 @@ def plot_cry_seebeck_potential(seebeck_obj):
 
     Args:
         seebeck_obj (object): Seebeck object containing the data for the Seebeck coefficient.
-        save_to_file (bool, optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -1324,8 +1293,6 @@ def plot_cry_seebeck_potential(seebeck_obj):
         - Prompts the user to choose the direction to plot among S_xx, S_xy, S_xz, S_yx, S_yy, S_yz, S_yz, S_zx, S_zy, S_zz.
         - Plots the Seebeck coefficient as a function of chemical potential for each temperature.
         - Distinguishes between n-type and p-type conduction with dashed and solid lines, respectively.
-        - If save_to_file is True, saves the plot to a file named 'seebeck_potential_at_T_K___YYYY-MM-DD_HHMMSS.jpg' for each temperature, and 'seebeck_potential_different_T_YYYY-MM-DD_HHMMSS.jpg' for all temperatures combined.
-
     """
     import sys
     import time
@@ -1448,8 +1415,6 @@ def plot_cry_seebeck_potential(seebeck_obj):
     plt.savefig('seebeck_potential_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
                 '.jpg', format='jpg', dpi=100, bbox_inches='tight')
     plt.show()
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
 
 def plot_cry_seebeck_carrier(seebeck_obj):
@@ -1458,7 +1423,6 @@ def plot_cry_seebeck_carrier(seebeck_obj):
 
     Args:
         seebeck_obj: Seebeck object containing the data for the Seebeck coefficient.
-        save_to_file (optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -1466,7 +1430,6 @@ def plot_cry_seebeck_carrier(seebeck_obj):
     Notes:
         - Prompts the user to choose the direction to plot among S_xx, S_xy, S_xz, S_yx, S_yy, S_yz, S_yz, S_zx, S_zy, S_zz.
         - Plots the Seebeck coefficient as a function of charge carrier concentration for each temperature, distinguishing between n-type and p-type conduction.
-        - If save_to_file is True, saves the plot to a file named 'seebeck_carrier_at_T_K___YYYY-MM-DD_HHMMSS.jpg' for each temperature, and 'seebeck_carrier_different_T_YYYY-MM-DD_HHMMSS.jpg' for all temperatures combined.
     """
     import sys
     import time
@@ -1585,8 +1548,6 @@ def plot_cry_seebeck_carrier(seebeck_obj):
                 '.jpg', format='jpg', dpi=100, bbox_inches='tight')
     plt.show()
 
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
 
 def plot_cry_multiseebeck(*seebeck):
@@ -1729,7 +1690,6 @@ def plot_cry_sigma_potential(sigma_obj):
 
     Args:
         sigma_obj (object): Sigma object containing the data for electrical conductivity.
-        save_to_file (bool, optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -1738,7 +1698,6 @@ def plot_cry_sigma_potential(sigma_obj):
         - Prompts the user to choose the direction to plot among S_xx, S_xy, S_xz, S_yy, S_yz, S_zz.
         - Plots the electrical conductivity as a function of chemical potential for each temperature.
         - Distinguishes between n-type and p-type conduction with dashed and solid lines, respectively.
-        - If save_to_file is True, saves the plot to a file named 'sigma_potential_different_T_YYYY-MM-DD_HHMMSS.jpg'.
 
     """
     import sys
@@ -1854,8 +1813,6 @@ def plot_cry_sigma_potential(sigma_obj):
     plt.savefig('sigma_potential_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
                 '.jpg', format='jpg', dpi=100, bbox_inches='tight')
 
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
 
 def plot_cry_sigma_carrier(sigma_obj):
@@ -1864,7 +1821,6 @@ def plot_cry_sigma_carrier(sigma_obj):
 
     Args:
         sigma_obj: Sigma object containing the data for the electrical conductivity.
-        save_to_file (optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -1872,7 +1828,6 @@ def plot_cry_sigma_carrier(sigma_obj):
     Notes:
         - Prompts the user to choose the direction to plot among S_xx, S_xy, S_xz, S_yy, S_yz, S_zz.
         - Plots the electrical conductivity as a function of charge carrier concentration for each temperature, distinguishing between n-type and p-type conduction.
-        - If save_to_file is True, saves the plot to a file named 'sigma_carrier_at_T_K___YYYY-MM-DD_HHMMSS.jpg' for each temperature, and 'sigma_carrier_different_T_YYYY-MM-DD_HHMMSS.jpg' for all temperatures combined.
     """
     import sys
     import time
@@ -1983,8 +1938,6 @@ def plot_cry_sigma_carrier(sigma_obj):
     plt.savefig('sigma_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
                 '.jpg', format='jpg', dpi=100, bbox_inches='tight')
 
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
 
 def plot_cry_multisigma(*sigma):
@@ -2121,7 +2074,6 @@ def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj):
     Args:
         seebeck_obj: Seebeck object containing the data for the Seebeck coefficient.
         sigma_obj: Sigma object containing the data for the electrical conductivity.
-        save_to_file (optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -2130,7 +2082,6 @@ def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj):
         - Prompts the user to choose the direction to plot among PF_xx, PF_xy, PF_xz, PF_yx, PF_yy, PF_yz, PF_yz, PF_zx, PF_zy, PF_zz.
         - Calculates the power factor using the Seebeck coefficient and electrical conductivity data for each temperature.
         - Plots the power factor for each temperature as a function of the chemical potential, distinguishing between n-type and p-type conduction.
-        - If save_to_file is True, saves the plot to a file named 'powerfactor_potential_at_T_K___YYYY-MM-DD_HHMMSS.jpg' for each temperature, and 'powerfactor_potential_different_T_YYYY-MM-DD_HHMMSS.jpg' for all temperatures combined.
     """
     import sys
     import time
@@ -2320,8 +2271,6 @@ def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj):
 
     plt.savefig('powerfactor_potential_different_T_' + time.strftime(
         "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=100, bbox_inches='tight')
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
 
 def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj):
@@ -2331,7 +2280,6 @@ def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj):
     Args:
         seebeck_obj: Seebeck object containing the data for the Seebeck coefficient.
         sigma_obj: Sigma object containing the data for the electrical conductivity.
-        save_to_file (optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -2340,7 +2288,6 @@ def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj):
         - Prompts the user to choose the direction to plot among PF_xx, PF_xy, PF_xz, PF_yx, PF_yy, PF_yz, PF_yz, PF_zx, PF_zy, PF_zz.
         - Calculates the power factor using the Seebeck coefficient and electrical conductivity data for each temperature.
         - Plots the power factor for each temperature as a function of the charge carrier concentration, distinguishing between n-type and p-type conduction.
-        - If save_to_file is True, saves the plot to a file named 'powerfactor_carrier_at_T_K___YYYY-MM-DD_HHMMSS.jpg' for each temperature, and 'powerfactor_carrier_different_T_YYYY-MM-DD_HHMMSS.jpg' for all temperatures combined.
     """
     import sys
     import time
@@ -2538,8 +2485,6 @@ def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj):
                 '.jpg', format='jpg', dpi=100, bbox_inches='tight')
     # plt.show()
 
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
 #-------------------------------------ZT--------------------------------------#
 
@@ -2551,7 +2496,6 @@ def plot_cry_zt(seebeck_obj, sigma_obj):
     Args:
         seebeck_obj: Seebeck object containing the data for the Seebeck coefficient.
         sigma_obj: Sigma object containing the data for the electrical conductivity.
-        save_to_file (optional): If True, saves the plot to a file. Default is False.
 
     Returns:
         None
@@ -2561,7 +2505,6 @@ def plot_cry_zt(seebeck_obj, sigma_obj):
         - Prompts the user to choose the direction to plot among ZT_xx, ZT_xy, ZT_xz, ZT_yx, ZT_yy, ZT_yz, ZT_yz, ZT_zx, ZT_zy, ZT_zz.
         - Calculates the ZT value using the Seebeck coefficient and electrical conductivity data.
         - Plots the ZT value for each temperature as a function of the chemical potential.
-        - If save_to_file is True, saves the plot to a file named 'zt_at_T_K___YYYY-MM-DD_HHMMSS.jpg' for each temperature, and 'zt_different_T_YYYY-MM-DD_HHMMSS.jpg' for all temperatures combined.
     """
     import sys
     import time
@@ -2671,8 +2614,6 @@ def plot_cry_zt(seebeck_obj, sigma_obj):
         plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
     plt.savefig('zt_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
                 '.jpg', format='jpg', dpi=100, bbox_inches='tight')
-    # if save_to_file != False:
-    #     save_plot(save_to_file)
 
 
 ##############################################################################
@@ -2995,9 +2936,7 @@ def plot_cry_ela(choose, ndeg, *args):
 
     Returns:
         list of :class:`matplotlib.pyplot`
-        A list of matplotlib objects to be further saved and plotted. Note
-        that the number of elements of such list corresponds to the number of
-        elastic tensors provided as argument.
+        A list of matplotlib objects to be further saved and plotted. Note that the number of elements of such list corresponds to the number of elastic tensors provided as argument.
     """
     import math
 
@@ -3130,10 +3069,11 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
         freq_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given frequency window. Defaults to None.
         int_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given intensity window. Defaults to None.
         label (list[str], optional): List of labels for the legend of a multiplot. Defaults to None.
-        save_to_file (str, optional): Filename of the spectra to be saved. Defaults to None.
         dpi (int, optional): Resolution of the saved file. Defaults to 300.
         transparency (bool, optional): Enables the transparency of the saved file background. Defaults to False.
 
+    Returns:
+        Matplotlib object
     Raises:
         ValueError: The function raises an error when the object to be plotted does not have the required y_mode  
     """
@@ -3305,9 +3245,10 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
         freq_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given frequency window. Defaults to None.
         int_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given intensity window. Defaults to None.
         label (list[str], optional): List of labels for the legend of a multiplot. Defaults to None.
-        save_to_file (str, optional): Filename of the spectra to be saved. Defaults to None.
         dpi (int, optional): Resolution of the saved file. Defaults to 300.
         transparency (bool, optional): Enables the transparency of the saved file background. Defaults to False.
+    Returns:
+        Matplotlib object
     """
 
     import sys
