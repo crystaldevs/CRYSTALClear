@@ -2982,8 +2982,7 @@ def plot_cry_poisson(theta_1D, phi_1D, S, ndeg, poisson_choice):
 
 #----------------------------------ELASTIC------------------------------------#
 
-def plot_cry_ela(choose, ndeg, *args, dpi=200, filetype=".png",
-                 transparency=False):
+def plot_cry_ela(choose, ndeg, *args):
     """
     Plot crystal elastic properties on the basis of the elastic tensor. A
     variable number of elastic tensors can be provided in order to get
@@ -2993,17 +2992,14 @@ def plot_cry_ela(choose, ndeg, *args, dpi=200, filetype=".png",
         choose (str): Property to plot. Options: "young", "comp", "shear avg", "shear min", "shear max", "poisson avg", "poisson min", "poisson max".
         ndeg (int): Number of degrees for discretization.
         *args: Variable number of elastic tensors.
-        dpi (int, optional): Dots per inch for saving the plot. Default is 200.
-        filetype (str, optional): File format of the output plot. Default is "png".
-        transparency (bool, optional): Flag indicating whether to make the plot 
-        background transparent. Default is False.
 
     Returns:
-        None
+        list of :class:`matplotlib.pyplot`
+        A list of matplotlib objects to be further saved and plotted. Note
+        that the number of elements of such list corresponds to the number of
+        elastic tensors provided as argument.
     """
     import math
-    import sys
-    import time
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -3058,7 +3054,7 @@ def plot_cry_ela(choose, ndeg, *args, dpi=200, filetype=".png",
     # <--
 
     # Create plot for each tensor -->
-    ax_list = []
+    plt_list = []
     for k in range(i):
         X = R[k] * np.sin(theta_2D) * np.cos(phi_2D)
         Y = R[k] * np.sin(theta_2D) * np.sin(phi_2D)
@@ -3101,13 +3097,9 @@ def plot_cry_ela(choose, ndeg, *args, dpi=200, filetype=".png",
 
         ax.set_box_aspect(aspect=(1, 1, 1))  # Fix aspect ratio
 
-        #plt.show()
-        #fig.savefig(choose + time.strftime("%Y-%m-%d_%H%M%S.") +
-        #            filetype, dpi=dpi, transparent=transparency)
+        plt_list.append(plt)
 
-        ax_list.append(ax)
-
-    return ax_list
+    return plt_list
 
         # <--
 
@@ -3522,7 +3514,8 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
         ratio of the figure (default is [16, 6]).
 
     Returns:
-        None
+        :class:`matplotlib.pyplot`
+        A matplotlib object representing the result of the plot
     """
 
     import math
@@ -3715,7 +3708,8 @@ def plot_cry_spec_multi(files, typeS, components=False, bwidth=5, stdev=3,
         ratio of the figure (default is [16, 6]).
 
     Returns:
-        None
+        :class:`matplotlib.pyplot`
+        A matplotlib object representing the result of the plot
     """
 
     import time

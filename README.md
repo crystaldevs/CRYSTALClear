@@ -80,10 +80,10 @@ in the plot module
    CCplt.function(data,*args,**kwargs)
 ```
 
-The function will return a [matplotlib object](https://matplotlib.org/) that the user can easily modify
+The function will return one (or a list of) [matplotlib object(s)](https://matplotlib.org/) that the user can easily modify
 as any other plot produced with the library.
 
-For further information check the [Documentation](https://crystaldevs.github.io/CRYSTALClear/)
+For further information check the [Documentation](https://crystaldevs.github.io/CRYSTALClear/).
 
 ## Contributing 🤝
 
