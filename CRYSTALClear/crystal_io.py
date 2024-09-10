@@ -4172,7 +4172,7 @@ class External_unit:
 
         return self.bands
 
-    def read_phonon_dos(self, properties_output):
+    def read_phonon_dos(self, external_unit):
         """
         Generate doss object from CRYSTAL PHONONDOSS.DAT or fort.25 file.
         Energy unit: eV. E Fermi is aligned to 0.
@@ -4185,7 +4185,7 @@ class External_unit:
         """
         from CRYSTALClear.base.propout import DOSBASE
 
-        self.read_external_unit(properties_output)
+        self.read_external_unit(external_unit)
         if '-%-' in self.data[0]:  # fort.25 file format
             self.doss = DOSBASE.f25_parser(self.data)
         else:  # DOSS.DAT file format
