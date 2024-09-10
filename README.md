@@ -18,7 +18,7 @@ A python framework for the [CRYSTAL](https://www.crystal.unito.it) code. Forked 
 - Band structure and DOSS
 - Elastic properties (Young and shear moduli, linear compressibility, Poisson ratio)
 - Harmonic and anharmonic IR and Raman spectra
-- Electron desities and laplacian topological analysis
+- Electron densities and laplacian topological analysis
 - Transport properties
 - Extraction of information from CRYSTAL .out file
 
