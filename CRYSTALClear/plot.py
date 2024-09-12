@@ -3015,7 +3015,7 @@ def plot_cry_ela(choose, ndeg, *args):
 
         m = cm.ScalarMappable(cmap=cm.jet, norm=norm)
         m.set_array(R[k])
-        fig.colorbar(m, shrink=0.7, location="left")
+        fig.colorbar(m, shrink=0.7, location="left", ax = ax)
 
         # Make the planes transparent
         ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
