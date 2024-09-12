@@ -3192,11 +3192,11 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
             ymax.append(max(y)+10)
 
             if label is not None:
-                ax = plt.plot(x, y, linestyle=linestyle[index], linewidth=linewidth[index],
+                ax.plot(x, y, linestyle=linestyle[index], linewidth=linewidth[index],
                                color=color[index], label=label[index])
                 plt.legend()
             else:
-                ax = plt.plot(
+                ax.plot(
                     x, y, linestyle=linestyle[index], linewidth=linewidth[index], color=color[index])
 
         xmin = min(xmin)
@@ -3368,11 +3368,11 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
             ymax.append(max(y)+10)
 
             if label is not None:
-                ax  = plt.plot(x, y, linestyle=linestyle[index], linewidth=linewidth[index],
+                ax.plot(x, y, linestyle=linestyle[index], linewidth=linewidth[index],
                                color=color[index], label=label[index])
                 plt.legend()
             else:
-                ax = plt.plot(
+                ax.plot(
                     x, y, linestyle=linestyle[index], linewidth=linewidth[index], color=color[index])
 
         xmin = min(xmin)
