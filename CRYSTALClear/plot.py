@@ -453,7 +453,7 @@ def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, name='SCD', 
 #--------------------------------BAND STRUCTURES------------------------------#
 
 def plot_phonon_band(bands, unit='cm-1', k_labels=None, mode='single',
-                     not_scaled=False, energy_range=None, k_range=None,
+                     not_scaled=False, freq_range=None, k_range=None,
                      color='blue', labels=None, linestl='-', linewidth=1,
                      line_freq0=None, title=None, figsize=None,
                      scheme=None, sharex=True, sharey=True, fontsize=12):
@@ -521,6 +521,8 @@ def plot_phonon_band(bands, unit='cm-1', k_labels=None, mode='single',
             b.unit = unit
     if len(bands) == 1:
         bands = bands[0]
+
+    energy_range = freq_range
 
     fig, ax = plot_cry_bands(bands, k_labels=k_labels, energy_range=energy_range, title=title,
                          not_scaled=not_scaled, mode=mode, linestl=linestl, linewidth=linewidth,
@@ -3121,6 +3123,9 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
     if figsize is not None:
         fig, ax = plt.subplots(figsize=figsize)
 
+    else:
+        fig,ax = plt.subplots()
+
     if mode == modes[0]:
 
         # selection of the x axis unit
@@ -3146,14 +3151,13 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
         elif y_mode == accepted_y[4]:
             y = irspec.irspec[:, 8]
 
-        print(x, y)
 
         xmin = min(x)
         xmax = max(x)
         ymin = min(y)-1
         ymax = max(y)+10
 
-        plt.plot(x, y, linestyle=linestyle, linewidth=linewidth, color=color)
+        ax.plot(x, y, linestyle=linestyle, linewidth=linewidth, color=color)
 
     if mode == modes[1]:
 
@@ -3285,6 +3289,9 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
     if figsize is not None:
         fig, ax = plt.subplots(figsize=figsize)
 
+    else:
+        fig, ax = plt.subplots()
+
     if mode == modes[0]:
 
         x = ramspec.ramspec[:, 0]
@@ -3322,7 +3329,7 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
         ymin = min(y)-1
         ymax = max(y)+10
 
-        fig = plt.plot(x, y, linestyle=linestyle,
+        ax.plot(x, y, linestyle=linestyle,
                        linewidth=linewidth, color=color)
 
     if mode == modes[1]:
