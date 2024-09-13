@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRYSTALClear documentation &mdash; CRYSTALClear 0.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="canonical" href="https://crystaldevs.github.io/CRYSTALClear/index.html" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=a47416a6"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction" href="introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            CRYSTALClear
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-via-pypi">Installing via Pypi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-from-github-source-code">Installing from GitHub Source Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#verification">Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CRYSTALClear.html">Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.adsorb">CRYSTALClear.adsorb</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.adsorb.sub_ads_indices"><code class="docutils literal notranslate"><span class="pre">sub_ads_indices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.calculate">CRYSTALClear.calculate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.calculate.cry_ads_energy"><code class="docutils literal notranslate"><span class="pre">cry_ads_energy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.calculate.cry_shrink"><code class="docutils literal notranslate"><span class="pre">cry_shrink()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.convert">CRYSTALClear.convert</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_ase2gui"><code class="docutils literal notranslate"><span class="pre">cry_ase2gui()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_bands2pmg"><code class="docutils literal notranslate"><span class="pre">cry_bands2pmg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2ase"><code class="docutils literal notranslate"><span class="pre">cry_gui2ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2cif"><code class="docutils literal notranslate"><span class="pre">cry_gui2cif()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2pmg"><code class="docutils literal notranslate"><span class="pre">cry_gui2pmg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2xyz"><code class="docutils literal notranslate"><span class="pre">cry_gui2xyz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2ase"><code class="docutils literal notranslate"><span class="pre">cry_out2ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2cif"><code class="docutils literal notranslate"><span class="pre">cry_out2cif()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2pmg"><code class="docutils literal notranslate"><span class="pre">cry_out2pmg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2xyz"><code class="docutils literal notranslate"><span class="pre">cry_out2xyz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_pmg2gui"><code class="docutils literal notranslate"><span class="pre">cry_pmg2gui()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.crystal_io">CRYSTALClear.crystal_io</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_input"><code class="docutils literal notranslate"><span class="pre">Crystal_input</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output"><code class="docutils literal notranslate"><span class="pre">Crystal_output</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_input"><code class="docutils literal notranslate"><span class="pre">Properties_input</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output"><code class="docutils literal notranslate"><span class="pre">Properties_output</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_gui"><code class="docutils literal notranslate"><span class="pre">Crystal_gui</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_density"><code class="docutils literal notranslate"><span class="pre">Crystal_density</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.cry_combine_density"><code class="docutils literal notranslate"><span class="pre">cry_combine_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.write_cry_density"><code class="docutils literal notranslate"><span class="pre">write_cry_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.External_unit"><code class="docutils literal notranslate"><span class="pre">External_unit</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.execute">CRYSTALClear.execute</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.set_runcry_path"><code class="docutils literal notranslate"><span class="pre">set_runcry_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.set_runprop_path"><code class="docutils literal notranslate"><span class="pre">set_runprop_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.runcry"><code class="docutils literal notranslate"><span class="pre">runcry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.runprop"><code class="docutils literal notranslate"><span class="pre">runprop()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.flatmaps">CRYSTALClear.flatmaps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.flatmaps.ScalarField"><code class="docutils literal notranslate"><span class="pre">ScalarField</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.geometry">CRYSTALClear.geometry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.rotate_lattice"><code class="docutils literal notranslate"><span class="pre">rotate_lattice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.refine_geometry"><code class="docutils literal notranslate"><span class="pre">refine_geometry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.get_pcel"><code class="docutils literal notranslate"><span class="pre">get_pcel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.get_scel"><code class="docutils literal notranslate"><span class="pre">get_scel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.get_sg_symmops"><code class="docutils literal notranslate"><span class="pre">get_sg_symmops()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.Miller_norm"><code class="docutils literal notranslate"><span class="pre">Miller_norm()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.plot">CRYSTALClear.plot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_dens_ECHG"><code class="docutils literal notranslate"><span class="pre">plot_dens_ECHG()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_vecfield2D_m"><code class="docutils literal notranslate"><span class="pre">plot_vecfield2D_m()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_vecfield2D_j"><code class="docutils literal notranslate"><span class="pre">plot_vecfield2D_j()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_vecfield2D_J"><code class="docutils literal notranslate"><span class="pre">plot_vecfield2D_J()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_phonon_band"><code class="docutils literal notranslate"><span class="pre">plot_phonon_band()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_electron_band"><code class="docutils literal notranslate"><span class="pre">plot_electron_band()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_electron_dos"><code class="docutils literal notranslate"><span class="pre">plot_electron_dos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_phonon_dos"><code class="docutils literal notranslate"><span class="pre">plot_phonon_dos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_electron_banddos"><code class="docutils literal notranslate"><span class="pre">plot_electron_banddos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_phonon_banddos"><code class="docutils literal notranslate"><span class="pre">plot_phonon_banddos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_contour"><code class="docutils literal notranslate"><span class="pre">plot_cry_contour()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_contour_differences"><code class="docutils literal notranslate"><span class="pre">plot_cry_contour_differences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_xrd"><code class="docutils literal notranslate"><span class="pre">plot_cry_xrd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_rholine"><code class="docutils literal notranslate"><span class="pre">plot_cry_rholine()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_lapl_profile"><code class="docutils literal notranslate"><span class="pre">plot_cry_lapl_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_density_profile"><code class="docutils literal notranslate"><span class="pre">plot_cry_density_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_seebeck_potential"><code class="docutils literal notranslate"><span class="pre">plot_cry_seebeck_potential()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_seebeck_carrier"><code class="docutils literal notranslate"><span class="pre">plot_cry_seebeck_carrier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_multiseebeck"><code class="docutils literal notranslate"><span class="pre">plot_cry_multiseebeck()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_sigma_potential"><code class="docutils literal notranslate"><span class="pre">plot_cry_sigma_potential()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_sigma_carrier"><code class="docutils literal notranslate"><span class="pre">plot_cry_sigma_carrier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_multisigma"><code class="docutils literal notranslate"><span class="pre">plot_cry_multisigma()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_powerfactor_potential"><code class="docutils literal notranslate"><span class="pre">plot_cry_powerfactor_potential()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_powerfactor_carrier"><code class="docutils literal notranslate"><span class="pre">plot_cry_powerfactor_carrier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_zt"><code class="docutils literal notranslate"><span class="pre">plot_cry_zt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_young"><code class="docutils literal notranslate"><span class="pre">plot_cry_young()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_comp"><code class="docutils literal notranslate"><span class="pre">plot_cry_comp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_shear"><code class="docutils literal notranslate"><span class="pre">plot_cry_shear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_poisson"><code class="docutils literal notranslate"><span class="pre">plot_cry_poisson()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_ela"><code class="docutils literal notranslate"><span class="pre">plot_cry_ela()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_irspec"><code class="docutils literal notranslate"><span class="pre">plot_cry_irspec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_ramspec"><code class="docutils literal notranslate"><span class="pre">plot_cry_ramspec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_spec"><code class="docutils literal notranslate"><span class="pre">plot_cry_spec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_spec_multi"><code class="docutils literal notranslate"><span class="pre">plot_cry_spec_multi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_anscan"><code class="docutils literal notranslate"><span class="pre">plot_cry_anscan()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.thermodynamics">CRYSTALClear.thermodynamics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Mode"><code class="docutils literal notranslate"><span class="pre">Mode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Harmonic"><code class="docutils literal notranslate"><span class="pre">Harmonic</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Phonopy"><code class="docutils literal notranslate"><span class="pre">Phonopy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output"><code class="docutils literal notranslate"><span class="pre">Output</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.unit_test">CRYSTALClear.unit_test</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.crystal_input_test"><code class="docutils literal notranslate"><span class="pre">crystal_input_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.crystal_output_test"><code class="docutils literal notranslate"><span class="pre">crystal_output_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.convert_test"><code class="docutils literal notranslate"><span class="pre">convert_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.test_all"><code class="docutils literal notranslate"><span class="pre">test_all()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.units">CRYSTALClear.units</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.H_to_eV"><code class="docutils literal notranslate"><span class="pre">H_to_eV()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.eV_to_H"><code class="docutils literal notranslate"><span class="pre">eV_to_H()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.H_to_kjmol"><code class="docutils literal notranslate"><span class="pre">H_to_kjmol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.kjmol_to_H"><code class="docutils literal notranslate"><span class="pre">kjmol_to_H()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.au_to_angstrom"><code class="docutils literal notranslate"><span class="pre">au_to_angstrom()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.angstrom_to_au"><code class="docutils literal notranslate"><span class="pre">angstrom_to_au()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.cm_to_thz"><code class="docutils literal notranslate"><span class="pre">cm_to_thz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.thz_to_cm"><code class="docutils literal notranslate"><span class="pre">thz_to_cm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.hartree_to_thz"><code class="docutils literal notranslate"><span class="pre">hartree_to_thz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.thz_to_hartree"><code class="docutils literal notranslate"><span class="pre">thz_to_hartree()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.amu_to_me"><code class="docutils literal notranslate"><span class="pre">amu_to_me()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.me_to_amu"><code class="docutils literal notranslate"><span class="pre">me_to_amu()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cite.html">How to Cite CRYSTALClear</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cite.html#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">CRYSTALClear</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">CRYSTALClear documentation</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/crystaldevs/CRYSTALClear/blob/main/docs_src/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <p><span class="math notranslate nohighlight">\(\newcommand{\AA}{\text{Å}}\)</span></p>
+<section id="crystalclear-documentation">
+<h1>CRYSTALClear documentation<a class="headerlink" href="#crystalclear-documentation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<a class="reference internal image-reference" href="_images/CRYSTAL_logo.png"><img alt="CRYSTALClear" class="align-center" src="_images/CRYSTAL_logo.png" style="width: 400px;" /></a>
+</section>
+<section id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
+<p>Welcome to the official documentation for CRYSTALClear, a Python framework
+designed to streamline the analysis of solid-state simulations performed with
+the quantum-chemistry code CRYSTAL. CRYSTALClear serves as a powerful tool for
+researchers and scientists working in the fields of materials science,
+computational chemistry, and condensed matter physics, enabling the efficient
+extraction and visualization of data from CRYSTAL’s output files.</p>
+<p>CRYSTALClear was born as a fork from <a class="reference external" href="https://github.com/crystal-code-tools/CRYSTALpytools">“CRYSTALpytools”</a>. , an existing
+GitHub repository, building on its foundation to deliver enhanced functionality
+and user experience. This project expands upon the original codebase,
+adding new features, improved usability, and more comprehensive documentation
+to better support the needs of the computational chemistry community.</p>
+<p>CRYSTALClear simplifies the post-processing of complex simulation data,
+offering robust features to analyze and visualize a wide range of
+physical properties. Whether you are working on electronic structure
+calculations or exploring the mechanical properties of materials,
+CRYSTALClear provides intuitive and customizable solutions tailored to your needs.
+The framework supports:</p>
+<ol class="arabic simple">
+<li><p><strong>Ease of Use</strong>: CRYSTALClear is designed with usability in mind, offering an
+intuitive interface that minimizes the learning curve. With straightforward
+commands and comprehensive documentation, users can quickly set up and
+execute their analysis workflows without needing to write complex code from
+scratch.</p></li>
+<li><p><strong>Extraction of Quantities from Output Files</strong>: Seamlessly retrieve and
+manipulate data from CRYSTAL output files, reducing the need for manual
+parsing and data handling.</p></li>
+<li><p><strong>Band Structure and Density of States (DOSS)</strong>: Generate detailed plots of band
+structures and density of states, providing insights into the electronic
+properties of materials.</p></li>
+<li><p><strong>Elastic Properties</strong>: Calculate and visualize key mechanical properties such as
+Young’s modulus, shear modulus, linear compressibility, and Poisson ratio,
+aiding in the characterization of material strength and elasticity.</p></li>
+<li><p><strong>Vibrational Spectroscopy (IR and Raman)</strong>: Analyze both harmonic and anharmonic
+infrared (IR) and Raman spectra, enabling the study of vibrational modes in
+crystals.</p></li>
+<li><p><strong>Quantum Theory of Atoms in Molecules (QTAIM) Analysis</strong>: Perform sophisticated
+analyses of electron density and related properties, crucial for
+understanding chemical bonding and reactivity in solids.</p></li>
+<li><p><strong>Electron Transport Properties</strong>: Investigate the electron transport
+characteristics of materials, essential for the design of semiconductors and
+other electronic devices.</p></li>
+</ol>
+<p>CRYSTALClear is designed to integrate seamlessly with your workflow, providing
+clear, publication-quality plots and data summaries. Whether you’re a seasoned
+computational chemist or new to solid-state simulations, CRYSTALClear offers the
+tools you need to derive meaningful insights from your CRYSTAL simulations.</p>
+<p>Explore this documentation to get started with CRYSTALClear, and unlock the
+full potential of your solid-state simulations.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="introduction.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, CRYSTALClear Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

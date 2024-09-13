@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; CRYSTALClear 0.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="canonical" href="https://crystaldevs.github.io/CRYSTALClear/modules.html" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=a47416a6"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CRYSTALClear
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-via-pypi">Installing via Pypi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-from-github-source-code">Installing from GitHub Source Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#verification">Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CRYSTALClear.html">Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.adsorb">CRYSTALClear.adsorb</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.adsorb.sub_ads_indices"><code class="docutils literal notranslate"><span class="pre">sub_ads_indices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.calculate">CRYSTALClear.calculate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.calculate.cry_ads_energy"><code class="docutils literal notranslate"><span class="pre">cry_ads_energy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.calculate.cry_shrink"><code class="docutils literal notranslate"><span class="pre">cry_shrink()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.convert">CRYSTALClear.convert</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_ase2gui"><code class="docutils literal notranslate"><span class="pre">cry_ase2gui()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_bands2pmg"><code class="docutils literal notranslate"><span class="pre">cry_bands2pmg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2ase"><code class="docutils literal notranslate"><span class="pre">cry_gui2ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2cif"><code class="docutils literal notranslate"><span class="pre">cry_gui2cif()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2pmg"><code class="docutils literal notranslate"><span class="pre">cry_gui2pmg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2xyz"><code class="docutils literal notranslate"><span class="pre">cry_gui2xyz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2ase"><code class="docutils literal notranslate"><span class="pre">cry_out2ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2cif"><code class="docutils literal notranslate"><span class="pre">cry_out2cif()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2pmg"><code class="docutils literal notranslate"><span class="pre">cry_out2pmg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2xyz"><code class="docutils literal notranslate"><span class="pre">cry_out2xyz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_pmg2gui"><code class="docutils literal notranslate"><span class="pre">cry_pmg2gui()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.crystal_io">CRYSTALClear.crystal_io</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_input"><code class="docutils literal notranslate"><span class="pre">Crystal_input</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output"><code class="docutils literal notranslate"><span class="pre">Crystal_output</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_input"><code class="docutils literal notranslate"><span class="pre">Properties_input</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output"><code class="docutils literal notranslate"><span class="pre">Properties_output</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_gui"><code class="docutils literal notranslate"><span class="pre">Crystal_gui</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_density"><code class="docutils literal notranslate"><span class="pre">Crystal_density</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.cry_combine_density"><code class="docutils literal notranslate"><span class="pre">cry_combine_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.write_cry_density"><code class="docutils literal notranslate"><span class="pre">write_cry_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.External_unit"><code class="docutils literal notranslate"><span class="pre">External_unit</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.execute">CRYSTALClear.execute</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.set_runcry_path"><code class="docutils literal notranslate"><span class="pre">set_runcry_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.set_runprop_path"><code class="docutils literal notranslate"><span class="pre">set_runprop_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.runcry"><code class="docutils literal notranslate"><span class="pre">runcry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.runprop"><code class="docutils literal notranslate"><span class="pre">runprop()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.flatmaps">CRYSTALClear.flatmaps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.flatmaps.ScalarField"><code class="docutils literal notranslate"><span class="pre">ScalarField</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.geometry">CRYSTALClear.geometry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.rotate_lattice"><code class="docutils literal notranslate"><span class="pre">rotate_lattice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.refine_geometry"><code class="docutils literal notranslate"><span class="pre">refine_geometry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.get_pcel"><code class="docutils literal notranslate"><span class="pre">get_pcel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.get_scel"><code class="docutils literal notranslate"><span class="pre">get_scel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.get_sg_symmops"><code class="docutils literal notranslate"><span class="pre">get_sg_symmops()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.Miller_norm"><code class="docutils literal notranslate"><span class="pre">Miller_norm()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.plot">CRYSTALClear.plot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_dens_ECHG"><code class="docutils literal notranslate"><span class="pre">plot_dens_ECHG()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_vecfield2D_m"><code class="docutils literal notranslate"><span class="pre">plot_vecfield2D_m()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_vecfield2D_j"><code class="docutils literal notranslate"><span class="pre">plot_vecfield2D_j()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_vecfield2D_J"><code class="docutils literal notranslate"><span class="pre">plot_vecfield2D_J()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_phonon_band"><code class="docutils literal notranslate"><span class="pre">plot_phonon_band()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_electron_band"><code class="docutils literal notranslate"><span class="pre">plot_electron_band()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_electron_dos"><code class="docutils literal notranslate"><span class="pre">plot_electron_dos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_phonon_dos"><code class="docutils literal notranslate"><span class="pre">plot_phonon_dos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_electron_banddos"><code class="docutils literal notranslate"><span class="pre">plot_electron_banddos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_phonon_banddos"><code class="docutils literal notranslate"><span class="pre">plot_phonon_banddos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_contour"><code class="docutils literal notranslate"><span class="pre">plot_cry_contour()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_contour_differences"><code class="docutils literal notranslate"><span class="pre">plot_cry_contour_differences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_xrd"><code class="docutils literal notranslate"><span class="pre">plot_cry_xrd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_rholine"><code class="docutils literal notranslate"><span class="pre">plot_cry_rholine()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_lapl_profile"><code class="docutils literal notranslate"><span class="pre">plot_cry_lapl_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_density_profile"><code class="docutils literal notranslate"><span class="pre">plot_cry_density_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_seebeck_potential"><code class="docutils literal notranslate"><span class="pre">plot_cry_seebeck_potential()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_seebeck_carrier"><code class="docutils literal notranslate"><span class="pre">plot_cry_seebeck_carrier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_multiseebeck"><code class="docutils literal notranslate"><span class="pre">plot_cry_multiseebeck()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_sigma_potential"><code class="docutils literal notranslate"><span class="pre">plot_cry_sigma_potential()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_sigma_carrier"><code class="docutils literal notranslate"><span class="pre">plot_cry_sigma_carrier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_multisigma"><code class="docutils literal notranslate"><span class="pre">plot_cry_multisigma()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_powerfactor_potential"><code class="docutils literal notranslate"><span class="pre">plot_cry_powerfactor_potential()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_powerfactor_carrier"><code class="docutils literal notranslate"><span class="pre">plot_cry_powerfactor_carrier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_zt"><code class="docutils literal notranslate"><span class="pre">plot_cry_zt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_young"><code class="docutils literal notranslate"><span class="pre">plot_cry_young()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_comp"><code class="docutils literal notranslate"><span class="pre">plot_cry_comp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_shear"><code class="docutils literal notranslate"><span class="pre">plot_cry_shear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_poisson"><code class="docutils literal notranslate"><span class="pre">plot_cry_poisson()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_ela"><code class="docutils literal notranslate"><span class="pre">plot_cry_ela()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_irspec"><code class="docutils literal notranslate"><span class="pre">plot_cry_irspec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_ramspec"><code class="docutils literal notranslate"><span class="pre">plot_cry_ramspec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_spec"><code class="docutils literal notranslate"><span class="pre">plot_cry_spec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_spec_multi"><code class="docutils literal notranslate"><span class="pre">plot_cry_spec_multi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_anscan"><code class="docutils literal notranslate"><span class="pre">plot_cry_anscan()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.thermodynamics">CRYSTALClear.thermodynamics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Mode"><code class="docutils literal notranslate"><span class="pre">Mode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Harmonic"><code class="docutils literal notranslate"><span class="pre">Harmonic</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Phonopy"><code class="docutils literal notranslate"><span class="pre">Phonopy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output"><code class="docutils literal notranslate"><span class="pre">Output</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.unit_test">CRYSTALClear.unit_test</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.crystal_input_test"><code class="docutils literal notranslate"><span class="pre">crystal_input_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.crystal_output_test"><code class="docutils literal notranslate"><span class="pre">crystal_output_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.convert_test"><code class="docutils literal notranslate"><span class="pre">convert_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.test_all"><code class="docutils literal notranslate"><span class="pre">test_all()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.units">CRYSTALClear.units</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.H_to_eV"><code class="docutils literal notranslate"><span class="pre">H_to_eV()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.eV_to_H"><code class="docutils literal notranslate"><span class="pre">eV_to_H()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.H_to_kjmol"><code class="docutils literal notranslate"><span class="pre">H_to_kjmol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.kjmol_to_H"><code class="docutils literal notranslate"><span class="pre">kjmol_to_H()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.au_to_angstrom"><code class="docutils literal notranslate"><span class="pre">au_to_angstrom()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.angstrom_to_au"><code class="docutils literal notranslate"><span class="pre">angstrom_to_au()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.cm_to_thz"><code class="docutils literal notranslate"><span class="pre">cm_to_thz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.thz_to_cm"><code class="docutils literal notranslate"><span class="pre">thz_to_cm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.hartree_to_thz"><code class="docutils literal notranslate"><span class="pre">hartree_to_thz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.thz_to_hartree"><code class="docutils literal notranslate"><span class="pre">thz_to_hartree()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.amu_to_me"><code class="docutils literal notranslate"><span class="pre">amu_to_me()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.me_to_amu"><code class="docutils literal notranslate"><span class="pre">me_to_amu()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cite.html">How to Cite CRYSTALClear</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cite.html#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CRYSTALClear</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/crystaldevs/CRYSTALClear/blob/main/docs_src/modules.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <p><span class="math notranslate nohighlight">\(\newcommand{\AA}{\text{Å}}\)</span></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CRYSTALClear.html">CRYSTALClear package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.adsorb">CRYSTALClear.adsorb</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.adsorb.sub_ads_indices"><code class="docutils literal notranslate"><span class="pre">sub_ads_indices()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.calculate">CRYSTALClear.calculate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.calculate.cry_ads_energy"><code class="docutils literal notranslate"><span class="pre">cry_ads_energy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.calculate.cry_shrink"><code class="docutils literal notranslate"><span class="pre">cry_shrink()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.convert">CRYSTALClear.convert</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_ase2gui"><code class="docutils literal notranslate"><span class="pre">cry_ase2gui()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_bands2pmg"><code class="docutils literal notranslate"><span class="pre">cry_bands2pmg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2ase"><code class="docutils literal notranslate"><span class="pre">cry_gui2ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2cif"><code class="docutils literal notranslate"><span class="pre">cry_gui2cif()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2pmg"><code class="docutils literal notranslate"><span class="pre">cry_gui2pmg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_gui2xyz"><code class="docutils literal notranslate"><span class="pre">cry_gui2xyz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2ase"><code class="docutils literal notranslate"><span class="pre">cry_out2ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2cif"><code class="docutils literal notranslate"><span class="pre">cry_out2cif()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2pmg"><code class="docutils literal notranslate"><span class="pre">cry_out2pmg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_out2xyz"><code class="docutils literal notranslate"><span class="pre">cry_out2xyz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.convert.cry_pmg2gui"><code class="docutils literal notranslate"><span class="pre">cry_pmg2gui()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.crystal_io">CRYSTALClear.crystal_io</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_input"><code class="docutils literal notranslate"><span class="pre">Crystal_input</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_input.geom_from_cif"><code class="docutils literal notranslate"><span class="pre">Crystal_input.geom_from_cif()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_input.geom_from_pmg"><code class="docutils literal notranslate"><span class="pre">Crystal_input.geom_from_pmg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_input.bs_from_bse"><code class="docutils literal notranslate"><span class="pre">Crystal_input.bs_from_bse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_input.bs_from_string"><code class="docutils literal notranslate"><span class="pre">Crystal_input.bs_from_string()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_input.bs_from_file"><code class="docutils literal notranslate"><span class="pre">Crystal_input.bs_from_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output"><code class="docutils literal notranslate"><span class="pre">Crystal_output</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.read_cry_output"><code class="docutils literal notranslate"><span class="pre">Crystal_output.read_cry_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_dielectric_tensor"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_dielectric_tensor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_eigenvectors"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_eigenvectors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_dimensionality"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_dimensionality()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_symmops"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_symmops()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_geometry"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_geometry()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_last_geom"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_last_geom()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_lattice"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_lattice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_reciprocal_lattice"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_reciprocal_lattice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.sg_number"><code class="docutils literal notranslate"><span class="pre">Crystal_output.sg_number</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.sg_symbol"><code class="docutils literal notranslate"><span class="pre">Crystal_output.sg_symbol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.n_atoms"><code class="docutils literal notranslate"><span class="pre">Crystal_output.n_atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.atom_symbols"><code class="docutils literal notranslate"><span class="pre">Crystal_output.atom_symbols</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.atom_numbers"><code class="docutils literal notranslate"><span class="pre">Crystal_output.atom_numbers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.atom_positions"><code class="docutils literal notranslate"><span class="pre">Crystal_output.atom_positions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.atom_positions_cart"><code class="docutils literal notranslate"><span class="pre">Crystal_output.atom_positions_cart</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.atom_positions_frac"><code class="docutils literal notranslate"><span class="pre">Crystal_output.atom_positions_frac</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_trans_matrix"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_trans_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_primitive_geometry"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_primitive_geometry()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_primitive_lattice"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_primitive_lattice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_primitive_reciprocal_lattice"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_primitive_reciprocal_lattice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_config_analysis"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_config_analysis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_convergence"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_convergence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_scf_convergence"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_scf_convergence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_fermi_energy"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_fermi_energy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_band_gap"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_band_gap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_mulliken_charges"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_mulliken_charges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_final_energy"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_final_energy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_num_cycles"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_num_cycles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_opt_convergence_energy"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_opt_convergence_energy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_opt_convergence"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_opt_convergence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_forces"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_forces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_phonon"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_phonon()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_q_info"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_q_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_mode"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_mode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_phonon_eigenvector"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_phonon_eigenvector()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_anh_spectra"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_anh_spectra()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_anscan"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_anscan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_output.get_elatensor"><code class="docutils literal notranslate"><span class="pre">Crystal_output.get_elatensor()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_input"><code class="docutils literal notranslate"><span class="pre">Properties_input</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_input.from_file"><code class="docutils literal notranslate"><span class="pre">Properties_input.from_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_input.make_newk_block"><code class="docutils literal notranslate"><span class="pre">Properties_input.make_newk_block()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_input.make_bands_block"><code class="docutils literal notranslate"><span class="pre">Properties_input.make_bands_block()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_input.make_doss_block"><code class="docutils literal notranslate"><span class="pre">Properties_input.make_doss_block()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_input.make_pdoss_block"><code class="docutils literal notranslate"><span class="pre">Properties_input.make_pdoss_block()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_input.write_properties_input"><code class="docutils literal notranslate"><span class="pre">Properties_input.write_properties_input()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output"><code class="docutils literal notranslate"><span class="pre">Properties_output</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_file"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_vecfield"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_vecfield()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_electron_band"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_electron_band()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_electron_dos"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_electron_dos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_bands"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_bands()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_doss"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_doss()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_contour"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_contour()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_xrd_spec"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_xrd_spec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_rholine"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_rholine()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_seebeck"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_seebeck()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_sigma"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_sigma()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_lapl_profile"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_lapl_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_density_profile"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_density_profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_ECHG"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_ECHG()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Properties_output.read_cry_ECHG_delta"><code class="docutils literal notranslate"><span class="pre">Properties_output.read_cry_ECHG_delta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_gui"><code class="docutils literal notranslate"><span class="pre">Crystal_gui</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_gui.read_gui"><code class="docutils literal notranslate"><span class="pre">Crystal_gui.read_gui()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_gui.write_gui"><code class="docutils literal notranslate"><span class="pre">Crystal_gui.write_gui()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_density"><code class="docutils literal notranslate"><span class="pre">Crystal_density</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.Crystal_density.read_cry_irr_density"><code class="docutils literal notranslate"><span class="pre">Crystal_density.read_cry_irr_density()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.cry_combine_density"><code class="docutils literal notranslate"><span class="pre">cry_combine_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.write_cry_density"><code class="docutils literal notranslate"><span class="pre">write_cry_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.External_unit"><code class="docutils literal notranslate"><span class="pre">External_unit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.External_unit.read_external_unit"><code class="docutils literal notranslate"><span class="pre">External_unit.read_external_unit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.External_unit.read_cry_irspec"><code class="docutils literal notranslate"><span class="pre">External_unit.read_cry_irspec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.External_unit.read_cry_ramspec"><code class="docutils literal notranslate"><span class="pre">External_unit.read_cry_ramspec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.External_unit.read_phonon_band"><code class="docutils literal notranslate"><span class="pre">External_unit.read_phonon_band()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.crystal_io.External_unit.read_phonon_dos"><code class="docutils literal notranslate"><span class="pre">External_unit.read_phonon_dos()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.execute">CRYSTALClear.execute</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.set_runcry_path"><code class="docutils literal notranslate"><span class="pre">set_runcry_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.set_runprop_path"><code class="docutils literal notranslate"><span class="pre">set_runprop_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.runcry"><code class="docutils literal notranslate"><span class="pre">runcry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.execute.runprop"><code class="docutils literal notranslate"><span class="pre">runprop()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.flatmaps">CRYSTALClear.flatmaps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.flatmaps.ScalarField"><code class="docutils literal notranslate"><span class="pre">ScalarField</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.flatmaps.ScalarField.change_units"><code class="docutils literal notranslate"><span class="pre">ScalarField.change_units()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.flatmaps.ScalarField.add_map"><code class="docutils literal notranslate"><span class="pre">ScalarField.add_map()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.flatmaps.ScalarField.log_scale"><code class="docutils literal notranslate"><span class="pre">ScalarField.log_scale()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.flatmaps.ScalarField.set_cmaprange"><code class="docutils literal notranslate"><span class="pre">ScalarField.set_cmaprange()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.flatmaps.ScalarField.plot"><code class="docutils literal notranslate"><span class="pre">ScalarField.plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.geometry">CRYSTALClear.geometry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.rotate_lattice"><code class="docutils literal notranslate"><span class="pre">rotate_lattice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.refine_geometry"><code class="docutils literal notranslate"><span class="pre">refine_geometry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.get_pcel"><code class="docutils literal notranslate"><span class="pre">get_pcel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.get_scel"><code class="docutils literal notranslate"><span class="pre">get_scel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.get_sg_symmops"><code class="docutils literal notranslate"><span class="pre">get_sg_symmops()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.geometry.Miller_norm"><code class="docutils literal notranslate"><span class="pre">Miller_norm()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.plot">CRYSTALClear.plot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_dens_ECHG"><code class="docutils literal notranslate"><span class="pre">plot_dens_ECHG()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_vecfield2D_m"><code class="docutils literal notranslate"><span class="pre">plot_vecfield2D_m()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_vecfield2D_j"><code class="docutils literal notranslate"><span class="pre">plot_vecfield2D_j()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_vecfield2D_J"><code class="docutils literal notranslate"><span class="pre">plot_vecfield2D_J()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_phonon_band"><code class="docutils literal notranslate"><span class="pre">plot_phonon_band()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_electron_band"><code class="docutils literal notranslate"><span class="pre">plot_electron_band()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_electron_dos"><code class="docutils literal notranslate"><span class="pre">plot_electron_dos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_phonon_dos"><code class="docutils literal notranslate"><span class="pre">plot_phonon_dos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_electron_banddos"><code class="docutils literal notranslate"><span class="pre">plot_electron_banddos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_phonon_banddos"><code class="docutils literal notranslate"><span class="pre">plot_phonon_banddos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_contour"><code class="docutils literal notranslate"><span class="pre">plot_cry_contour()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_contour_differences"><code class="docutils literal notranslate"><span class="pre">plot_cry_contour_differences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_xrd"><code class="docutils literal notranslate"><span class="pre">plot_cry_xrd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_rholine"><code class="docutils literal notranslate"><span class="pre">plot_cry_rholine()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_lapl_profile"><code class="docutils literal notranslate"><span class="pre">plot_cry_lapl_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_density_profile"><code class="docutils literal notranslate"><span class="pre">plot_cry_density_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_seebeck_potential"><code class="docutils literal notranslate"><span class="pre">plot_cry_seebeck_potential()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_seebeck_carrier"><code class="docutils literal notranslate"><span class="pre">plot_cry_seebeck_carrier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_multiseebeck"><code class="docutils literal notranslate"><span class="pre">plot_cry_multiseebeck()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_sigma_potential"><code class="docutils literal notranslate"><span class="pre">plot_cry_sigma_potential()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_sigma_carrier"><code class="docutils literal notranslate"><span class="pre">plot_cry_sigma_carrier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_multisigma"><code class="docutils literal notranslate"><span class="pre">plot_cry_multisigma()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_powerfactor_potential"><code class="docutils literal notranslate"><span class="pre">plot_cry_powerfactor_potential()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_powerfactor_carrier"><code class="docutils literal notranslate"><span class="pre">plot_cry_powerfactor_carrier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_zt"><code class="docutils literal notranslate"><span class="pre">plot_cry_zt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_young"><code class="docutils literal notranslate"><span class="pre">plot_cry_young()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_comp"><code class="docutils literal notranslate"><span class="pre">plot_cry_comp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_shear"><code class="docutils literal notranslate"><span class="pre">plot_cry_shear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_poisson"><code class="docutils literal notranslate"><span class="pre">plot_cry_poisson()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_ela"><code class="docutils literal notranslate"><span class="pre">plot_cry_ela()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_irspec"><code class="docutils literal notranslate"><span class="pre">plot_cry_irspec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_ramspec"><code class="docutils literal notranslate"><span class="pre">plot_cry_ramspec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_spec"><code class="docutils literal notranslate"><span class="pre">plot_cry_spec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_spec_multi"><code class="docutils literal notranslate"><span class="pre">plot_cry_spec_multi()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.plot.plot_cry_anscan"><code class="docutils literal notranslate"><span class="pre">plot_cry_anscan()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.thermodynamics">CRYSTALClear.thermodynamics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Mode"><code class="docutils literal notranslate"><span class="pre">Mode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Mode.get_zp_energy"><code class="docutils literal notranslate"><span class="pre">Mode.get_zp_energy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Mode.get_u_vib"><code class="docutils literal notranslate"><span class="pre">Mode.get_u_vib()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Mode.get_entropy"><code class="docutils literal notranslate"><span class="pre">Mode.get_entropy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Mode.get_c_v"><code class="docutils literal notranslate"><span class="pre">Mode.get_c_v()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Mode.get_classical_amplitude"><code class="docutils literal notranslate"><span class="pre">Mode.get_classical_amplitude()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Mode.polynomial_fit"><code class="docutils literal notranslate"><span class="pre">Mode.polynomial_fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Mode.get_gruneisen"><code class="docutils literal notranslate"><span class="pre">Mode.get_gruneisen()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Harmonic"><code class="docutils literal notranslate"><span class="pre">Harmonic</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Harmonic.from_file"><code class="docutils literal notranslate"><span class="pre">Harmonic.from_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Harmonic.from_phonopy"><code class="docutils literal notranslate"><span class="pre">Harmonic.from_phonopy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Harmonic.from_frequency"><code class="docutils literal notranslate"><span class="pre">Harmonic.from_frequency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Harmonic.thermodynamics"><code class="docutils literal notranslate"><span class="pre">Harmonic.thermodynamics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Harmonic.write_HA_result"><code class="docutils literal notranslate"><span class="pre">Harmonic.write_HA_result()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.from_HA_files"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.from_HA_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.from_QHA_file"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.from_QHA_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.from_phonopy_files"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.from_phonopy_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.eos_fit"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.eos_fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.freq_polynomial_fit"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.freq_polynomial_fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.thermo_freq"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.thermo_freq()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.thermo_gruneisen"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.thermo_gruneisen()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.thermo_eos"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.thermo_eos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.expansion_vol"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.expansion_vol()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.bulk_modulus"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.bulk_modulus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.specific_heat"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.specific_heat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Quasi_harmonic.expansion_lin"><code class="docutils literal notranslate"><span class="pre">Quasi_harmonic.expansion_lin()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Phonopy"><code class="docutils literal notranslate"><span class="pre">Phonopy</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Phonopy.read_structure"><code class="docutils literal notranslate"><span class="pre">Phonopy.read_structure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Phonopy.read_frequency"><code class="docutils literal notranslate"><span class="pre">Phonopy.read_frequency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Phonopy.write_force_constants"><code class="docutils literal notranslate"><span class="pre">Phonopy.write_force_constants()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output"><code class="docutils literal notranslate"><span class="pre">Output</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_HA_result"><code class="docutils literal notranslate"><span class="pre">Output.write_HA_result()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_QHA_combinedata"><code class="docutils literal notranslate"><span class="pre">Output.write_QHA_combinedata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_QHA_sortphonon"><code class="docutils literal notranslate"><span class="pre">Output.write_QHA_sortphonon()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_QHA_eosfit"><code class="docutils literal notranslate"><span class="pre">Output.write_QHA_eosfit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_QHA_polyfit"><code class="docutils literal notranslate"><span class="pre">Output.write_QHA_polyfit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_QHA_thermofreq"><code class="docutils literal notranslate"><span class="pre">Output.write_QHA_thermofreq()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_QHA_thermogru"><code class="docutils literal notranslate"><span class="pre">Output.write_QHA_thermogru()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_QHA_thermoeos"><code class="docutils literal notranslate"><span class="pre">Output.write_QHA_thermoeos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_expansion_vol"><code class="docutils literal notranslate"><span class="pre">Output.write_expansion_vol()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_bulk_modulus"><code class="docutils literal notranslate"><span class="pre">Output.write_bulk_modulus()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_specific_heat"><code class="docutils literal notranslate"><span class="pre">Output.write_specific_heat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.thermodynamics.Output.write_expansion_latt"><code class="docutils literal notranslate"><span class="pre">Output.write_expansion_latt()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.unit_test">CRYSTALClear.unit_test</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.crystal_input_test"><code class="docutils literal notranslate"><span class="pre">crystal_input_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.crystal_output_test"><code class="docutils literal notranslate"><span class="pre">crystal_output_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.convert_test"><code class="docutils literal notranslate"><span class="pre">convert_test()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.unit_test.test_all"><code class="docutils literal notranslate"><span class="pre">test_all()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.html#module-CRYSTALClear.units">CRYSTALClear.units</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.H_to_eV"><code class="docutils literal notranslate"><span class="pre">H_to_eV()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.eV_to_H"><code class="docutils literal notranslate"><span class="pre">eV_to_H()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.H_to_kjmol"><code class="docutils literal notranslate"><span class="pre">H_to_kjmol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.kjmol_to_H"><code class="docutils literal notranslate"><span class="pre">kjmol_to_H()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.au_to_angstrom"><code class="docutils literal notranslate"><span class="pre">au_to_angstrom()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.angstrom_to_au"><code class="docutils literal notranslate"><span class="pre">angstrom_to_au()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.cm_to_thz"><code class="docutils literal notranslate"><span class="pre">cm_to_thz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.thz_to_cm"><code class="docutils literal notranslate"><span class="pre">thz_to_cm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.hartree_to_thz"><code class="docutils literal notranslate"><span class="pre">hartree_to_thz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.thz_to_hartree"><code class="docutils literal notranslate"><span class="pre">thz_to_hartree()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.amu_to_me"><code class="docutils literal notranslate"><span class="pre">amu_to_me()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.html#CRYSTALClear.units.me_to_amu"><code class="docutils literal notranslate"><span class="pre">me_to_amu()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="CRYSTALClear.base.html">CRYSTALClear.base package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CRYSTALClear.base.html#developer">Developer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.base.html#module-CRYSTALClear.base.basisset">CRYSTALClear.base.basisset</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.basisset.BS_GTF"><code class="docutils literal notranslate"><span class="pre">BS_GTF</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.basisset.BS_Shell"><code class="docutils literal notranslate"><span class="pre">BS_Shell</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.basisset.BS_Atom"><code class="docutils literal notranslate"><span class="pre">BS_Atom</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.basisset.BasisSetBASE"><code class="docutils literal notranslate"><span class="pre">BasisSetBASE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.base.html#module-CRYSTALClear.base.crysd12">CRYSTALClear.base.crysd12</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysd12.Crystal_inputBASE"><code class="docutils literal notranslate"><span class="pre">Crystal_inputBASE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysd12.Geom"><code class="docutils literal notranslate"><span class="pre">Geom</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysd12.Optgeom"><code class="docutils literal notranslate"><span class="pre">Optgeom</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysd12.Freqcalc"><code class="docutils literal notranslate"><span class="pre">Freqcalc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysd12.BasisSet"><code class="docutils literal notranslate"><span class="pre">BasisSet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysd12.SCF"><code class="docutils literal notranslate"><span class="pre">SCF</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysd12.DFT"><code class="docutils literal notranslate"><span class="pre">DFT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysd12.DFTD3"><code class="docutils literal notranslate"><span class="pre">DFTD3</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysd12.GCP"><code class="docutils literal notranslate"><span class="pre">GCP</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.base.html#module-CRYSTALClear.base.crysout">CRYSTALClear.base.crysout</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysout.GeomBASE"><code class="docutils literal notranslate"><span class="pre">GeomBASE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysout.SCFBASE"><code class="docutils literal notranslate"><span class="pre">SCFBASE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysout.OptBASE"><code class="docutils literal notranslate"><span class="pre">OptBASE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.crysout.PhononBASE"><code class="docutils literal notranslate"><span class="pre">PhononBASE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.base.html#module-CRYSTALClear.base.inputbase">CRYSTALClear.base.inputbase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.inputbase.BlockBASE"><code class="docutils literal notranslate"><span class="pre">BlockBASE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.base.html#module-CRYSTALClear.base.plotbase">CRYSTALClear.base.plotbase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.plotbase.plot_cry_bands"><code class="docutils literal notranslate"><span class="pre">plot_cry_bands()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.plotbase.plot_single_cry_bands"><code class="docutils literal notranslate"><span class="pre">plot_single_cry_bands()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.plotbase.plot_multi_cry_bands"><code class="docutils literal notranslate"><span class="pre">plot_multi_cry_bands()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.plotbase.plot_compare_cry_bands"><code class="docutils literal notranslate"><span class="pre">plot_compare_cry_bands()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.plotbase.plot_cry_doss"><code class="docutils literal notranslate"><span class="pre">plot_cry_doss()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.plotbase.plot_cry_es"><code class="docutils literal notranslate"><span class="pre">plot_cry_es()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CRYSTALClear.base.html#module-CRYSTALClear.base.propout">CRYSTALClear.base.propout</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.propout.OutBASE"><code class="docutils literal notranslate"><span class="pre">OutBASE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.propout.DOSBASE"><code class="docutils literal notranslate"><span class="pre">DOSBASE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="CRYSTALClear.base.html#CRYSTALClear.base.propout.BandsBASE"><code class="docutils literal notranslate"><span class="pre">BandsBASE</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, CRYSTALClear Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
