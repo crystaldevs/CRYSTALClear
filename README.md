@@ -26,7 +26,7 @@ A python framework for the [CRYSTAL](https://www.crystal.unito.it) code. Forked 
 
 Public releases of the code are distributed through Pypi.
 
-### Prerequisites 📦
+### Requirements 📦
 
 The following will be installed if not already present:
 
