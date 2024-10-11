@@ -2937,8 +2937,13 @@ def plot_cry_ela(choose, ndeg, *args):
         *args: Variable number of elastic tensors.
 
     Returns:
-        list of :class:`matplotlib.pyplot`
-        A list of matplotlib objects to be further saved and plotted. Note that the number of elements of such list corresponds to the number of elastic tensors provided as argument.
+        Tuple of lists:
+        - fig_list : list of matplotlib.figure.Figure
+            A list containing matplotlib Figure objects for each plot.
+        - ax_list : list of matplotlib.axes._axes.Axes
+            A list containing the Axes objects associated with each plot.
+        - plt_list : list of matplotlib.pyplot
+            A list of the pyplot objects for each plot, representing the actual plot.
     """
     import math
 
@@ -2996,6 +3001,8 @@ def plot_cry_ela(choose, ndeg, *args):
 
     # Create plot for each tensor -->
     plt_list = []
+    ax_list = []
+    fig_list = []
     for k in range(i):
         X = R[k] * np.sin(theta_2D) * np.cos(phi_2D)
         Y = R[k] * np.sin(theta_2D) * np.sin(phi_2D)
@@ -3038,9 +3045,11 @@ def plot_cry_ela(choose, ndeg, *args):
 
         ax.set_box_aspect(aspect=(1, 1, 1))  # Fix aspect ratio
 
+        fig_list.append(fig)
+        ax_list.append(ax)
         plt_list.append(plt)
 
-    return plt_list
+    return fig_list, ax_list, plt_list
 
         # <--
 
