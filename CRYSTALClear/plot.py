@@ -3727,104 +3727,130 @@ def plot_cry_spec_multi(files, typeS, components=False, bwidth=5, stdev=3,
          
     return plt
 
-def plot_cry_anscan(harm_freq, alpha, force_const, rangescan, energy=None, wf=None,
-                    prob=False, harmpot=False, Qmin=-5, Qmax=5, scale_wf=10, 
-                    scale_prob=20, scan_energy=None, figsize=[10, 10],
-                    Nlevel=None, Nwf=None):
+def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
+                    scanpot=True, figsize=[10, 10]):
+
+    """
+    This function provides a plotting tool for the ANSCAN keyword.  
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object.
+        scale_wf (float, optional): Scaling factor for wavefunctions plot. By 
+        default, wavefunctions are not plotted. Providing a value for this 
+        argument enables the wavefunction plot and scales it accordingly.  
+        scale_prob (float, optional): Scaling factor for probability density 
+        plot. By default, probability densities are not plotted. Providing a 
+        value for this argument enables the probability density plot and 
+        scales it accordingly.  
+        harmpot (bool, optional): A logical flag to activate the plotting of 
+        the harmonic potential (default is False). 
+        scanpot (bool, optional): A logical flag to activate the plotting of 
+        the scan potential provided by ANSCAN (default is True). 
+        figsize (list[float])
+
+    Returns:
+        :class:`matplotlib.pyplot`
+        A matplotlib object representing the result of the plot
+    """
 
     import math
-
     import matplotlib.pyplot as plt
     import numpy as np
     from scipy import special
 
+    # Unpack co
+    harm_freq = co.harm_freq
+    force_const = co.force_const
+    energy = co.energy
+    wf = co.wf
+    scan_energy = co.anhpot
+    alpha = co.alpha
+    rangescan = co.rangescan
+
+    # npts 
+    npts = 10000
+
     # Matplotlib aspect ratio
     plt.figure(figsize=figsize)
 
-
     # Define harmonic freq
     amu_me = 1822.88848
-    Ha2wn = 220000
+    Ha2wn = 219473.5152
     lambda_AU = abs(harm_freq / Ha2wn) * amu_me
 
     # Define coordinates (basis set)
-    x = np.linspace(-1000, 1000, 10000)
+    x = np.linspace(-1000, 1000, npts)
     xi = x * alpha
-
         
     # Plot levels
-    if (energy is not None):
-        if(Nlevel is None):
-            Nlevel = len(energy)
-        for i in range(Nlevel):
-            plt.hlines(y=energy[i], xmin=Qmin, xmax=Qmax, colors='k', linewidth=0.3)
+    Nlevel = 10
+    for i in range(Nlevel):
+        plt.hlines(y=energy[i], xmin=rangescan[0], xmax=rangescan[1], 
+                   colors='k', linewidth=0.3)
+
+    # Set number of basis functions and wf 
+    N = len(wf) 
+    Nwf = N
+
+    # Compute Gaussian functions
+    G = np.exp(-(xi)**2/2)
+
+    # Compute harmonic wf
+    wfHO = np.zeros([len(xi), N])
+    for m in range(N):
+        norm = np.sqrt((alpha) / ((np.sqrt(math.pi)) * (2**m) * math.factorial(m)))
+        Herm = special.hermite(m, monic=False)
+        wfHO[:, m] = norm * Herm(xi) * G
+
+    # Build anharmonic wf
+    wfANH = np.zeros([len(wfHO), N])
+    
+    # Define coordinates (wf)
+    x = np.linspace(-100, 100, npts)
+    xi = x * lambda_AU**0.25
+
+    #for s in range(N):
+    for s in range(Nlevel):
+        for i in range(N):
+            wfANH[:, s] = wfANH[:, s] + wf[i, s]*wfHO[:, i]
 
     # Wavefunctions -->
-    if(wf is not None):
-
-        if(energy is None):
-            raise Exception('Optional argument "energy" is required for wf plotting')
-
-        # Set number of basis functions 
-        N = len(wf) 
-        if(Nwf is None):
-            Nwf = N
-
-        # Compute Gaussian functions
-        G = np.exp(-(xi)**2/2)
-
-        # Compute harmonic wf
-        wfHO = np.zeros([len(xi), N])
-        for m in range(N):
-            norm = np.sqrt((alpha) / ((np.sqrt(math.pi)) * (2**m) * math.factorial(m)))
-            Herm = special.hermite(m, monic=False)
-            wfHO[:, m] = norm * Herm(xi) * G
-
-        # Build anharmonic wf
-        wfANH = np.zeros([len(wfHO), N])
-    
-        # Define coordinates (wf)
-        x = np.linspace(-100, 100, 10000)
-        xi = x * lambda_AU**0.25
-
-        #for s in range(N):
-        for s in range(10):
-            for i in range(N):
-                wfANH[:, s] = wfANH[:, s] + wf[i, s]*wfHO[:, i]
+    if(scale_wf is not None):
 
         # Plot wf
         for i in range(Nwf):
             yp = wfANH[:, i]*scale_wf + energy[i]
-            plt.plot(xi, yp, "b-", linewidth=1)
-
-        # Plot probability density
-        if(prob):
-            for s in range(10):
-                prob = wfANH[:, s]**2*scale_prob**2 + energy[s]
-                lower_bound = energy[s] + 0*xi
-                plt.fill_between(xi, lower_bound, prob, color='c', alpha=0.3)
+            plt.plot(xi, yp, "m-", linewidth=1)
     # <-- Wavefunctions 
+
+    # Probability density  -->
+    if(scale_prob is not None):
+        for s in range(Nlevel):
+            prob = wfANH[:, s]**2*scale_prob**2 + energy[s]
+            lower_bound = energy[s] + 0*xi
+            plt.fill_between(xi, lower_bound, prob, color='c', alpha=0.3)
 
     # Plot anharmonic potential
     anhpot = 1/2 * force_const[2] * xi**2 \
            + 1/6 * force_const[3] * xi**3 \
            + 1/24 * force_const[4] * xi**4
     plt.plot(xi, anhpot, 'b', linewidth=2)
-    #plt.plot(xi, anhpot, 'r', linewidth=2)
-    plt.ylabel('$\Delta E$ [cm$^{-1}$]')
-    plt.xlabel(r'$\xi$')
 
+    # Plot harmonic potential
     if(harmpot):
-        # Plot harmonic potential
         HOpot = 1/2 * harm_freq * xi**2
-        plt.plot(xi, HOpot, 'm--', linewidth=2)
-        #plt.plot(xi, HOpot, 'k--', linewidth=2)
+        plt.plot(xi, HOpot, 'r--', linewidth=2)
 
     # Plot scan potential
-    if(scan_energy is not None):
+    if(scanpot):
         # Define scaled_x
         scaled_x = np.linspace(rangescan[0], rangescan[1], len(scan_energy)) 
         plt.plot(scaled_x, scan_energy, 'bo')
+
+    plt.ylabel('$\Delta E$ [cm$^{-1}$]')
+    plt.xlabel(r'$\xi$')
+    plt.xlim([rangescan[0], rangescan[1]])
+    plt.ylim([harm_freq, abs(harm_freq)*5])
 
     return plt
 
