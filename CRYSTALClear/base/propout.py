@@ -53,6 +53,8 @@ class OutBASE():
                 countline += 4
                 continue
             elif re.match(r'^\s+ATOM N\.AT\.\s+SHELL\s+X\(A\)', line):
+                lattice_parameters = [
+                    float(i) for i in data[countline-3].split()]
                 countline += 2
                 line = data[countline]
                 while not re.match(r'^\s*\*+\s*$', line):
@@ -72,6 +74,7 @@ class OutBASE():
         if len(lattice) == 0 or len(cart_coord) == 0:
             raise Exception('Valid geometry not found.')
 
+        print(lattice_parameters)
         return Structure(lattice=lattice, species=species, coords=cart_coord,
                          coords_are_cartesian=True)
 
