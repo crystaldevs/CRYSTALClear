@@ -2203,15 +2203,11 @@ class Crystal_output:
         """
 
         import re
-
         import numpy as np
 
         ndispl = 0
         storeE = False
         storeFC = False
-        E = []
-        FC = []
-        self.potential = []
         self.energy = []
         self.force_const = []
 
@@ -2221,31 +2217,38 @@ class Crystal_output:
                           int(self.data[i+1].split()[2]))
                 if (ndispl < 1):
                     raise Exception('Number of displacements too low.')
+                # Save range
+                first = float(self.data[i+1].split()[2])
+                last  = float(self.data[i+1].split()[5])
+                step  = float(self.data[i+1].split()[7])
+                self.rangescan = [first*step, last*step]
             if re.match(r'\s*\[DISPLAC\]\s*\[\s*SCAN POTENTIAL\s*\]', line):
-                imode = int(self.data[i-1].split()[1][0])
                 V = np.zeros([ndispl+1, 2])
                 for k in range(ndispl+1):
                     if (re.match(r'^\s+0.0000*', self.data[i+2+k])):
                         continue
                     V[k, 0] = float(self.data[i+2+k].split()[2])
                     V[k, 1] = float(self.data[i+2+k].split()[4])
-                self.potential.append(V)
+                self.anhpot = V[:, 0]
+                self.harmpot = V[:, 1]
+                # Save index of anscan mode
+                anhmode = int(self.data[i-1].split()[1].replace('(', ''))
             if re.match(r'\s*ANHARMONIC VIBRATIONAL STATES', self.data[i-3]):
                 storeE = True
             if re.match(r'\s*POTENTIAL ENERGY DERIVATIVES', line):
                 storeE = False
-                self.energy.append(E)
-                E = []
             if (storeE and (len(self.data[i].split()) != 0)):
-                E.append(float(self.data[i].split()[2]))
+                self.energy.append(float(self.data[i].split()[2]))
             if re.match(r'\s*POTENTIAL ENERGY DERIVATIVES', self.data[i-3]):
                 storeFC = True
             if (storeFC and (re.match(r'^(?!\s*\d)', line))):
                 storeFC = False
-                self.force_const.append(FC)
-                FC = []
             if (storeFC):
-                FC.append(float(line.split()[2]))
+                self.force_const.append(float(line.split()[2]))
+
+        # Call get_phonon() method and save harmonic freq
+        self.get_phonon(rm_imaginary=False)
+        self.harm_freq = self.frequency[0, anhmode-1]*33.3333
 
         # Read ANSCANWF.DAT
         try:
@@ -2256,23 +2259,16 @@ class Crystal_output:
             raise FileNotFoundError(
                 'EXITING: a .anscanwf file needs to be specified')
 
-        self.wf = []
-        for t in range(len(self.energy)):
-            self.wf.append(np.zeros([len(self.energy[t]), 10]))
+        self.wf = np.zeros([len(self.energy), 10])
 
-        idx = 0
-        i = 0
-        for line in data:
-            if (len(line) == 1):
+        for i, line in enumerate(data):
+            if re.match(r'.ALP.*', line):
+                self.alpha = float(line.split()[2])
                 break
-            if re.match(r'.*WF.*', line):
-                idx += 1
-                i = 0
+            if re.match(r'.ANH.*', line):
                 continue
-            for j in range(10):
-                # print(float(line.split()[j]))
-                self.wf[idx-1][i, j] = float(line.split()[j])
-            i += 1
+            for j in range(10): 
+                self.wf[i-1, j] = float(line.split()[j])
 
     # ANSCAN+DWELL
 
