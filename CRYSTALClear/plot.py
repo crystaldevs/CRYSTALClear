@@ -2920,7 +2920,7 @@ def plot_cry_poisson(theta_1D, phi_1D, S, ndeg, poisson_choice):
 
 # ----------------------------------ELASTIC------------------------------------#
 
-def plot_cry_ela(choose, ndeg, *args):
+def plot_cry_ela(choose, ndeg,  *args, twoD=False):
     """
     Plot crystal elastic properties on the basis of the elastic tensor. A
     variable number of elastic tensors can be provided in order to get
@@ -3004,6 +3004,30 @@ def plot_cry_ela(choose, ndeg, *args):
         Z = R[k] * np.cos(theta_2D)
 
         norm = colors.Normalize(vmin=vmin, vmax=vmax, clip=False)
+
+        if twoD == True:
+            fig, ax = plt.subplots()
+            ax.plot(X, Y)
+            ax.set_xlabel("X")
+            ax.set_ylabel("Y")
+            fig_list.append(fig)
+            ax_list.append(ax)
+            plt_list.append(plt)
+            fig, ax = plt.subplots()
+            ax.plot(X, Z)
+            ax.set_xlabel("X")
+            ax.set_ylabel("Z")
+            fig_list.append(fig)
+            ax_list.append(ax)
+            plt_list.append(plt)
+            fig, ax = plt.subplots()
+            ax.plot(Y, Z)
+            ax.set_xlabel("Y")
+            ax.set_ylabel("Z")
+            fig_list.append(fig)
+            ax_list.append(ax)
+            plt_list.append(plt)
+
         fig, ax = plt.subplots(subplot_kw=dict(projection="3d"))
 
         ax.plot_surface(
