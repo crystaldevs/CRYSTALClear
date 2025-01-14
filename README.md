@@ -1,4 +1,4 @@
-# CRYSTALClear 💎
+![CRYSTALClear](docs_src/_static/CRYSTAL_logo.png)
 
 ## Description 📄
 
