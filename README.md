@@ -3,6 +3,8 @@
 ## Description 📄
 
 A python framework for the [CRYSTAL](https://www.crystal.unito.it) code. Forked from [CRYSTALpytools](https://github.com/crystal-code-tools/CRYSTALpytools).
+** Take a look at the full [📚documentation](https://crystaldevs.github.io/CRYSTALClear/) **.
+
 
 ## Table of Contents 📑
 
@@ -82,8 +84,6 @@ in the plot module
 
 The function will return one (or a list of) [matplotlib object(s)](https://matplotlib.org/) that the user can easily modify
 as any other plot produced with the library.
-
-For further information check the [Documentation](https://crystaldevs.github.io/CRYSTALClear/).
 
 ## Contributing 🤝
 
