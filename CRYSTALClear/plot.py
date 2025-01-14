@@ -3767,6 +3767,10 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     alpha = co.alpha
     rangescan = co.rangescan
 
+    #debug
+    print(co.alpha)
+    #debug
+
     # npts 
     npts = 10000
 
@@ -3777,6 +3781,11 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     amu_me = 1822.88848
     Ha2wn = 219473.5152
     lambda_AU = abs(harm_freq / Ha2wn) * amu_me
+
+    #debug
+    print(harm_freq)
+    print(lambda_AU)
+    #debug
 
     # Define coordinates (basis set)
     x = np.linspace(-1000, 1000, npts)
