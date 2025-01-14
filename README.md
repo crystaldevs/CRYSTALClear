@@ -4,7 +4,7 @@
 
 A python framework for the [CRYSTAL](https://www.crystal.unito.it) code. Forked from [CRYSTALpytools](https://github.com/crystal-code-tools/CRYSTALpytools).
 
-** Take a look at the full [📚documentation](https://crystaldevs.github.io/CRYSTALClear/) **.
+📚 Take a look at the full [Documentation](https://crystaldevs.github.io/CRYSTALClear/).
 
 
 ## Table of Contents 📑
