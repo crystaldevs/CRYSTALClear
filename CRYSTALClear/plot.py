@@ -3602,11 +3602,14 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
         exp_data[:, 1] = exp_data[:, 1] * norm_fac - baseline  # * 0.5
         plt.plot(exp_data[:, 0], exp_data[:, 1], 'r-', linewidth=linewidth)
 
-    if label is not None:
+    if ((label is not None) and (style is None)):
         plt.plot(spec_data[:, 0], spec_data[:, 1], linewidth=linewidth,
                  label=label)
-    elif (style is not None):
+    elif ((label is None) and (style is not None)):
         plt.plot(spec_data[:, 0], spec_data[:, 1], style, linewidth=linewidth)
+    elif ((label is not None) and (style is not None)):
+        plt.plot(spec_data[:, 0], spec_data[:, 1], style, linewidth=linewidth,
+                 label=label)
     else:
         plt.plot(spec_data[:, 0], spec_data[:, 1], linewidth=linewidth)
 
