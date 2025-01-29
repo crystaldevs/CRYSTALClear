@@ -2232,7 +2232,9 @@ class Crystal_output:
                 self.anhpot = V[:, 0]
                 self.harmpot = V[:, 1]
                 # Save index of anscan mode
-                anhmode = int(self.data[i-1].split()[1].replace('(', ''))
+                strtmp = self.data[i-1].split()[1] 
+                strtmp = strtmp[:strtmp.find('(')]
+                anhmode = int(strtmp)
             if re.match(r'\s*ANHARMONIC VIBRATIONAL STATES', self.data[i-3]):
                 storeE = True
             if re.match(r'\s*POTENTIAL ENERGY DERIVATIVES', line):
@@ -2248,7 +2250,7 @@ class Crystal_output:
 
         # Call get_phonon() method and save harmonic freq
         self.get_phonon(rm_imaginary=False)
-        self.harm_freq = self.frequency[0, anhmode-1]*33.3333
+        self.harm_freq = self.frequency[0, anhmode-1]*33.333333
 
         # Read ANSCANWF.DAT
         try:
@@ -2260,8 +2262,11 @@ class Crystal_output:
                 'EXITING: a .anscanwf file needs to be specified')
 
         self.wf = np.zeros([len(self.energy), 10])
+        self.alpha = None
 
         for i, line in enumerate(data):
+            if re.match(r'^\s*$', line):
+                break
             if re.match(r'.ALP.*', line):
                 self.alpha = float(line.split()[2])
                 break
