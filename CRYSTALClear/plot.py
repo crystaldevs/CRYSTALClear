@@ -10,7 +10,7 @@ Functions to visualize physical properties computed with CRYSTAL .
 #                                                                            #
 ##############################################################################
 
-#------------------------------------ECHG------------------------------------#
+# ------------------------------------ECHG------------------------------------#
 
 
 def plot_dens_ECHG(obj_echg, levels=150, xticks=5,
@@ -83,7 +83,8 @@ def plot_dens_ECHG(obj_echg, levels=150, xticks=5,
 
     plt.show()
 
-#----------------------------------SPIN CURRENTS------------------------------#
+# ----------------------------------SPIN CURRENTS------------------------------#
+
 
 def plot_vecfield2D_m(header, dens, quivscale, name='MAG', levels=150, dpi=400):
     """
@@ -450,7 +451,7 @@ def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, name='SCD', 
     plt.show()
 
 
-#--------------------------------BAND STRUCTURES------------------------------#
+# --------------------------------BAND STRUCTURES------------------------------#
 
 def plot_phonon_band(bands, unit='cm-1', k_labels=None, mode='single',
                      not_scaled=False, freq_range=None, k_range=None,
@@ -525,15 +526,15 @@ def plot_phonon_band(bands, unit='cm-1', k_labels=None, mode='single',
     energy_range = freq_range
 
     fig, ax = plot_cry_bands(bands, k_labels=k_labels, energy_range=energy_range, title=title,
-                         not_scaled=not_scaled, mode=mode, linestl=linestl, linewidth=linewidth,
-                         color=color, fermi=line_freq0, k_range=k_range, labels=labels,
-                         figsize=figsize, scheme=scheme, sharex=sharex, sharey=sharey, fermialpha=1, fermiwidth=0)
+                             not_scaled=not_scaled, mode=mode, linestl=linestl, linewidth=linewidth,
+                             color=color, fermi=line_freq0, k_range=k_range, labels=labels,
+                             figsize=figsize, scheme=scheme, sharex=sharex, sharey=sharey, fermialpha=1, fermiwidth=0)
     if is_thz == True:
         fig.supylabel('Frequency (THz)', fontsize=fontsize)
     else:
         fig.supylabel('Frequency (cm$^{-1}$)', fontsize=fontsize)
 
-    return fig, ax 
+    return fig, ax
 
 
 def plot_electron_band(bands, unit='eV', k_labels=None, mode='single',
@@ -606,9 +607,9 @@ def plot_electron_band(bands, unit='eV', k_labels=None, mode='single',
         bands = bands[0]
 
     fig, ax = plot_cry_bands(bands, k_labels=k_labels, energy_range=energy_range, title=title,
-                         not_scaled=not_scaled, mode=mode, linestl=linestl, linewidth=linewidth,
-                         color=color, fermi=fermi, fermiwidth=fermiwidth, fermialpha=fermialpha, k_range=k_range, labels=labels,
-                         figsize=figsize, scheme=scheme, sharex=sharex, sharey=sharey)
+                             not_scaled=not_scaled, mode=mode, linestl=linestl, linewidth=linewidth,
+                             color=color, fermi=fermi, fermiwidth=fermiwidth, fermialpha=fermialpha, k_range=k_range, labels=labels,
+                             figsize=figsize, scheme=scheme, sharex=sharex, sharey=sharey)
     if is_ev == True:
         fig.supylabel('$E-E_{F}$ (eV)', fontsize=fontsize)
     else:
@@ -617,7 +618,7 @@ def plot_electron_band(bands, unit='eV', k_labels=None, mode='single',
     return fig, ax
 
 
-#-------------------------------DENSITY OF STATES-----------------------------#
+# -------------------------------DENSITY OF STATES-----------------------------#
 
 
 def plot_electron_dos(doss, unit='eV', beta='up', overlap=False, prj=None,
@@ -683,9 +684,9 @@ def plot_electron_dos(doss, unit='eV', beta='up', overlap=False, prj=None,
         doss = doss[0]
 
     fig, ax = plot_cry_doss(doss, color=color, fermi=fermi, overlap=overlap,
-                        labels=labels, figsize=figsize, linestl=linestl,
-                        linewidth=linewidth, title=title, beta=beta,
-                        energy_range=energy_range, dos_range=dos_range, prj=prj)
+                            labels=labels, figsize=figsize, linestl=linestl,
+                            linewidth=linewidth, title=title, beta=beta,
+                            energy_range=energy_range, dos_range=dos_range, prj=prj)
     if is_ev == True:
         fig.supylabel('DOS (states/eV)')
         fig.supxlabel('Energy (eV)')
@@ -761,9 +762,9 @@ def plot_phonon_dos(doss, unit='cm-1', overlap=False, prj=None,
         doss = doss[0]
 
     fig, ax = plot_cry_doss(doss, color=color, fermi=line_freq0, overlap=overlap,
-                        labels=labels, figsize=figsize, linestl=linestl,
-                        linewidth=linewidth, title=title, beta='up',
-                        energy_range=freq_range, dos_range=dos_range, prj=prj)
+                            labels=labels, figsize=figsize, linestl=linestl,
+                            linewidth=linewidth, title=title, beta='up',
+                            energy_range=freq_range, dos_range=dos_range, prj=prj)
 
     if is_thz == True:
         fig.supylabel('DOS (states/THz)')
@@ -775,7 +776,7 @@ def plot_phonon_dos(doss, unit='cm-1', overlap=False, prj=None,
     return fig, ax
 
 
-#-----------------------------BAND + DENSITY OF STATES------------------------#
+# -----------------------------BAND + DENSITY OF STATES------------------------#
 
 
 def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down',
@@ -850,10 +851,10 @@ def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down'
         bands.unit = unit
 
     fig, ax = plot_cry_es(bands=bands, doss=doss, k_labels=k_labels, color_bd=color_band,
-                      color_doss=color_dos, fermi=fermi, energy_range=energy_range,
-                      linestl_bd=linestl_band, linestl_doss=linestl_dos,
-                      linewidth=linewidth, prj=dos_prj, figsize=figsize, labels=labels,
-                      dos_range=dos_range, title=title, dos_beta=dos_beta, legend=legend)
+                          color_doss=color_dos, fermi=fermi, energy_range=energy_range,
+                          linestl_bd=linestl_band, linestl_doss=linestl_dos,
+                          linewidth=linewidth, prj=dos_prj, figsize=figsize, labels=labels,
+                          dos_range=dos_range, title=title, dos_beta=dos_beta, legend=legend)
     if is_ev == True:
         fig.supylabel('Energy (eV)')
     else:
@@ -934,10 +935,10 @@ def plot_phonon_banddos(bands, doss, unit='cm-1', k_labels=None, dos_prj=None,
         line_freq0 = (1., 0., 0., 0.)  # Transparent
 
     fig, ax = plot_cry_es(bands=bands, doss=doss, k_labels=k_labels, color_bd=color_band,
-                      color_doss=color_dos, fermi=line_freq0, energy_range=energy_range,
-                      linestl_bd=linestl_band, linestl_doss=linestl_dos,
-                      linewidth=linewidth, prj=dos_prj, figsize=figsize, labels=labels,
-                      dos_max_range=dos_max_range, title=title, dos_beta='up')
+                          color_doss=color_dos, fermi=line_freq0, energy_range=energy_range,
+                          linestl_bd=linestl_band, linestl_doss=linestl_dos,
+                          linewidth=linewidth, prj=dos_prj, figsize=figsize, labels=labels,
+                          dos_max_range=dos_max_range, title=title, dos_beta='up')
     if is_thz == True:
         fig.supylabel('Frequency (THz)')
     else:
@@ -952,7 +953,7 @@ def plot_phonon_banddos(bands, doss, unit='cm-1', k_labels=None, dos_prj=None,
 #                                                                            #
 ##############################################################################
 
-#----------------------------------CONTOUR PLOT-------------------------------#
+# ----------------------------------CONTOUR PLOT-------------------------------#
 
 
 def plot_cry_contour(contour_obj):
@@ -1026,7 +1027,6 @@ def plot_cry_contour(contour_obj):
                         '_' + time.strftime("%Y-%m-%d_%H%M%S") + '.jpg')
     plt.savefig(path, bbox_inches='tight', dpi=600)
     print('\nThe image has been saved in the current directory')
-
 
     plt.show()
 
@@ -1125,10 +1125,9 @@ def plot_cry_contour_differences(contour_obj, contour_obj_ref):
     plt.savefig(path, bbox_inches='tight', dpi=600)
     print('\nThe image has been saved in the current directory')
 
-
     plt.show()
 
-#--------------------------------------XRD------------------------------------#
+# --------------------------------------XRD------------------------------------#
 
 
 def plot_cry_xrd(xrd_obj):
@@ -1164,10 +1163,9 @@ def plot_cry_xrd(xrd_obj):
     plt.title(xrd_obj.title, fontsize=20)
     plt.savefig(path, bbox_inches='tight', dpi=600)
 
-
     plt.show()
 
-#-------------------------------------RHOLINE---------------------------------#
+# -------------------------------------RHOLINE---------------------------------#
 
 
 def plot_cry_rholine(rholine_obj):
@@ -1200,10 +1198,9 @@ def plot_cry_rholine(rholine_obj):
     plt.title(rholine_obj.title, fontsize=15)
     plt.savefig(path, bbox_inches='tight', dpi=600)
 
-
     plt.show()
 
-#-----------------------------------LAPLACIAN---------------------------------#
+# -----------------------------------LAPLACIAN---------------------------------#
 
 
 def plot_cry_lapl_profile(lapl_obj):
@@ -1240,10 +1237,10 @@ def plot_cry_lapl_profile(lapl_obj):
     plt.xlabel('Distance [A]')
     plt.ylabel('Laplacian [e/A^5]')
 
-
     plt.show()
 
-#-----------------------------DENSITY PROFILE---------------------------------#
+# -----------------------------DENSITY PROFILE---------------------------------#
+
 
 def plot_cry_density_profile(lapl_obj):
     """
@@ -1269,7 +1266,6 @@ def plot_cry_density_profile(lapl_obj):
     plt.xlabel('Distance [A]')
     plt.ylabel('Density [e/A^3]')
 
-
     plt.show()
 
 ##############################################################################
@@ -1278,7 +1274,7 @@ def plot_cry_density_profile(lapl_obj):
 #                                                                            #
 ##############################################################################
 
-#-------------------------------------SEEBACK---------------------------------#
+# -------------------------------------SEEBACK---------------------------------#
 
 
 def plot_cry_seebeck_potential(seebeck_obj):
@@ -1551,7 +1547,6 @@ def plot_cry_seebeck_carrier(seebeck_obj):
     plt.show()
 
 
-
 def plot_cry_multiseebeck(*seebeck):
     """
     Plot the multiseebeck coefficient for different temperatures.
@@ -1684,7 +1679,7 @@ def plot_cry_multiseebeck(*seebeck):
                 '.jpg', format='jpg', dpi=100, bbox_inches='tight')
 
 
-#-------------------------------------SIGMA-----------------------------------#
+# -------------------------------------SIGMA-----------------------------------#
 
 def plot_cry_sigma_potential(sigma_obj):
     """
@@ -1816,7 +1811,6 @@ def plot_cry_sigma_potential(sigma_obj):
                 '.jpg', format='jpg', dpi=100, bbox_inches='tight')
 
 
-
 def plot_cry_sigma_carrier(sigma_obj):
     """
     Plot the electrical conductivity as a function of charge carrier concentration.
@@ -1939,7 +1933,6 @@ def plot_cry_sigma_carrier(sigma_obj):
         plt.xscale('log')
     plt.savefig('sigma_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
                 '.jpg', format='jpg', dpi=100, bbox_inches='tight')
-
 
 
 def plot_cry_multisigma(*sigma):
@@ -2067,7 +2060,7 @@ def plot_cry_multisigma(*sigma):
                 '.jpg', format='jpg', dpi=100, bbox_inches='tight')
 
 
-#--------------------------------POWERFACTOR----------------------------------#
+# --------------------------------POWERFACTOR----------------------------------#
 
 def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj):
     """
@@ -2488,7 +2481,7 @@ def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj):
     # plt.show()
 
 
-#-------------------------------------ZT--------------------------------------#
+# -------------------------------------ZT--------------------------------------#
 
 
 def plot_cry_zt(seebeck_obj, sigma_obj):
@@ -2624,7 +2617,7 @@ def plot_cry_zt(seebeck_obj, sigma_obj):
 #                                                                            #
 ##############################################################################
 
-#--------------------------------YOUNG MODULUS--------------------------------#
+# --------------------------------YOUNG MODULUS--------------------------------#
 
 def plot_cry_young(theta, phi, S):
     """
@@ -2689,7 +2682,7 @@ def plot_cry_young(theta, phi, S):
     E_tmp = 1 / e  # is the Young Modulus of each cycle
     return E_tmp
 
-#----------------------------COMPRESSION PROPERTIES---------------------------#
+# ----------------------------COMPRESSION PROPERTIES---------------------------#
 
 
 def plot_cry_comp(theta, phi, S):
@@ -2718,6 +2711,7 @@ def plot_cry_comp(theta, phi, S):
         ]
     )
 
+    # Paper u vector
     a = np.array(
         [
             np.sin(theta) * np.cos(phi),
@@ -2740,12 +2734,13 @@ def plot_cry_comp(theta, phi, S):
                 if u >= 3 and v < 3:
                     rf = 2
 
+                # beta(theta, phi) = u_i * u_j * S_{ij}
                 rtmp = a[i] * a[j] * (S[v, u] / rf)
                 B = B + rtmp
     return B
 
 
-#--------------------------------SHEAR MODULUS--------------------------------#
+# --------------------------------SHEAR MODULUS--------------------------------#
 
 def plot_cry_shear(theta_1D, phi_1D, S, ndeg, shear_choice):
     """
@@ -2833,7 +2828,7 @@ def plot_cry_shear(theta_1D, phi_1D, S, ndeg, shear_choice):
         return shear_max
 
 
-#------------------------------------POISSON RATIO----------------------------#
+# ------------------------------------POISSON RATIO----------------------------#
 
 def plot_cry_poisson(theta_1D, phi_1D, S, ndeg, poisson_choice):
     """
@@ -2923,9 +2918,9 @@ def plot_cry_poisson(theta_1D, phi_1D, S, ndeg, poisson_choice):
         return poisson_max
 
 
-#----------------------------------ELASTIC------------------------------------#
+# ----------------------------------ELASTIC------------------------------------#
 
-def plot_cry_ela(choose, ndeg, *args):
+def plot_cry_ela(choose, ndeg,  *args, twoD=False):
     """
     Plot crystal elastic properties on the basis of the elastic tensor. A
     variable number of elastic tensors can be provided in order to get
@@ -3009,6 +3004,30 @@ def plot_cry_ela(choose, ndeg, *args):
         Z = R[k] * np.cos(theta_2D)
 
         norm = colors.Normalize(vmin=vmin, vmax=vmax, clip=False)
+
+        # if twoD == True:
+        #     fig, ax = plt.subplots()
+        #     ax.plot(X, Y)
+        #     ax.set_xlabel("X")
+        #     ax.set_ylabel("Y")
+        #     fig_list.append(fig)
+        #     ax_list.append(ax)
+        #     plt_list.append(plt)
+        #     fig, ax = plt.subplots()
+        #     ax.plot(X, Z)
+        #     ax.set_xlabel("X")
+        #     ax.set_ylabel("Z")
+        #     fig_list.append(fig)
+        #     ax_list.append(ax)
+        #     plt_list.append(plt)
+        #     fig, ax = plt.subplots()
+        #     ax.plot(Y, Z)
+        #     ax.set_xlabel("Y")
+        #     ax.set_ylabel("Z")
+        #     fig_list.append(fig)
+        #     ax_list.append(ax)
+        #     plt_list.append(plt)
+
         fig, ax = plt.subplots(subplot_kw=dict(projection="3d"))
 
         ax.plot_surface(
@@ -3024,7 +3043,7 @@ def plot_cry_ela(choose, ndeg, *args):
 
         m = cm.ScalarMappable(cmap=cm.jet, norm=norm)
         m.set_array(R[k])
-        fig.colorbar(m, shrink=0.7, location="left", ax = ax)
+        fig.colorbar(m, shrink=0.7, location="left", ax=ax)
 
         # Make the planes transparent
         ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
@@ -3051,7 +3070,7 @@ def plot_cry_ela(choose, ndeg, *args):
 
     return fig_list, ax_list, plt_list
 
-        # <--
+    # <--
 
 
 ##############################################################################
@@ -3060,15 +3079,15 @@ def plot_cry_ela(choose, ndeg, *args):
 #                                                                            #
 ##############################################################################
 
-#------------------------------------HARMONIC---------------------------------#
+# ------------------------------------HARMONIC---------------------------------#
 
 def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle='-',
                     linewidth=1.5, color='tab:blue', freq_range=None, int_range=None,
-                    label=None):
+                    label=None, dpi=100, offset=0):
     """Generates the IR spectra for the IRSPEC.DAT file produced by an IRSPEC calculation
 
     Args:
-        irspec (External_unit object): Object generated by the read_cry_irspec function necessary for the plot
+        irspec (External_unit object): Object (or a list of) generated by the read_cry_irspec function necessary for the plot
         x_unit (str, optional): Unit measure of the x axes. Avalilable: 'cm-1' and 'nm'. Defaults to 'cm-1'.
         y_mode (str, optional): Peak broadening modality in absorbance and reflectance. 
                                 Available: 'LG'(Lorentzian-Gaussian broadening), 'V' (Voight broadening), 'RS' (Rayleigh spherical particles), 'RE' (Rayleigh with elipsoid particles), 'REFL' (Reflectance)
@@ -3080,8 +3099,9 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
         freq_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given frequency window. Defaults to None.
         int_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given intensity window. Defaults to None.
         label (list[str], optional): List of labels for the legend of a multiplot. Defaults to None.
-        dpi (int, optional): Resolution of the saved file. Defaults to 300.
-        transparency (bool, optional): Enables the transparency of the saved file background. Defaults to False.
+        dpi (int, optional): Resolution of the saved file. Defaults to 100
+        offset(float, optional): Allows the user to define an offset between different spectra in a multi plot
+
 
     Returns:
         Matplotlib object
@@ -3130,10 +3150,10 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
                 'This spectra does not contain the y_mode requested: available y_mode'+accepted_y[0])
 
     if figsize is not None:
-        fig, ax = plt.subplots(figsize=figsize)
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
     else:
-        fig,ax = plt.subplots()
+        fig, ax = plt.subplots(dpi=dpi)
 
     if mode == modes[0]:
 
@@ -3160,7 +3180,6 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
         elif y_mode == accepted_y[4]:
             y = irspec.irspec[:, 8]
 
-
         xmin = min(x)
         xmax = max(x)
         ymin = min(y)-1
@@ -3174,6 +3193,7 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
         xmax = []
         ymin = []
         ymax = []
+        add_offset = 0
 
         for index, file in enumerate(irspec):
             # selection of the x axis unit
@@ -3185,19 +3205,19 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
 
             # selection of the intensities mode
             if y_mode == accepted_y[0]:
-                y = file.irspec[:, 2]
+                y = file.irspec[:, 2] + add_offset
 
             elif y_mode == accepted_y[1]:
-                y = file.irspec[:, 5]
+                y = file.irspec[:, 5] + add_offset
 
             elif y_mode == accepted_y[2]:
-                y = file.irspec[:, 6]
+                y = file.irspec[:, 6] + add_offset
 
             elif y_mode == accepted_y[3]:
-                y = file.irspec[:, 7]
+                y = file.irspec[:, 7] + add_offset
 
             elif y_mode == accepted_y[4]:
-                y = file.irspec[:, 8]
+                y = file.irspec[:, 8] + add_offset
 
             xmin.append(min(x))
             xmax.append(max(x))
@@ -3206,11 +3226,13 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
 
             if label is not None:
                 ax.plot(x, y, linestyle=linestyle[index], linewidth=linewidth[index],
-                               color=color[index], label=label[index])
+                        color=color[index], label=label[index])
                 plt.legend()
             else:
                 ax.plot(
                     x, y, linestyle=linestyle[index], linewidth=linewidth[index], color=color[index])
+
+            add_offset += offset
 
         xmin = min(xmin)
         xmax = max(xmax)
@@ -3243,11 +3265,11 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
 
 def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
                      linewidth=1.5, color='tab:blue', freq_range=None, int_range=None,
-                     label=None):
+                     label=None, dpi=100, offset=0):
     """Generates the RAMAN spectra for the RAMSPEC.DAT file produced by an RAMSPEC calculation
 
     Args:
-        irspec (External_unit object): Object generated by the read_cry_ramspec function necessary for the plot
+        ramspec (External_unit object): Object (or a list of) generated by the read_cry_ramspec function necessary for the plot
         y_mode (str, optional): Polarization of the spectra for the simulated compound
                                 Available: 'total', 'parallel', 'perpendicular' (for powders), 'xx', 'xy', 'xz', 'yy', 'yz', 'zz' (for single crystals)
                                 Defaults to 'LG'.
@@ -3259,7 +3281,7 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
         int_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given intensity window. Defaults to None.
         label (list[str], optional): List of labels for the legend of a multiplot. Defaults to None.
         dpi (int, optional): Resolution of the saved file. Defaults to 300.
-        transparency (bool, optional): Enables the transparency of the saved file background. Defaults to False.
+        offset (float): Allows the user to define an offset between different spectra in a multi plot
     Returns:
         Matplotlib object
     """
@@ -3296,7 +3318,7 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
         mode = modes[0]
 
     if figsize is not None:
-        fig, ax = plt.subplots(figsize=figsize)
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
     else:
         fig, ax = plt.subplots()
@@ -3339,44 +3361,45 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
         ymax = max(y)+10
 
         ax.plot(x, y, linestyle=linestyle,
-                       linewidth=linewidth, color=color)
+                linewidth=linewidth, color=color)
 
     if mode == modes[1]:
         xmin = []
         xmax = []
         ymin = []
         ymax = []
+        add_offset = 0
 
         for index, file in enumerate(ramspec):
             x = file.ramspec[:, 0]
 
             # selection of the intensities mode
             if y_mode == accepted_y[0]:
-                y = file.ramspec[:, 1]
+                y = file.ramspec[:, 1] + add_offset
 
             elif y_mode == accepted_y[1]:
-                y = file.ramspec[:, 2]
+                y = file.ramspec[:, 2] + add_offset
 
             elif y_mode == accepted_y[2]:
-                y = file.ramspec[:, 3]
+                y = file.ramspec[:, 3] + add_offset
 
             elif y_mode == accepted_y[3]:
-                y = file.ramspec[:, 4]
+                y = file.ramspec[:, 4] + add_offset
 
             elif y_mode == accepted_y[4]:
-                y = file.ramspec[:, 5]
+                y = file.ramspec[:, 5] + add_offset
 
             elif y_mode == accepted_y[5]:
-                y = file.ramspec[:, 6]
+                y = file.ramspec[:, 6] + add_offset
 
             elif y_mode == accepted_y[6]:
-                y = file.ramspec[:, 7]
+                y = file.ramspec[:, 7] + add_offset
 
             elif y_mode == accepted_y[7]:
-                y = file.ramspec[:, 8]
+                y = file.ramspec[:, 8] + add_offset
 
             elif y_mode == accepted_y[8]:
-                y = file.ramspec[:, 9]
+                y = file.ramspec[:, 9] + add_offset
 
             xmin.append(min(x))
             xmax.append(max(x))
@@ -3385,11 +3408,13 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
 
             if label is not None:
                 ax.plot(x, y, linestyle=linestyle[index], linewidth=linewidth[index],
-                               color=color[index], label=label[index])
+                        color=color[index], label=label[index])
                 plt.legend()
             else:
                 ax.plot(
                     x, y, linestyle=linestyle[index], linewidth=linewidth[index], color=color[index])
+
+            add_offset += offset
 
         xmin = min(xmin)
         xmax = max(xmax)
@@ -3417,7 +3442,7 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
     return fig, ax
 
 
-#-----------------------------------ANHARMONIC--------------------------------#
+# -----------------------------------ANHARMONIC--------------------------------#
 
 def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0.5,
                   fmin=None, fmax=None, ylim=None, savefig=False, dpi=300,
@@ -3625,14 +3650,13 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
     return plt
 
 
-def plot_cry_spec_multi(files, typeS, components=False, bwidth=5, stdev=3, 
-                        eta=0.5, fmin=None, fmax=None, ylim=None, 
-                        savefig=False, dpi=300, filetype='png', label=None, 
-                        xlabel='Wavenumber [cm$^{-1}$]', 
-                        ylabel='Intensity [arb. u.]', linewidth=2.0, padd=100, 
-                        fontsize=12, style=None, nopadding=False, 
+def plot_cry_spec_multi(files, typeS, components=False, bwidth=5, stdev=3,
+                        eta=0.5, fmin=None, fmax=None, ylim=None,
+                        savefig=False, dpi=300, filetype='png', label=None,
+                        xlabel='Wavenumber [cm$^{-1}$]',
+                        ylabel='Intensity [arb. u.]', linewidth=2.0, padd=100,
+                        fontsize=12, style=None, nopadding=False,
                         figsize=(16, 6), exp_spec=None, norm_fac=1, sep=';'):
-
     """
     This function is a wrapper for `plot_spec` function, enablng the simulation 
     of many vibrational spectra coming from a list of NumPy array.  
@@ -3681,58 +3705,57 @@ def plot_cry_spec_multi(files, typeS, components=False, bwidth=5, stdev=3,
     plt.xlabel(xlabel, fontsize=fontsize)
     plt.ylabel(ylabel, fontsize=fontsize)
 
-
-    if(exp_spec is not None):
+    if (exp_spec is not None):
         exp_data = genfromtxt(exp_spec, delimiter=sep)
-        #area_spec_data = np.trapz(spec_data[:, 1], spec_data[:, 0])
-        #area_exp_data = np.trapz(exp_data[:, 1], exp_data[:, 0])
-        #norm_fac = area_spec_data / area_exp_data
+        # area_spec_data = np.trapz(spec_data[:, 1], spec_data[:, 0])
+        # area_exp_data = np.trapz(exp_data[:, 1], exp_data[:, 0])
+        # norm_fac = area_spec_data / area_exp_data
         baseline = 0.2
-        exp_data[:, 1] = exp_data[:,1] * norm_fac - baseline
+        exp_data[:, 1] = exp_data[:, 1] * norm_fac - baseline
         plt.plot(exp_data[:, 0], exp_data[:, 1], 'r-', linewidth=linewidth)
 
     compstyle = []
-    if(style is not None):
+    if (style is not None):
         for i in range(len(style)):
             compstyle.append([style[i]] * 100)
 
     for i, transitions in enumerate(files):
-        if((label is not None) and (style is None)): 
-            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta, 
-                          fmin, fmax, ylim, show=False, savefig=False, 
-                          label=label[i], linewidth=linewidth, padd=padd, 
-                          nopadding=nopadding, fontsize=fontsize, xlabel=xlabel, 
+        if ((label is not None) and (style is None)):
+            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
+                          fmin, fmax, ylim, show=False, savefig=False,
+                          label=label[i], linewidth=linewidth, padd=padd,
+                          nopadding=nopadding, fontsize=fontsize, xlabel=xlabel,
                           ylabel=ylabel)
-        elif((style is not None) and (label is None)):
-            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta, 
-                          fmin, fmax, ylim, show=False, savefig=False, 
-                          linewidth=linewidth, padd=padd, nopadding=nopadding, 
-                          fontsize=fontsize, style=style[i], xlabel=xlabel, 
+        elif ((style is not None) and (label is None)):
+            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
+                          fmin, fmax, ylim, show=False, savefig=False,
+                          linewidth=linewidth, padd=padd, nopadding=nopadding,
+                          fontsize=fontsize, style=style[i], xlabel=xlabel,
                           ylabel=ylabel, compstyle=compstyle[i])
-        elif((style is not None) and (label is not None)):
-            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta, 
-                          fmin, fmax, ylim, show=False, savefig=False, 
-                          linewidth=linewidth, padd=padd, nopadding=nopadding, 
-                          fontsize=fontsize, style=style[i], label=label[i], 
+        elif ((style is not None) and (label is not None)):
+            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
+                          fmin, fmax, ylim, show=False, savefig=False,
+                          linewidth=linewidth, padd=padd, nopadding=nopadding,
+                          fontsize=fontsize, style=style[i], label=label[i],
                           xlabel=xlabel, ylabel=ylabel, compstyle=compstyle[i])
         else:
-            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta, fmin, 
-                      fmax, ylim, show=False, savefig=False,
-                      linewidth=linewidth, padd=padd, nopadding=nopadding,
-                      fontsize=fontsize, xlabel=xlabel, ylabel=ylabel)
+            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta, fmin,
+                          fmax, ylim, show=False, savefig=False,
+                          linewidth=linewidth, padd=padd, nopadding=nopadding,
+                          fontsize=fontsize, xlabel=xlabel, ylabel=ylabel)
 
-    if(label is not None): 
+    if (label is not None):
         plt.legend(loc='upper left', fontsize=fontsize)
 
-    if(savefig): 
-        plt.savefig("multi_" + typeS + time.strftime("%Y-%m-%d_%H%M%S.") + 
+    if (savefig):
+        plt.savefig("multi_" + typeS + time.strftime("%Y-%m-%d_%H%M%S.") +
                     filetype, format=filetype, dpi=dpi)
-         
+
     return plt
+
 
 def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
                     scanpot=True, figsize=[10, 10]):
-
     """
     This function provides a plotting tool for the ANSCAN keyword.  
 
@@ -3757,6 +3780,7 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     """
 
     import math
+
     import matplotlib.pyplot as plt
     import numpy as np
     from scipy import special
@@ -3770,11 +3794,11 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     alpha = co.alpha
     rangescan = co.rangescan
 
-    #debug
+    # debug
     print(co.alpha)
-    #debug
+    # debug
 
-    # npts 
+    # npts
     npts = 10000
 
     # Matplotlib aspect ratio
@@ -3785,23 +3809,23 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     Ha2wn = 219473.5152
     lambda_AU = abs(harm_freq / Ha2wn) * amu_me
 
-    #debug
+    # debug
     print(harm_freq)
     print(lambda_AU)
-    #debug
+    # debug
 
     # Define coordinates (basis set)
     x = np.linspace(-1000, 1000, npts)
     xi = x * alpha
-        
+
     # Plot levels
     Nlevel = 10
     for i in range(Nlevel):
-        plt.hlines(y=energy[i], xmin=rangescan[0], xmax=rangescan[1], 
+        plt.hlines(y=energy[i], xmin=rangescan[0], xmax=rangescan[1],
                    colors='k', linewidth=0.3)
 
-    # Set number of basis functions and wf 
-    N = len(wf) 
+    # Set number of basis functions and wf
+    N = len(wf)
     Nwf = N
 
     # Compute Gaussian functions
@@ -3810,33 +3834,34 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     # Compute harmonic wf
     wfHO = np.zeros([len(xi), N])
     for m in range(N):
-        norm = np.sqrt((alpha) / ((np.sqrt(math.pi)) * (2**m) * math.factorial(m)))
+        norm = np.sqrt((alpha) / ((np.sqrt(math.pi))
+                       * (2**m) * math.factorial(m)))
         Herm = special.hermite(m, monic=False)
         wfHO[:, m] = norm * Herm(xi) * G
 
     # Build anharmonic wf
     wfANH = np.zeros([len(wfHO), N])
-    
+
     # Define coordinates (wf)
     x = np.linspace(-100, 100, npts)
     xi = x * lambda_AU**0.25
 
-    #for s in range(N):
+    # for s in range(N):
     for s in range(Nlevel):
         for i in range(N):
             wfANH[:, s] = wfANH[:, s] + wf[i, s]*wfHO[:, i]
 
     # Wavefunctions -->
-    if(scale_wf is not None):
+    if (scale_wf is not None):
 
         # Plot wf
         for i in range(Nwf):
             yp = wfANH[:, i]*scale_wf + energy[i]
             plt.plot(xi, yp, "m-", linewidth=1)
-    # <-- Wavefunctions 
+    # <-- Wavefunctions
 
     # Probability density  -->
-    if(scale_prob is not None):
+    if (scale_prob is not None):
         for s in range(Nlevel):
             prob = wfANH[:, s]**2*scale_prob**2 + energy[s]
             lower_bound = energy[s] + 0*xi
@@ -3844,19 +3869,19 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
 
     # Plot anharmonic potential
     anhpot = 1/2 * force_const[2] * xi**2 \
-           + 1/6 * force_const[3] * xi**3 \
-           + 1/24 * force_const[4] * xi**4
+        + 1/6 * force_const[3] * xi**3 \
+        + 1/24 * force_const[4] * xi**4
     plt.plot(xi, anhpot, 'b', linewidth=2)
 
     # Plot harmonic potential
-    if(harmpot):
+    if (harmpot):
         HOpot = 1/2 * harm_freq * xi**2
         plt.plot(xi, HOpot, 'r--', linewidth=2)
 
     # Plot scan potential
-    if(scanpot):
+    if (scanpot):
         # Define scaled_x
-        scaled_x = np.linspace(rangescan[0], rangescan[1], len(scan_energy)) 
+        scaled_x = np.linspace(rangescan[0], rangescan[1], len(scan_energy))
         plt.plot(scaled_x, scan_energy, 'bo')
 
     plt.ylabel('$\Delta E$ [cm$^{-1}$]')
@@ -3865,4 +3890,3 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     plt.ylim([harm_freq, abs(harm_freq)*5])
 
     return plt
-
