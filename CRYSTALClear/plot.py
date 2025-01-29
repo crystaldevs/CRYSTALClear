@@ -3038,7 +3038,8 @@ def plot_cry_ela(choose, ndeg, *args):
 
         ax.set_box_aspect(aspect=(1, 1, 1))  # Fix aspect ratio
 
-        plt_list.append(plt)
+        # plt.show()
+        plt_list.append([fig,ax])
 
     return plt_list
 
@@ -3055,7 +3056,7 @@ def plot_cry_ela(choose, ndeg, *args):
 
 def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle='-',
                     linewidth=1.5, color='tab:blue', freq_range=None, int_range=None,
-                    label=None):
+                    label=None, dpi=100, offset=0):
     """Generates the IR spectra for the IRSPEC.DAT file produced by an IRSPEC calculation
 
     Args:
@@ -3121,10 +3122,10 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
                 'This spectra does not contain the y_mode requested: available y_mode'+accepted_y[0])
 
     if figsize is not None:
-        fig, ax = plt.subplots(figsize=figsize)
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
     else:
-        fig,ax = plt.subplots()
+        fig,ax = plt.subplots(dpi=dpi)
 
     if mode == modes[0]:
 
@@ -3165,6 +3166,7 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
         xmax = []
         ymin = []
         ymax = []
+        add_offset = 0
 
         for index, file in enumerate(irspec):
             # selection of the x axis unit
@@ -3176,19 +3178,19 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
 
             # selection of the intensities mode
             if y_mode == accepted_y[0]:
-                y = file.irspec[:, 2]
+                y = file.irspec[:, 2] + add_offset
 
             elif y_mode == accepted_y[1]:
-                y = file.irspec[:, 5]
+                y = file.irspec[:, 5] + add_offset
 
             elif y_mode == accepted_y[2]:
-                y = file.irspec[:, 6]
+                y = file.irspec[:, 6] + add_offset
 
             elif y_mode == accepted_y[3]:
-                y = file.irspec[:, 7]
+                y = file.irspec[:, 7] + add_offset
 
             elif y_mode == accepted_y[4]:
-                y = file.irspec[:, 8]
+                y = file.irspec[:, 8] + add_offset
 
             xmin.append(min(x))
             xmax.append(max(x))
@@ -3202,6 +3204,8 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
             else:
                 ax.plot(
                     x, y, linestyle=linestyle[index], linewidth=linewidth[index], color=color[index])
+
+            add_offset += offset
 
         xmin = min(xmin)
         xmax = max(xmax)
@@ -3234,7 +3238,7 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
 
 def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
                      linewidth=1.5, color='tab:blue', freq_range=None, int_range=None,
-                     label=None):
+                     label=None, dpi=100, offset=0):
     """Generates the RAMAN spectra for the RAMSPEC.DAT file produced by an RAMSPEC calculation
 
     Args:
@@ -3287,7 +3291,7 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
         mode = modes[0]
 
     if figsize is not None:
-        fig, ax = plt.subplots(figsize=figsize)
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
 
     else:
         fig, ax = plt.subplots()
@@ -3337,37 +3341,38 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
         xmax = []
         ymin = []
         ymax = []
+        add_offset = 0
 
         for index, file in enumerate(ramspec):
             x = file.ramspec[:, 0]
 
             # selection of the intensities mode
             if y_mode == accepted_y[0]:
-                y = file.ramspec[:, 1]
+                y = file.ramspec[:, 1] + add_offset
 
             elif y_mode == accepted_y[1]:
-                y = file.ramspec[:, 2]
+                y = file.ramspec[:, 2] + add_offset
 
             elif y_mode == accepted_y[2]:
-                y = file.ramspec[:, 3]
+                y = file.ramspec[:, 3] + add_offset
 
             elif y_mode == accepted_y[3]:
-                y = file.ramspec[:, 4]
+                y = file.ramspec[:, 4] + add_offset
 
             elif y_mode == accepted_y[4]:
-                y = file.ramspec[:, 5]
+                y = file.ramspec[:, 5] + add_offset
 
             elif y_mode == accepted_y[5]:
-                y = file.ramspec[:, 6]
+                y = file.ramspec[:, 6] + add_offset
 
             elif y_mode == accepted_y[6]:
-                y = file.ramspec[:, 7]
+                y = file.ramspec[:, 7] + add_offset
 
             elif y_mode == accepted_y[7]:
-                y = file.ramspec[:, 8]
+                y = file.ramspec[:, 8] + add_offset
 
             elif y_mode == accepted_y[8]:
-                y = file.ramspec[:, 9]
+                y = file.ramspec[:, 9] + add_offset
 
             xmin.append(min(x))
             xmax.append(max(x))
@@ -3381,6 +3386,8 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
             else:
                 ax.plot(
                     x, y, linestyle=linestyle[index], linewidth=linewidth[index], color=color[index])
+
+            add_offset += offset
 
         xmin = min(xmin)
         xmax = max(xmax)
