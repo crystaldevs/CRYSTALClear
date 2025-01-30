@@ -4,7 +4,7 @@ long_description = 'Python framework for the <a href="https://www.crystal.unito.
 
 setuptools.setup(
     name="CRYSTALClear",
-    version="0.2.5",
+    version="0.2.6",
     author_email="crystalunito@gmail.com",
     description="Python framework for the CRYSTAL code.",
     long_description=long_description,
