@@ -2645,149 +2645,6 @@ class Properties_output:
             raise FileNotFoundError(
                 'EXITING: a CRYSTAL properties file needs to be specified')
 
-    def read_vecfield(self, properties_output, which_prop):
-        """Reads the fort.25 file to return data arrays containing one or more vectiorial density properties.
-
-        Args:
-            properties_output (str): The properties output file.
-            which_prop (str): The density property selected by the user.
-            'm' (magnetization), 'j' (spin current), 'J' (spin current density)
-        Returns:
-            Properties_output (str): The fort.25 output file.
-        """
-
-        import numpy as np
-
-        self.read_file(properties_output)
-
-        data = self.data
-
-        # Reads the header information
-        nrow = int(data[0].split()[1])
-        ncol = int(data[0].split()[2])
-        stepx = float(data[0].split()[3])
-        stepy = float(data[0].split()[4])
-        cosxy = float(data[0].split()[5])
-
-        A = np.array([float(data[1].split()[0]), float(
-            data[1].split()[1]), float(data[1].split()[2])])
-        B = np.array([float(data[1].split()[3]), float(
-            data[1].split()[4]), float(data[1].split()[5])])
-
-        C = np.array([float(data[2].split()[0]), float(
-            data[2].split()[1]), float(data[2].split()[2])])
-        naf = int(data[2].split()[3])
-        ldim = int(data[2].split()[4])
-
-        self.header = (nrow, ncol, stepx, stepy, cosxy, A, B, C, naf, ldim)
-
-        # Elaborates the header data
-        skip = 6 + naf
-
-        for i in range(2, 20):
-            if (nrow % i) == 0:
-                nrow_split = int(nrow/i)
-
-        for i in range(2, 20):
-            if (ncol % i) == 0:
-                ncol_split = int(ncol/i)
-
-        bline = (nrow*ncol)/6
-        if (bline % 6) == 0:
-            bline = int(bline)
-        else:
-            bline = int(bline) + 1
-
-        # Reads the types of density properties requested by the user and initializes the data arrays
-        check = np.zeros(3, dtype=int)
-        if 'm' in which_prop:
-            check[0] = 1
-            self.dens_m = np.zeros((nrow, ncol, 3), dtype=float)
-        if 'j' in which_prop:
-            check[1] = 1
-            self.dens_j = np.zeros((nrow, ncol, 3), dtype=float)
-        if 'J' in which_prop:
-            check[2] = 1
-            self.dens_JX = np.zeros((nrow, ncol, 3), dtype=float)
-            self.dens_JY = np.zeros((nrow, ncol, 3), dtype=float)
-            self.dens_JZ = np.zeros((nrow, ncol, 3), dtype=float)
-        if (not check[0]) and (not check[1]) and (not check[2]):
-            print('Error: Invalid Entry. Only the m, j, and J characters are supported')
-            sys.exit(1)
-
-        # Gathers the data
-        iamhere = 0
-
-        if check[0]:
-            iamhere = 3
-            r = 0
-            s = 0
-            for i in range(0, bline):
-                for j in range(0, len(data[i+iamhere].split())):
-                    self.dens_m[r, s, 0] = data[i+iamhere].split()[j]
-                    self.dens_m[r, s, 1] = data[i +
-                                                iamhere+bline+skip].split()[j]
-                    self.dens_m[r, s, 2] = data[i+iamhere +
-                                                (2*bline)+(2*skip)].split()[j]
-                    if s == (ncol - 1):
-                        r += 1
-                        s = 0
-                    else:
-                        s += 1
-            iamhere = iamhere + 3*bline + 2*skip
-        if check[1]:
-            if iamhere == 0:
-                iamhere = 3
-            else:
-                iamhere = iamhere + skip
-            r = 0
-            s = 0
-            for i in range(0, bline):
-                for j in range(0, len(data[i+iamhere].split())):
-                    self.dens_j[r, s, 0] = data[i+iamhere].split()[j]
-                    self.dens_j[r, s, 1] = data[i +
-                                                iamhere+bline+skip].split()[j]
-                    self.dens_j[r, s, 2] = data[i +
-                                                iamhere+2*bline+2*skip].split()[j]
-                    if s == (ncol - 1):
-                        r += 1
-                        s = 0
-                    else:
-                        s += 1
-            iamhere = iamhere + 3*bline + 2*skip
-        if check[2]:
-            if iamhere == 0:
-                iamhere = 3
-            else:
-                iamhere = iamhere + skip
-            r = 0
-            s = 0
-            for i in range(0, bline):
-                for j in range(0, len(data[i+iamhere].split())):
-                    self.dens_JX[r, s, 0] = data[i+iamhere].split()[j]
-                    self.dens_JX[r, s, 1] = data[i +
-                                                 iamhere+bline+skip].split()[j]
-                    self.dens_JX[r, s, 2] = data[i+iamhere +
-                                                 (2*bline)+(2*skip)].split()[j]
-                    self.dens_JY[r, s, 0] = data[i+iamhere +
-                                                 (3*bline)+(3*skip)].split()[j]
-                    self.dens_JY[r, s, 1] = data[i+iamhere +
-                                                 (4*bline)+(4*skip)].split()[j]
-                    self.dens_JY[r, s, 2] = data[i+iamhere +
-                                                 (5*bline)+(5*skip)].split()[j]
-                    self.dens_JZ[r, s, 0] = data[i+iamhere +
-                                                 (6*bline)+(6*skip)].split()[j]
-                    self.dens_JZ[r, s, 1] = data[i+iamhere +
-                                                 (7*bline)+(7*skip)].split()[j]
-                    self.dens_JZ[r, s, 2] = data[i+iamhere +
-                                                 (8*bline)+(8*skip)].split()[j]
-                    if s == (ncol - 1):
-                        r += 1
-                        s = 0
-                    else:
-                        s += 1
-        return self
-
     def read_electron_band(self, band_file, output=None):
         """
         Generate bands object from CRYSTAL BAND.DAT or fort.25 file.
@@ -3390,6 +3247,206 @@ class Properties_output:
         self.datax = df.dist
         self.datay = df.rho
 
+        return self
+
+    def read_vecfield(self, properties_output, which_prop):
+        """Reads the fort.25 file to return data arrays containing one or more vectiorial density properties.
+
+        Args:
+            properties_output (str): The properties output file.
+            which_prop (str): The density property selected by the user.
+            'm' (magnetization), 'j' (spin current), 'J' (spin current density)
+        Returns:
+            Properties_output (str): The fort.25 output file.
+        """
+
+        import numpy as np
+
+        self.read_file(properties_output)
+
+        data = self.data
+
+        # Reads the header information
+        self.nrow = int(data[0].split()[1])
+        self.ncol = int(data[0].split()[2])
+        self.stepx = float(data[0].split()[3])
+        self.stepy = float(data[0].split()[4])
+        self.cosxy = float(data[0].split()[5])
+
+        self.a = np.array([float(data[1].split()[0]), float(data[1].split()[1]), 
+                           float(data[1].split()[2])])
+        self.b = np.array([float(data[1].split()[3]), float(data[1].split()[4]),
+                           float(data[1].split()[5])])
+        self.c = np.array([float(data[2].split()[0]), float(data[2].split()[1]), 
+                           float(data[2].split()[2])])
+        self.naf = int(data[2].split()[3])
+        self.ldim = int(data[2].split()[4])
+
+        # Elaborates the header data
+
+        gridsize = (self.nrow*self.ncol)
+        lines = int(gridsize/6)
+        if (gridsize % 6) != 0:
+            lines += 1
+
+        # Reads the types of density properties requested by the user and initializes the data arrays
+        check = np.zeros(3, dtype=int)
+        if 'm' in which_prop:
+            check[0] = 1
+            dens_m_array = np.zeros(gridsize*3, dtype=float)
+            self.dens_m = np.zeros((self.nrow, self.ncol, 3), dtype=float)
+        if 'j' in which_prop:
+            check[1] = 1
+            dens_j_array = np.zeros(gridsize*3, dtype=float)
+            self.dens_j = np.zeros((self.nrow, self.ncol, 3), dtype=float)
+        if 'J' in which_prop:
+            check[2] = 1
+            dens_JX_array = np.zeros(gridsize*3, dtype=float)
+            self.dens_JX = np.zeros((self.nrow, self.ncol, 3), dtype=float)
+            dens_JY_array = np.zeros(gridsize*3, dtype=float)
+            self.dens_JY = np.zeros((self.nrow, self.ncol, 3), dtype=float)
+            dens_JZ_array = np.zeros(gridsize*3, dtype=float)
+            self.dens_JZ = np.zeros((self.nrow, self.ncol, 3), dtype=float)
+        if (not check[0]) and (not check[1]) and (not check[2]):
+            print('Error: Invalid Entry. Only the m, j, and J characters are supported')
+            sys.exit(1)
+
+        # Gathers the data
+        pointer = 0
+        skip = 6 + self.naf
+
+        if check[0]:
+            pointer = 3
+            k = 0
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_m_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_m_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_m_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+
+            k = 0
+            for dir in range(0, 3):
+                for j in range(0, self.ncol):
+                    for i in range(self.nrow - 1, -1, -1):
+                        self.dens_m[i, j, dir] = dens_m_array[k]
+                        k += 1
+            del dens_m_array
+                
+        if check[1]:
+            if pointer == 0:
+                pointer = 3
+            k = 0
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_j_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_j_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_j_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+
+            k = 0
+            for dir in range(0, 3):
+                for j in range(0, self.ncol):
+                    for i in range(self.nrow - 1, -1, -1):
+                        self.dens_j[i, j, dir] = dens_j_array[k]
+                        k += 1
+            del dens_j_array
+ 
+        if check[2]:
+            if pointer == 0:
+                pointer = 3
+            k = 0
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JX_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JX_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JX_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+
+            k = 0
+            for dir in range(0, 3):
+                for j in range(0, self.ncol):
+                    for i in range(self.nrow - 1, -1, -1):
+                        self.dens_JX[i, j, dir] = dens_JX_array[k]
+                        k += 1
+            del dens_JX_array
+ 
+            k = 0
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JY_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JY_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JY_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+
+            k = 0
+            for dir in range(0, 3):
+                for j in range(0, self.ncol):
+                    for i in range(self.nrow - 1, -1, -1):
+                        self.dens_JY[i, j, dir] = dens_JY_array[k]
+                        k += 1
+            del dens_JY_array
+ 
+            k = 0
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JZ_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JZ_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JZ_array[k] = data[i+pointer].split()[j]
+                    k += 1
+
+            k = 0
+            for dir in range(0, 3):
+                for j in range(0, self.ncol):
+                    for i in range(self.nrow - 1, -1, -1):
+                        self.dens_JZ[i, j, dir] = dens_JZ_array[k]
+                        k += 1
+            del dens_JZ_array
+ 
         return self
 
     def read_cry_ECHG(self, properties_output):
