@@ -8,3 +8,4 @@ ase
 ghp-import
 -e .
 ipykernel
+pypandoc
