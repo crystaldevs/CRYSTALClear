@@ -15,6 +15,7 @@ CRYSTALClear documentation
    introduction
    installation
    usage
+   examples
    Docs<CRYSTALClear>
    cite
    
