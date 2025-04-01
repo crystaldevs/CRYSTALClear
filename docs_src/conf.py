@@ -129,3 +129,8 @@ latex_elements = {
     'utf8extra': '',
     'latex_engine': 'pdflatex',
 }
+
+# -- To put jupyter notebooks into the documentation site ---------------
+extensions = [
+    "nbsphinx",
+]
