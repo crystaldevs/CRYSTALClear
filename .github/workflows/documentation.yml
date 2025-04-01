@@ -47,6 +47,11 @@ jobs:
       - name: Run ghp-import
         run: |
           ghp-import -n -p -f docs_src/_build/html
+      - name: Build HTML
+      uses: ammaraskar/sphinx-action@master
+      with:
+        pre-build-command: >-
+          apt-get update && apt-get install -y pandoc
 
       # Runs a set of commands using the runners shell
       # - name: Run a multi-line script
