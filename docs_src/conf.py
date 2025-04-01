@@ -134,3 +134,4 @@ latex_elements = {
 extensions = [
     "nbsphinx",
 ]
+nbsphinx_allow_errors = True
