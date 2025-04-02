@@ -1,0 +1,600 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transport properties plot &mdash; CRYSTALClear 0.2.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="canonical" href="https://crystaldevs.github.io/CRYSTALClear/notebooks/tutorial_electron_transport_properties.html" />
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=fc7d8818"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            CRYSTALClear
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-via-pypi">Installing via Pypi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-from-github-source-code">Installing from GitHub Source Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#verification">Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Example Notebooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="elastic_properties_tutorial.html">Elastic Properties: A Quick Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="elastic_properties_tutorial.html#Young-Modulus">Young Modulus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elastic_properties_tutorial.html#Linear-Compressibility">Linear Compressibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elastic_properties_tutorial.html#Shear-Modulus">Shear Modulus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elastic_properties_tutorial.html#Poisson-Ratio">Poisson Ratio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elastic_properties_tutorial.html#Comparison-Between-Plots">Comparison Between Plots</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../CRYSTALClear.html">Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-adsorb">CRYSTALClear.adsorb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-calculate">CRYSTALClear.calculate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-convert">CRYSTALClear.convert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-crystal-io">CRYSTALClear.crystal_io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-execute">CRYSTALClear.execute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-flatmaps">CRYSTALClear.flatmaps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-geometry">CRYSTALClear.geometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-plot">CRYSTALClear.plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-thermodynamics">CRYSTALClear.thermodynamics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-unit-test">CRYSTALClear.unit_test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CRYSTALClear.html#crystalclear-units">CRYSTALClear.units</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cite.html">How to Cite CRYSTALClear</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cite.html#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CRYSTALClear</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Transport properties plot</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/crystaldevs/CRYSTALClear/blob/main/docs_src/notebooks/tutorial_electron_transport_properties.ipynb" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Transport-properties-plot">
+<h1>Transport properties plot<a class="headerlink" href="#Transport-properties-plot" title="Link to this heading"></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">CRYSTALClear</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Requirement already satisfied: CRYSTALClear in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (0.2.6)
+Requirement already satisfied: pymatgen in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from CRYSTALClear) (2024.8.9)
+Requirement already satisfied: mendeleev in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from CRYSTALClear) (1.0.0)
+Requirement already satisfied: ase in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from CRYSTALClear) (3.24.0)
+Requirement already satisfied: numpy&gt;=1.19.5 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ase-&gt;CRYSTALClear) (1.26.4)
+Requirement already satisfied: scipy&gt;=1.6.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ase-&gt;CRYSTALClear) (1.13.1)
+Requirement already satisfied: matplotlib&gt;=3.3.4 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ase-&gt;CRYSTALClear) (3.9.4)
+Requirement already satisfied: Pygments&lt;3.0.0,&gt;=2.11.2 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (2.19.1)
+Requirement already satisfied: SQLAlchemy&gt;=1.4.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (2.0.40)
+Requirement already satisfied: colorama&lt;0.5.0,&gt;=0.4.6 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (0.4.6)
+Requirement already satisfied: deprecated&lt;2.0.0,&gt;=1.2.14 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (1.2.18)
+Requirement already satisfied: pandas&gt;=1.0.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (2.2.3)
+Requirement already satisfied: pydantic&lt;3.0.0,&gt;=2.9.2 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (2.11.1)
+Requirement already satisfied: pyfiglet&lt;0.9,&gt;=0.8.post1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (0.8.post1)
+Requirement already satisfied: joblib&gt;=1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (1.4.2)
+Requirement already satisfied: monty&gt;=2024.7.29 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (2025.3.3)
+Requirement already satisfied: networkx&gt;=2.2 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (3.2.1)
+Requirement already satisfied: palettable&gt;=3.3.3 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (3.3.3)
+Requirement already satisfied: plotly&gt;=4.5.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (6.0.1)
+Requirement already satisfied: pybtex&gt;=0.24.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (0.24.0)
+Requirement already satisfied: requests&gt;=2.32 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (2.32.3)
+Requirement already satisfied: ruamel.yaml&gt;=0.17.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (0.18.10)
+Requirement already satisfied: spglib&gt;=2.5.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (2.6.0)
+Requirement already satisfied: sympy&gt;=1.2 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (1.13.3)
+Requirement already satisfied: tabulate&gt;=0.9 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (0.9.0)
+Requirement already satisfied: tqdm&gt;=4.60 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (4.67.1)
+Requirement already satisfied: uncertainties&gt;=3.1.4 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (3.2.2)
+Requirement already satisfied: wrapt&lt;2,&gt;=1.10 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from deprecated&lt;2.0.0,&gt;=1.2.14-&gt;mendeleev-&gt;CRYSTALClear) (1.17.2)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (1.3.0)
+Requirement already satisfied: cycler&gt;=0.10 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (4.56.0)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (1.4.7)
+Requirement already satisfied: packaging&gt;=20.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (24.2)
+Requirement already satisfied: pillow&gt;=8 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (11.1.0)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (3.2.3)
+Requirement already satisfied: python-dateutil&gt;=2.7 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (2.9.0.post0)
+Requirement already satisfied: importlib-resources&gt;=3.2.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (6.5.2)
+Requirement already satisfied: pytz&gt;=2020.1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pandas&gt;=1.0.0-&gt;mendeleev-&gt;CRYSTALClear) (2025.2)
+Requirement already satisfied: tzdata&gt;=2022.7 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pandas&gt;=1.0.0-&gt;mendeleev-&gt;CRYSTALClear) (2025.2)
+Requirement already satisfied: narwhals&gt;=1.15.1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from plotly&gt;=4.5.0-&gt;pymatgen-&gt;CRYSTALClear) (1.33.0)
+Requirement already satisfied: PyYAML&gt;=3.01 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pybtex&gt;=0.24.0-&gt;pymatgen-&gt;CRYSTALClear) (6.0.2)
+Requirement already satisfied: latexcodec&gt;=1.0.4 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pybtex&gt;=0.24.0-&gt;pymatgen-&gt;CRYSTALClear) (3.0.0)
+Requirement already satisfied: six in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pybtex&gt;=0.24.0-&gt;pymatgen-&gt;CRYSTALClear) (1.17.0)
+Requirement already satisfied: annotated-types&gt;=0.6.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pydantic&lt;3.0.0,&gt;=2.9.2-&gt;mendeleev-&gt;CRYSTALClear) (0.7.0)
+Requirement already satisfied: pydantic-core==2.33.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pydantic&lt;3.0.0,&gt;=2.9.2-&gt;mendeleev-&gt;CRYSTALClear) (2.33.0)
+Requirement already satisfied: typing-extensions&gt;=4.12.2 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pydantic&lt;3.0.0,&gt;=2.9.2-&gt;mendeleev-&gt;CRYSTALClear) (4.13.0)
+Requirement already satisfied: typing-inspection&gt;=0.4.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pydantic&lt;3.0.0,&gt;=2.9.2-&gt;mendeleev-&gt;CRYSTALClear) (0.4.0)
+Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from requests&gt;=2.32-&gt;pymatgen-&gt;CRYSTALClear) (3.4.1)
+Requirement already satisfied: idna&lt;4,&gt;=2.5 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from requests&gt;=2.32-&gt;pymatgen-&gt;CRYSTALClear) (3.10)
+Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from requests&gt;=2.32-&gt;pymatgen-&gt;CRYSTALClear) (2.3.0)
+Requirement already satisfied: certifi&gt;=2017.4.17 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from requests&gt;=2.32-&gt;pymatgen-&gt;CRYSTALClear) (2025.1.31)
+Requirement already satisfied: ruamel.yaml.clib&gt;=0.2.7 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ruamel.yaml&gt;=0.17.0-&gt;pymatgen-&gt;CRYSTALClear) (0.2.12)
+Requirement already satisfied: greenlet&gt;=1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from SQLAlchemy&gt;=1.4.0-&gt;mendeleev-&gt;CRYSTALClear) (3.1.1)
+Requirement already satisfied: mpmath&lt;1.4,&gt;=1.1.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from sympy&gt;=1.2-&gt;pymatgen-&gt;CRYSTALClear) (1.3.0)
+Requirement already satisfied: zipp&gt;=3.1.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from importlib-resources&gt;=3.2.0-&gt;matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (3.21.0)
+Note: you may need to restart the kernel to use updated packages.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">ipykernel</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Requirement already satisfied: ipykernel in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (6.29.5)
+Requirement already satisfied: comm&gt;=0.1.1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (0.2.2)
+Requirement already satisfied: debugpy&gt;=1.6.5 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (1.8.13)
+Requirement already satisfied: ipython&gt;=7.23.1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (8.18.1)
+Requirement already satisfied: jupyter-client&gt;=6.1.12 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (8.6.3)
+Requirement already satisfied: jupyter-core!=5.0.*,&gt;=4.12 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (5.7.2)
+Requirement already satisfied: matplotlib-inline&gt;=0.1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (0.1.7)
+Requirement already satisfied: nest-asyncio in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (1.6.0)
+Requirement already satisfied: packaging in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (24.2)
+Requirement already satisfied: psutil in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (7.0.0)
+Requirement already satisfied: pyzmq&gt;=24 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (26.3.0)
+Requirement already satisfied: tornado&gt;=6.1 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (6.4.2)
+Requirement already satisfied: traitlets&gt;=5.4.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipykernel) (5.14.3)
+Requirement already satisfied: decorator in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (5.2.1)
+Requirement already satisfied: jedi&gt;=0.16 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (0.19.2)
+Requirement already satisfied: prompt-toolkit&lt;3.1.0,&gt;=3.0.41 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (3.0.50)
+Requirement already satisfied: pygments&gt;=2.4.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (2.19.1)
+Requirement already satisfied: stack-data in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (0.6.3)
+Requirement already satisfied: typing-extensions in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (4.13.0)
+Requirement already satisfied: exceptiongroup in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (1.2.2)
+Requirement already satisfied: pexpect&gt;4.3 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (4.9.0)
+Requirement already satisfied: importlib-metadata&gt;=4.8.3 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from jupyter-client&gt;=6.1.12-&gt;ipykernel) (8.6.1)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from jupyter-client&gt;=6.1.12-&gt;ipykernel) (2.9.0.post0)
+Requirement already satisfied: platformdirs&gt;=2.5 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from jupyter-core!=5.0.*,&gt;=4.12-&gt;ipykernel) (4.3.7)
+Requirement already satisfied: zipp&gt;=3.20 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from importlib-metadata&gt;=4.8.3-&gt;jupyter-client&gt;=6.1.12-&gt;ipykernel) (3.21.0)
+Requirement already satisfied: parso&lt;0.9.0,&gt;=0.8.4 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from jedi&gt;=0.16-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (0.8.4)
+Requirement already satisfied: ptyprocess&gt;=0.5 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from pexpect&gt;4.3-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (0.7.0)
+Requirement already satisfied: wcwidth in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from prompt-toolkit&lt;3.1.0,&gt;=3.0.41-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (0.2.13)
+Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from python-dateutil&gt;=2.8.2-&gt;jupyter-client&gt;=6.1.12-&gt;ipykernel) (1.17.0)
+Requirement already satisfied: executing&gt;=1.2.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from stack-data-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (2.2.0)
+Requirement already satisfied: asttokens&gt;=2.1.0 in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from stack-data-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (3.0.0)
+Requirement already satisfied: pure-eval in /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages (from stack-data-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (0.2.3)
+Note: you may need to restart the kernel to use updated packages.
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.crystal_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Properties_output</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot</span> <span class="k">as</span> <span class="n">CCplt</span>
+</pre></div>
+</div>
+</div>
+<p>Read a seebeck files</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seebeck</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_seebeck</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_SEEBECK.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seebeck1</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_seebeck</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_antisito_SEEBECK.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Plot seebeck versus the chemical potential</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_seebeck_potential</span><span class="p">(</span><span class="n">seebeck</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">StdinNotImplementedError</span>                  Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[6], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_seebeck_potential</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">seebeck</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/work/CRYSTALClear/CRYSTALClear/CRYSTALClear/plot.py:1301</span>, in <span class="ansi-cyan-fg">plot_cry_seebeck_potential</span><span class="ansi-blue-fg">(seebeck_obj)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1298</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">matplotlib</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">pyplot</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">plt</span>
+<span class="ansi-green-intense-fg ansi-bold">   1299</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">numpy</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">np</span>
+<span class="ansi-green-fg">-&gt; 1301</span> case <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">input</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1302</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">Please, choose the direction you want to plot. </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">You can choose among S_xx, S_xy, S_xz, S_yx, S_yy, S_yz, S_yz, S_zx, S_zy, S_zz</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1304</span> case <span style="color: rgb(98,98,98)">=</span> case<span style="color: rgb(98,98,98)">.</span>lower()<span style="color: rgb(98,98,98)">.</span>replace(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">_</span><span style="color: rgb(175,0,0)">&#39;</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">&#39;</span>)
+<span class="ansi-green-intense-fg ansi-bold">   1306</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> case<span style="color: rgb(98,98,98)">.</span>isalpha() <span style="color: rgb(98,98,98)">==</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>:
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/ipykernel/kernelbase.py:1281</span>, in <span class="ansi-cyan-fg">Kernel.raw_input</span><span class="ansi-blue-fg">(self, prompt)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1279</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_allow_stdin:
+<span class="ansi-green-intense-fg ansi-bold">   1280</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">raw_input was called, but this frontend does not support input requests.</span><span style="color: rgb(175,0,0)">&#34;</span>
+<span class="ansi-green-fg">-&gt; 1281</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> StdinNotImplementedError(msg)
+<span class="ansi-green-intense-fg ansi-bold">   1282</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_input_request(
+<span class="ansi-green-intense-fg ansi-bold">   1283</span>     <span style="color: rgb(0,135,0)">str</span>(prompt),
+<span class="ansi-green-intense-fg ansi-bold">   1284</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_parent_ident[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>],
+<span class="ansi-green-intense-fg ansi-bold">   1285</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>get_parent(<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>),
+<span class="ansi-green-intense-fg ansi-bold">   1286</span>     password<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1287</span> )
+
+<span class="ansi-red-fg">StdinNotImplementedError</span>: raw_input was called, but this frontend does not support input requests.
+</pre></div></div>
+</div>
+<p>Plot seebeck versus the charge carrier concentration</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_seebeck_carrier</span><span class="p">(</span><span class="n">seebeck</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">StdinNotImplementedError</span>                  Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[7], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_seebeck_carrier</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">seebeck</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/work/CRYSTALClear/CRYSTALClear/CRYSTALClear/plot.py:1438</span>, in <span class="ansi-cyan-fg">plot_cry_seebeck_carrier</span><span class="ansi-blue-fg">(seebeck_obj)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1435</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">matplotlib</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">pyplot</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">plt</span>
+<span class="ansi-green-intense-fg ansi-bold">   1436</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">numpy</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">np</span>
+<span class="ansi-green-fg">-&gt; 1438</span> case <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">input</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1439</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">Please, choose the direction you want to plot. </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">You can choose among S_xx, S_xy, S_xz, S_yx, S_yy, S_yz, S_yz, S_zx, S_zy, S_zz</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1441</span> case <span style="color: rgb(98,98,98)">=</span> case<span style="color: rgb(98,98,98)">.</span>lower()<span style="color: rgb(98,98,98)">.</span>replace(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">_</span><span style="color: rgb(175,0,0)">&#39;</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">&#39;</span>)
+<span class="ansi-green-intense-fg ansi-bold">   1443</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> case<span style="color: rgb(98,98,98)">.</span>isalpha() <span style="color: rgb(98,98,98)">==</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>:
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/ipykernel/kernelbase.py:1281</span>, in <span class="ansi-cyan-fg">Kernel.raw_input</span><span class="ansi-blue-fg">(self, prompt)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1279</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_allow_stdin:
+<span class="ansi-green-intense-fg ansi-bold">   1280</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">raw_input was called, but this frontend does not support input requests.</span><span style="color: rgb(175,0,0)">&#34;</span>
+<span class="ansi-green-fg">-&gt; 1281</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> StdinNotImplementedError(msg)
+<span class="ansi-green-intense-fg ansi-bold">   1282</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_input_request(
+<span class="ansi-green-intense-fg ansi-bold">   1283</span>     <span style="color: rgb(0,135,0)">str</span>(prompt),
+<span class="ansi-green-intense-fg ansi-bold">   1284</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_parent_ident[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>],
+<span class="ansi-green-intense-fg ansi-bold">   1285</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>get_parent(<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>),
+<span class="ansi-green-intense-fg ansi-bold">   1286</span>     password<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1287</span> )
+
+<span class="ansi-red-fg">StdinNotImplementedError</span>: raw_input was called, but this frontend does not support input requests.
+</pre></div></div>
+</div>
+<p>Read a sigma files</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sigma</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_sigma</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_SIGMA.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sigma1</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_sigma</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_antisito_SIGMA.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Plot sigma versus the chemical potential</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_sigma_potential</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">StdinNotImplementedError</span>                  Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[10], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_sigma_potential</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">sigma</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/work/CRYSTALClear/CRYSTALClear/CRYSTALClear/plot.py:1706</span>, in <span class="ansi-cyan-fg">plot_cry_sigma_potential</span><span class="ansi-blue-fg">(sigma_obj)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1703</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">matplotlib</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">pyplot</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">plt</span>
+<span class="ansi-green-intense-fg ansi-bold">   1704</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">numpy</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">np</span>
+<span class="ansi-green-fg">-&gt; 1706</span> case <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">input</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1707</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">Please, choose the direction you want to plot. </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">You can choose among S_xx, S_xy, S_xz, S_yy, S_yz, S_zz</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1709</span> case <span style="color: rgb(98,98,98)">=</span> case<span style="color: rgb(98,98,98)">.</span>lower()<span style="color: rgb(98,98,98)">.</span>replace(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">_</span><span style="color: rgb(175,0,0)">&#39;</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">&#39;</span>)
+<span class="ansi-green-intense-fg ansi-bold">   1711</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> case<span style="color: rgb(98,98,98)">.</span>isalpha() <span style="color: rgb(98,98,98)">==</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>:
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/ipykernel/kernelbase.py:1281</span>, in <span class="ansi-cyan-fg">Kernel.raw_input</span><span class="ansi-blue-fg">(self, prompt)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1279</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_allow_stdin:
+<span class="ansi-green-intense-fg ansi-bold">   1280</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">raw_input was called, but this frontend does not support input requests.</span><span style="color: rgb(175,0,0)">&#34;</span>
+<span class="ansi-green-fg">-&gt; 1281</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> StdinNotImplementedError(msg)
+<span class="ansi-green-intense-fg ansi-bold">   1282</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_input_request(
+<span class="ansi-green-intense-fg ansi-bold">   1283</span>     <span style="color: rgb(0,135,0)">str</span>(prompt),
+<span class="ansi-green-intense-fg ansi-bold">   1284</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_parent_ident[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>],
+<span class="ansi-green-intense-fg ansi-bold">   1285</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>get_parent(<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>),
+<span class="ansi-green-intense-fg ansi-bold">   1286</span>     password<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1287</span> )
+
+<span class="ansi-red-fg">StdinNotImplementedError</span>: raw_input was called, but this frontend does not support input requests.
+</pre></div></div>
+</div>
+<p>Plot multiseebeck</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_multiseebeck</span><span class="p">(</span><span class="n">seebeck</span><span class="p">,</span> <span class="n">seebeck1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">StdinNotImplementedError</span>                  Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[11], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_multiseebeck</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">seebeck</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">seebeck1</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/work/CRYSTALClear/CRYSTALClear/CRYSTALClear/plot.py:1574</span>, in <span class="ansi-cyan-fg">plot_cry_multiseebeck</span><span class="ansi-blue-fg">(*seebeck)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1571</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">matplotlib</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">pyplot</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">plt</span>
+<span class="ansi-green-intense-fg ansi-bold">   1572</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">numpy</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">np</span>
+<span class="ansi-green-fg">-&gt; 1574</span> k <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">int</span>(<span class="ansi-yellow-bg" style="color: rgb(0,135,0)">input</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1575</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">Insert the index of temperature you want to plot </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">(i.e. if your temperature are [T1, T2, T3] indexes are [0, 1, 2])</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">)</span>)
+<span class="ansi-green-intense-fg ansi-bold">   1576</span> minpot <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">float</span>(
+<span class="ansi-green-intense-fg ansi-bold">   1577</span>     <span style="color: rgb(0,135,0)">input</span>(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Insert the lower value of chemical potential you want to plot in eV</span><span style="color: rgb(175,0,0)">&#39;</span>))
+<span class="ansi-green-intense-fg ansi-bold">   1578</span> maxpot <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">float</span>(
+<span class="ansi-green-intense-fg ansi-bold">   1579</span>     <span style="color: rgb(0,135,0)">input</span>(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Inser the higher value of chemical potential you want to plot in eV</span><span style="color: rgb(175,0,0)">&#39;</span>))
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/ipykernel/kernelbase.py:1281</span>, in <span class="ansi-cyan-fg">Kernel.raw_input</span><span class="ansi-blue-fg">(self, prompt)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1279</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_allow_stdin:
+<span class="ansi-green-intense-fg ansi-bold">   1280</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">raw_input was called, but this frontend does not support input requests.</span><span style="color: rgb(175,0,0)">&#34;</span>
+<span class="ansi-green-fg">-&gt; 1281</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> StdinNotImplementedError(msg)
+<span class="ansi-green-intense-fg ansi-bold">   1282</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_input_request(
+<span class="ansi-green-intense-fg ansi-bold">   1283</span>     <span style="color: rgb(0,135,0)">str</span>(prompt),
+<span class="ansi-green-intense-fg ansi-bold">   1284</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_parent_ident[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>],
+<span class="ansi-green-intense-fg ansi-bold">   1285</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>get_parent(<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>),
+<span class="ansi-green-intense-fg ansi-bold">   1286</span>     password<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1287</span> )
+
+<span class="ansi-red-fg">StdinNotImplementedError</span>: raw_input was called, but this frontend does not support input requests.
+</pre></div></div>
+</div>
+<p>Plot multisigma</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_multisigma</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">sigma1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">StdinNotImplementedError</span>                  Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[12], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_multisigma</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">sigma</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">sigma1</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/work/CRYSTALClear/CRYSTALClear/CRYSTALClear/plot.py:1962</span>, in <span class="ansi-cyan-fg">plot_cry_multisigma</span><span class="ansi-blue-fg">(*sigma)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1959</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">matplotlib</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">pyplot</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">plt</span>
+<span class="ansi-green-intense-fg ansi-bold">   1960</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">numpy</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">np</span>
+<span class="ansi-green-fg">-&gt; 1962</span> k <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">int</span>(<span class="ansi-yellow-bg" style="color: rgb(0,135,0)">input</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   1963</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">Insert the index of temperature you want to plot </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">(i.e. if your temperature are [T1, T2, T3] indexes are [0, 1, 2])</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">)</span>)
+<span class="ansi-green-intense-fg ansi-bold">   1964</span> minpot <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">float</span>(
+<span class="ansi-green-intense-fg ansi-bold">   1965</span>     <span style="color: rgb(0,135,0)">input</span>(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Insert the lower value of chemical potential you want to plot in eV</span><span style="color: rgb(175,0,0)">&#39;</span>))
+<span class="ansi-green-intense-fg ansi-bold">   1966</span> maxpot <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">float</span>(
+<span class="ansi-green-intense-fg ansi-bold">   1967</span>     <span style="color: rgb(0,135,0)">input</span>(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Inser the higher value of chemical potential you want to plot in eV</span><span style="color: rgb(175,0,0)">&#39;</span>))
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/ipykernel/kernelbase.py:1281</span>, in <span class="ansi-cyan-fg">Kernel.raw_input</span><span class="ansi-blue-fg">(self, prompt)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1279</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_allow_stdin:
+<span class="ansi-green-intense-fg ansi-bold">   1280</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">raw_input was called, but this frontend does not support input requests.</span><span style="color: rgb(175,0,0)">&#34;</span>
+<span class="ansi-green-fg">-&gt; 1281</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> StdinNotImplementedError(msg)
+<span class="ansi-green-intense-fg ansi-bold">   1282</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_input_request(
+<span class="ansi-green-intense-fg ansi-bold">   1283</span>     <span style="color: rgb(0,135,0)">str</span>(prompt),
+<span class="ansi-green-intense-fg ansi-bold">   1284</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_parent_ident[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>],
+<span class="ansi-green-intense-fg ansi-bold">   1285</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>get_parent(<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>),
+<span class="ansi-green-intense-fg ansi-bold">   1286</span>     password<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1287</span> )
+
+<span class="ansi-red-fg">StdinNotImplementedError</span>: raw_input was called, but this frontend does not support input requests.
+</pre></div></div>
+</div>
+<p>Plot powerfactor</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_powerfactor_potential</span><span class="p">(</span><span class="n">seebeck</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">StdinNotImplementedError</span>                  Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[13], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_powerfactor_potential</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">seebeck</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">sigma</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/work/CRYSTALClear/CRYSTALClear/CRYSTALClear/plot.py:2087</span>, in <span class="ansi-cyan-fg">plot_cry_powerfactor_potential</span><span class="ansi-blue-fg">(seebeck_obj, sigma_obj)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2084</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">matplotlib</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">pyplot</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">plt</span>
+<span class="ansi-green-intense-fg ansi-bold">   2085</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">numpy</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">np</span>
+<span class="ansi-green-fg">-&gt; 2087</span> case <span style="color: rgb(98,98,98)">=</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">input</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   2088</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">Please, choose the direction you want to plot. </span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">You can choose among PF_xx, PF_xy, PF_xz, PF_yx, PF_yy, PF_yz, PF_yz, PF_zx, PF_zy, PF_zz</span><span class="ansi-yellow-bg ansi-bold" style="color: rgb(175,95,0)">\n</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2090</span> case <span style="color: rgb(98,98,98)">=</span> case<span style="color: rgb(98,98,98)">.</span>lower()<span style="color: rgb(98,98,98)">.</span>replace(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">_</span><span style="color: rgb(175,0,0)">&#39;</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">&#39;</span>)
+<span class="ansi-green-intense-fg ansi-bold">   2092</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> case<span style="color: rgb(98,98,98)">.</span>isalpha() <span style="color: rgb(98,98,98)">==</span> <span class="ansi-bold" style="color: rgb(0,135,0)">True</span>:
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/ipykernel/kernelbase.py:1281</span>, in <span class="ansi-cyan-fg">Kernel.raw_input</span><span class="ansi-blue-fg">(self, prompt)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1279</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_allow_stdin:
+<span class="ansi-green-intense-fg ansi-bold">   1280</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">raw_input was called, but this frontend does not support input requests.</span><span style="color: rgb(175,0,0)">&#34;</span>
+<span class="ansi-green-fg">-&gt; 1281</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> StdinNotImplementedError(msg)
+<span class="ansi-green-intense-fg ansi-bold">   1282</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_input_request(
+<span class="ansi-green-intense-fg ansi-bold">   1283</span>     <span style="color: rgb(0,135,0)">str</span>(prompt),
+<span class="ansi-green-intense-fg ansi-bold">   1284</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_parent_ident[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>],
+<span class="ansi-green-intense-fg ansi-bold">   1285</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>get_parent(<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>),
+<span class="ansi-green-intense-fg ansi-bold">   1286</span>     password<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1287</span> )
+
+<span class="ansi-red-fg">StdinNotImplementedError</span>: raw_input was called, but this frontend does not support input requests.
+</pre></div></div>
+</div>
+<p>Plot ZT</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_zt</span><span class="p">(</span><span class="n">seebeck</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">StdinNotImplementedError</span>                  Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[14], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_zt</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">seebeck</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">sigma</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/work/CRYSTALClear/CRYSTALClear/CRYSTALClear/plot.py:2510</span>, in <span class="ansi-cyan-fg">plot_cry_zt</span><span class="ansi-blue-fg">(seebeck_obj, sigma_obj)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2507</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">matplotlib</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">pyplot</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">plt</span>
+<span class="ansi-green-intense-fg ansi-bold">   2508</span> <span class="ansi-bold" style="color: rgb(0,135,0)">import</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">numpy</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">as</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">np</span>
+<span class="ansi-green-fg">-&gt; 2510</span> ktot <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">float</span>(<span class="ansi-yellow-bg" style="color: rgb(0,135,0)">input</span><span class="ansi-yellow-bg">(</span>
+<span class="ansi-green-intense-fg ansi-bold">   2511</span> <span class="ansi-yellow-bg">    </span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">Please insert the value of ktot in W-1K-1m-1</span><span class="ansi-yellow-bg" style="color: rgb(175,0,0)">&#39;</span><span class="ansi-yellow-bg">)</span>)
+<span class="ansi-green-intense-fg ansi-bold">   2512</span> case <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">input</span>(
+<span class="ansi-green-intense-fg ansi-bold">   2513</span>     <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">Please, choose the direction you want to plot. </span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">You can choose among ZT_xx, ZT_xy, ZT_xz, ZT_yx, ZT_yy, ZT_yz, ZT_yz, ZT_zx, ZT_zy, ZT_zz</span><span class="ansi-bold" style="color: rgb(175,95,0)">\n</span><span style="color: rgb(175,0,0)">&#39;</span>)
+<span class="ansi-green-intense-fg ansi-bold">   2515</span> case <span style="color: rgb(98,98,98)">=</span> case<span style="color: rgb(98,98,98)">.</span>lower()<span style="color: rgb(98,98,98)">.</span>replace(<span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">_</span><span style="color: rgb(175,0,0)">&#39;</span>, <span style="color: rgb(175,0,0)">&#39;</span><span style="color: rgb(175,0,0)">&#39;</span>)
+
+File <span class="ansi-green-fg">/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/ipykernel/kernelbase.py:1281</span>, in <span class="ansi-cyan-fg">Kernel.raw_input</span><span class="ansi-blue-fg">(self, prompt)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1279</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_allow_stdin:
+<span class="ansi-green-intense-fg ansi-bold">   1280</span>     msg <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">raw_input was called, but this frontend does not support input requests.</span><span style="color: rgb(175,0,0)">&#34;</span>
+<span class="ansi-green-fg">-&gt; 1281</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> StdinNotImplementedError(msg)
+<span class="ansi-green-intense-fg ansi-bold">   1282</span> <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_input_request(
+<span class="ansi-green-intense-fg ansi-bold">   1283</span>     <span style="color: rgb(0,135,0)">str</span>(prompt),
+<span class="ansi-green-intense-fg ansi-bold">   1284</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_parent_ident[<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>],
+<span class="ansi-green-intense-fg ansi-bold">   1285</span>     <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>get_parent(<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">shell</span><span style="color: rgb(175,0,0)">&#34;</span>),
+<span class="ansi-green-intense-fg ansi-bold">   1286</span>     password<span style="color: rgb(98,98,98)">=</span><span class="ansi-bold" style="color: rgb(0,135,0)">False</span>,
+<span class="ansi-green-intense-fg ansi-bold">   1287</span> )
+
+<span class="ansi-red-fg">StdinNotImplementedError</span>: raw_input was called, but this frontend does not support input requests.
+</pre></div></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CRYSTALClear Development Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
