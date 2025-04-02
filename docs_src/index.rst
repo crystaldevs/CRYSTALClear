@@ -15,7 +15,7 @@ CRYSTALClear documentation
    introduction
    installation
    usage
-   ExampleNotebooks
+   ExampleNotebooks<notebooks>
    Docs<CRYSTALClear>
    cite
    
