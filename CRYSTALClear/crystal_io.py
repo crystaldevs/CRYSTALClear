@@ -1611,8 +1611,8 @@ class Crystal_output:
 
     def get_mode(self):
         """
-        Deprecated.
-        """
+            Deprecated.
+            """
         return self.get_q_info()
 
     def get_phonon_eigenvector(self):
@@ -1621,10 +1621,76 @@ class Crystal_output:
         """
         return self.get_q_info()
 
+    def get_anh_const(self):
+        """
+        Extract anharmonic terms of the PES (ANHAPES).     
+
+        Returns:
+            self.PES_single(array[float]): 2D numpy array containing
+            single-mode anharmonic force constants (col 1: mode; cols 2-3: cubic and quartic single-mode terms of the PES, respectively). 
+            self.PES_couple(array[float]): 2D numpy array contaning anharmonic force constants coupling two phonon modes (col 1: mode I; col 2: mode J; cols 3-7: two-mode anharmonic force constants of type IIJ, IJJ, IIIJ, IJJJ and IIJJ, respectively.)
+            self.PES_triplet(array[float]): 2D numpy array contaning anharmonic force constant coupling three phonon modes (col 1: mode I; col 2: mode J; col 3: mode K; cols 4-7: three-mode anharmonic force constants of type IJK, IIJK, IJJK and IJKK, respectively)
+        """
+
+        import re
+        import numpy as np
+
+        save = False
+        PES_single = []
+        PES_couple = []
+        PES_triplet = []
+
+        for i, line in enumerate(self.data):
+
+            if re.match(r'\s*CALCULATION OF CUBIC AND QUARTIC TERMS', line):
+                save = True
+
+            if re.match(r'\s*TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT SCANPES', line):
+                save = False
+
+            if (re.match(r'\s*MODE:', line) and save):
+                a = int(line.split()[1])
+                for k, line2 in enumerate(self.data[i:]):
+                    if re.match(r'\s*ETA', line2):
+                        b = float((self.data[i+k]).split()[6])
+                        c = float((self.data[i+k+1]).split()[7])
+                        break
+                PES_single.append([a, b, c])
+
+            if (re.match(r'\s*COUPLE', line) and save):
+                a = int(line.split()[3])
+                b = int(line.split()[4])
+                for k, line2 in enumerate(self.data[i:]):
+                    if re.match(r'\s*ETA', line2):
+                        c = float((self.data[i+k]).split()[6])
+                        d = float((self.data[i+k+1]).split()[6])
+                        e = float((self.data[i+k+2]).split()[7])
+                        f = float((self.data[i+k+3]).split()[7])
+                        g = float((self.data[i+k+4]).split()[7])
+                        break
+                PES_couple.append([a, b, c, d, e, f, g])
+
+            if (re.match(r'\s*TRIPLET', line) and save):
+                a = int(line.split()[3])
+                b = int(line.split()[4])
+                c = int(line.split()[5])
+                for k, line2 in enumerate(self.data[i:]):
+                    if re.match(r'\s*ETA', line2):
+                        d = float((self.data[i+k]).split()[6])
+                        e = float((self.data[i+k+1]).split()[7])
+                        f = float((self.data[i+k+2]).split()[7])
+                        g = float((self.data[i+k+3]).split()[7])
+                        break
+                PES_triplet.append([a, b, c, d, e, f, g])
+
+        self.PES_single = np.array(PES_single)
+        self.PES_couple = np.array(PES_couple)
+        self.PES_triplet = np.array(PES_triplet)
+
+
     def get_anh_spectra(self):
         """
-        This method reads data from a CRYSTAL output file and processes it to 
-        extract anharmonic (VSCF and VCI) IR and Raman spectra.
+        Extract anharmonic (VSCF and VCI) IR and Raman spectra (in development).     
 
         Returns:
             self.IR_HO_0K (array[float]): 2D numpy array containing harmonic IR frequency and intensities computed at 0 K. 
@@ -1665,7 +1731,6 @@ class Crystal_output:
         """
 
         import re
-
         import numpy as np
 
         # Initialize some logical variables
@@ -1713,10 +1778,6 @@ class Crystal_output:
         Ram_VCI_T_comp = []
         # anscan
         IR_anscan = []
-        Ram_anscan_0K_tot = []
-        Ram_anscan_T_tot = []
-        Ram_anscan_0K_comp = []
-        Ram_anscan_T_comp = []
         # anscan
 
         # Initialize some buffers
@@ -2203,7 +2264,7 @@ class Crystal_output:
     # ANSCAN+DWELL
     def get_anscan(self, anscanwf):
         """
-        Work in progress for ANSCAN stuff
+        Work in progress for ANSCAN stuff (in development).
         """
 
         import re
@@ -3261,8 +3322,7 @@ class Properties_output:
 
         Args:
             properties_output (str): The properties output file.
-            which_prop (str): The density property selected by the user.
-            'm' (magnetization), 'j' (spin current), 'J' (spin current density)
+            which_prop (str): The density property selected by the user: 'm' (magnetization), 'j' (spin current), 'J' (spin current density)
         Returns:
             Properties_output (str): The fort.25 output file.
         """
