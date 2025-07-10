@@ -327,6 +327,7 @@ class Crystal_output:
                 # Use atom coords to read molecule geometries. Go 4 lines up for periodic systems
                 if re.match(r'^\s*ATOMS IN THE ASYMMETRIC UNIT', line):
                     bg_line = len(self.data[:self.eoo]) - nline - 4
+                    print(bg_line)
                     break
 
         if bg_line < 0:
@@ -411,15 +412,16 @@ class Crystal_output:
                               self.atom_numbers,
                               self.atom_positions_cart.tolist()]
         else:
-           self.last_geom = [struc.lattice.matrix.tolist(),
-                             self.atom_numbers,
-                             self.atom_positions_cart.tolist()]
+            # self.last_geom = [struc.lattice.matrix.tolist(),
+            #                   self.atom_numbers,
+            #                   self.atom_positions_cart.tolist()]
 
-            # self.last_geom = [struc.lattice.abc,
-            #                   struc.lattice.angles,
-            #                   struc.lattice.volume]
+            self.last_geom = [struc.lattice.abc,
+                              struc.lattice.angles,
+                              struc.lattice.volume,
+                              struc.lattice.matrix.tolist(),
                               # self.atom_numbers,
-                              # self.atom_positions_cart.tolist()]
+                              self.atom_positions_cart.tolist()]
         return self.last_geom
 
     def get_lattice(self, initial=True):
@@ -2224,8 +2226,8 @@ class Crystal_output:
                     raise Exception('Number of displacements too low.')
                 # Save range
                 first = float(self.data[i+1].split()[2])
-                last  = float(self.data[i+1].split()[5])
-                step  = float(self.data[i+1].split()[7])
+                last = float(self.data[i+1].split()[5])
+                step = float(self.data[i+1].split()[7])
                 self.rangescan = [first*step, last*step]
             if re.match(r'\s*\[DISPLAC\]\s*\[\s*SCAN POTENTIAL\s*\]', line):
                 V = np.zeros([ndispl+1, 2])
@@ -2237,7 +2239,7 @@ class Crystal_output:
                 self.anhpot = V[:, 0]
                 self.harmpot = V[:, 1]
                 # Save index of anscan mode
-                strtmp = self.data[i-1].split()[1] 
+                strtmp = self.data[i-1].split()[1]
                 strtmp = strtmp[:strtmp.find('(')]
                 anhmode = int(strtmp)
             if re.match(r'\s*ANHARMONIC VIBRATIONAL STATES', self.data[i-3]):
@@ -2277,7 +2279,7 @@ class Crystal_output:
                 break
             if re.match(r'.ANH.*', line):
                 continue
-            for j in range(10): 
+            for j in range(10):
                 self.wf[i-1, j] = float(line.split()[j])
 
     # ANSCAN+DWELL
@@ -2326,6 +2328,120 @@ class Crystal_output:
                 self.tensor[j][i] = self.tensor[i][j]
 
         return self.tensor
+
+    def get_EOS(self):
+        """
+        Extracts the Equation of state output data and corresponding fittings
+
+        Returns:
+            self.VvsE (np.array): numpy array containing the computed volumes and the corresponding energies in the first and second column respectively 
+            self.murnaghan (np.array): numpy array containing the fitted thermodynamics functions with the Murnaghan Equation
+            self.bmurnaghan (np.array): numpy array containing the fitted thermodynamics functions with the Birch-Murnaghan Equation
+            self.pt (np.array): numpy array containing the fitted thermodynamics functions with the Poirier-Tarantola Equation
+            self.vinet (np.array): numpy array containing the fitted thermodynamics functions with the Vinet Equation
+        """
+        import re
+
+        import numpy as np
+
+        # Definition of the delimiters regex -->
+        volume_start = r'\s+SORTING VOLUMES/ENERGIES'
+        volume_end = r'\s+\++\sFITTING\sUSING\sALL\sPOINTS\s\++\s'
+        murnaghan_start = r'\s+THERMODYNAMIC\s\w+\s\w+\s\w+\s\d\sK\s\w+\sEOS:\sMURNAGHAN\s\d+'
+        bmurnaghan_start = r'\s+THERMODYNAMIC\s\w+\s\w+\s\w+\s\d\sK\s\w+\sEOS:\sBIRCH-MURNAGHAN\s\d+'
+        poiriertarantola_start = r'\s+THERMODYNAMIC\s\w+\s\w+\s\w+\s\d\sK\s\w+\sEOS:\sPOIRIER-TARANTOLA\s\d+'
+        vinet_start = r'\s+THERMODYNAMIC\s\w+\s\w+\s\w+\s\d\sK\s\w+\sEOS:\sVINET\s\d+'
+        eos_end = r' EOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOSEOS'
+        eos_end_logic = False
+        # <--
+
+        # Search of delimiters index -->
+        for index, line in enumerate(self.data):
+            if re.match(volume_start, line):
+                volume_start_idx = index
+                eos_end_logic = True
+
+            if re.match(volume_end, line):
+                volume_end_idx = index
+
+            if re.match(murnaghan_start, line):
+                murnaghan_start_idx = index
+
+            if re.match(bmurnaghan_start, line):
+                bmurnaghan_start_idx = index
+
+            if re.match(poiriertarantola_start, line):
+                poiriertarantola_start_idx = index
+
+            if re.match(vinet_start, line):
+                vinet_start_idx = index
+
+            if (re.match(eos_end, line) and eos_end_logic):
+                eos_end_idx = index
+        # <--
+
+        # Creation of the numpy array for volume and energy -->
+        no_volumes = len(self.data[volume_start_idx+4:volume_end_idx-1])
+        self.VvsE = np.ones((no_volumes, 2))
+        for i, line in enumerate(self.data[(volume_start_idx + 4): (volume_end_idx - 1)]):
+            lsplit = line.split()
+            self.VvsE[i, 0] = float(lsplit[0])
+            self.VvsE[i, 1] = float(lsplit[1])
+        # <--
+
+        # Creation of the Murnaghan numpy array -->
+        no_points = len(
+            self.data[murnaghan_start_idx + 7: bmurnaghan_start_idx - 3])
+        self.murnaghan = np.ones((no_points, 5))
+        for i, line in enumerate(self.data[murnaghan_start_idx + 7: bmurnaghan_start_idx - 3]):
+            lsplit = line.split()
+            self.murnaghan[i, 0] = float(lsplit[0])
+            self.murnaghan[i, 1] = float(lsplit[1])
+            self.murnaghan[i, 2] = float(lsplit[2])
+            self.murnaghan[i, 3] = float(lsplit[3])
+            self.murnaghan[i, 4] = float(lsplit[4])
+        # <--
+
+        # Creation of Birch-Murnaghan numpy array -->
+        no_points = len(
+            self.data[bmurnaghan_start_idx + 7: poiriertarantola_start_idx - 3])
+        self.bmurnaghan = np.ones((no_points, 5))
+        for i, line in enumerate(self.data[bmurnaghan_start_idx + 7: poiriertarantola_start_idx - 3]):
+            lsplit = line.split()
+            self.bmurnaghan[i, 0] = float(lsplit[0])
+            self.bmurnaghan[i, 1] = float(lsplit[1])
+            self.bmurnaghan[i, 2] = float(lsplit[2])
+            self.bmurnaghan[i, 3] = float(lsplit[3])
+            self.bmurnaghan[i, 4] = float(lsplit[4])
+        # <--
+
+        # Creation of Poirier-Tarantola numpy array -->
+        no_points = len(
+            self.data[poiriertarantola_start_idx + 7: vinet_start_idx - 3])
+        self.pt = np.ones((no_points, 5))
+        for i, line in enumerate(self.data[poiriertarantola_start_idx + 7: vinet_start_idx - 3]):
+            lsplit = line.split()
+            self.pt[i, 0] = float(lsplit[0])
+            self.pt[i, 1] = float(lsplit[1])
+            self.pt[i, 2] = float(lsplit[2])
+            self.pt[i, 3] = float(lsplit[3])
+            self.pt[i, 4] = float(lsplit[4])
+        # <--
+
+        # Creation of Vinet numpy array -->
+        no_points = len(
+            self.data[vinet_start_idx + 7: eos_end_idx - 1])
+        self.vinet = np.ones((no_points, 5))
+        for i, line in enumerate(self.data[vinet_start_idx + 7: eos_end_idx - 1]):
+            lsplit = line.split()
+            self.vinet[i, 0] = float(lsplit[0])
+            self.vinet[i, 1] = float(lsplit[1])
+            self.vinet[i, 2] = float(lsplit[2])
+            self.vinet[i, 3] = float(lsplit[3])
+            self.vinet[i, 4] = float(lsplit[4])
+        # <--
+
+        return self
 
 
 class Properties_input:
@@ -2864,7 +2980,8 @@ class Properties_output:
         return self.read_electron_dos(properties_output)
 
     def read_cry_contour(self, properties_output):
-        """Read the CRYSTAL contour files to create the contour objects.
+        """Read the CRYSTAL contour files (SURFRHOO, SURFLAPP, SURFLAPM, SURFGRHO, 
+           SURFELFB, SURFVIRI, SURFGKIN, SURFKKIN) to create the contour objects.
 
         Args:
             properties_output (str): The properties output file.

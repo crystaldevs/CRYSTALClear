@@ -444,8 +444,6 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
     import warnings
 
     import numpy as np
-    from crystal_io import Crystal_gui
-    from geometry import get_sg_symmops
     from pymatgen.core.structure import Molecule, Structure
     from pymatgen.core.surface import center_slab
     from pymatgen.symmetry.analyzer import (PointGroupAnalyzer,
