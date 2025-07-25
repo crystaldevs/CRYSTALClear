@@ -2801,7 +2801,6 @@ class Properties_output:
 
         tipo = ''
 
-
         if (filename.endswith('.SURFRHOO')):
             self.tipo = 'SURFRHOO'
             self.path = filename
