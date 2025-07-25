@@ -3777,7 +3777,7 @@ class Properties_output:
         return self
 
     def topond_viz_file(self, cp_type='ALL', add_atoms=False, file_type="xyz"):
-         """Given the existence of TOPOND TRHO DataFrames, write files
+        """Given the existence of TOPOND TRHO DataFrames, write files
          with the critical points (CP) coordinates for further
          visualization.
 
@@ -3794,64 +3794,94 @@ class Properties_output:
 
          Returns:
              ase_obj: The generated ASE object.
-         """
-         import sys
-         from ase import Atoms
+        """
+        import sys
+        from ase import Atoms
 
-         if not hasattr(self,'topo_df'):
-            print('ERROR: You need to succesfully run first read_topond_trho() to use this.')
+        if not hasattr(self,'topo_df'):
+            print('ERROR: You need first to succesfully run read_topond_trho() to use this.')
             sys.exit(1)
 
          # An ASE object is used as intermediate to generate different types of outputs
-         if cp_type == 'ALL':
-             ase_obj = Atoms(
-               symbols = ["X"] * len(self.topo_df['type']),
-               positions = list(self.topo_df['coord']*0.529177), # factor for Bohr2Angs
-               cell = self.unitcell_mat,
-               pbc=[True,True,True]
-             )
-         elif cp_type == 'BCP':
-             df_bcp =  self.topo_df[self.topo_df['type']=='(3,-1)']
-             ase_obj = Atoms(
-               symbols = ["X"] * len(df_bcp['type']),
-               positions = list(df_bcp['coord']*0.529177), # factor for Bohr2Angs
-               cell = self.unitcell_mat,
-               pbc=[True,True,True]
-             )
-         elif cp_type == 'RCP':
-             df_rcp =  self.topo_df[self.topo_df['type']=='(3,1)']
-             ase_obj = Atoms(
-               symbols = ["X"] * len(df_rcp['type']),
-               positions = list(df_rcp['coord']*0.529177), # factor for Bohr2Angs
-               cell = self.unitcell_mat,
-               pbc=[True,True,True]
-             )
-         elif cp_type == 'CCP':
-             df_ccp =  self.topo_df[self.topo_df['type']=='(3,3)']
-             ase_obj = Atoms(
-               symbols = ["X"] * len(df_ccp['type']),
-               positions = list(df_ccp['coord'] * 0.529177), # factor for Bohr2Angs
-               cell = self.unitcell_mat,
-               pbc=[True,True,True]
-             )
-         elif cp_type == 'NNA':
-             df_nna =  self.topo_df[self.topo_df['type']=='(3,-3)']
-             ase_obj = Atoms(
-               symbols = ["X"] * len(df_nna['type']),
-               positions = list(df_nna['coord'] * 0.529177), # factor for Bohr2Angs
-               cell = self.unitcell_mat,
-               pbc=[True,True,True]
-             )
+        if cp_type == 'ALL':
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(self.topo_df['type']),
+                    positions = list(self.topo_df['coord']*0.529177), # factor for Bohr2Angs
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(self.topo_df['type']),
+                    positions = list(self.topo_df['coord']*0.529177) 
+                ) 
+        elif cp_type == 'BCP':
+            df_bcp =  self.topo_df[self.topo_df['type']=='(3,-1)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_bcp['type']),
+                    positions = list(df_bcp['coord']*0.529177), 
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_bcp['type']),
+                    positions = list(df_bcp['coord']*0.529177)
+                )
+        elif cp_type == 'RCP':
+            df_rcp =  self.topo_df[self.topo_df['type']=='(3,1)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_rcp['type']),
+                    positions = list(df_rcp['coord']*0.529177), 
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_rcp['type']),
+                    positions = list(df_rcp['coord']*0.529177)
+                )
+        elif cp_type == 'CCP':
+            df_ccp =  self.topo_df[self.topo_df['type']=='(3,3)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_ccp['type']),
+                    positions = list(df_ccp['coord'] * 0.529177), 
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_ccp['type']),
+                    positions = list(df_ccp['coord'] * 0.529177)
+                )
+        elif cp_type == 'NNA':
+            df_nna =  self.topo_df[self.topo_df['type']=='(3,-3)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_nna['type']),
+                    positions = list(df_nna['coord'] * 0.529177), # factor for Bohr2Angs
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_nna['type']),
+                    positions = list(df_nna['coord'] * 0.529177)
+                )
 
-         if add_atoms:
+        if add_atoms:
             for i in range(len(self.nuclei_df['z'])):
                 ase_obj.append(self.nuclei_df.loc[i + 1, 'z'])
                 ase_obj.positions[-1] = self.nuclei_df.loc[i + 1, 'coord']
 
-         ase_obj.write(self.topo_filename + '_' + cp_type + '.' +file_type)
-         print(self.topo_filename + '_' + cp_type + '.' + file_type)
+        ase_obj.write(self.topo_filename + '_' + cp_type + '.' +file_type)
+        print(self.topo_filename + '_' + cp_type + '.' + file_type + " generated.")
 
-         return ase_obj
+        return ase_obj
 
 
 class Crystal_gui:
