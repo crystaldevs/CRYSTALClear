@@ -3619,7 +3619,6 @@ class Properties_output:
 
         self.topo_df = pd.DataFrame(columns=properties)
         self.nuclei_df = pd.DataFrame(columns=['z','coord'])
-        self.unitcell_mat = []
 
         atom_a_read = False
         bp_step = False
@@ -3630,7 +3629,6 @@ class Properties_output:
             line = self.data[i]
 
             if re.match(r' DIRECT LATTICE VECTOR COMPONENTS .ANGSTROM.',line) != None:
-                unitcell_read = True
                 unitcell_mat = [self.data[i+1].strip().split(),
                                 self.data[i+2].strip().split(),
                                 self.data[i+3].strip().split()]
