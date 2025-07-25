@@ -3591,8 +3591,8 @@ class Properties_output:
         return self
     
     # TOPOND related functions
-    def read_topond_data(self, properties_output):
-        """Read the TOPOND output file to create associated DataFrames:
+    def read_topond_trho(self, properties_output):
+        """Read the TOPOND TRHO run output file to create associated DataFrames:
          * Coordinates for the nuclei at the unitcell (nuclei_df)
          * Data of the critical points (CP) discoverd (topo_df)
 
@@ -3777,7 +3777,7 @@ class Properties_output:
         return self
 
     def topond_viz_file(self, cp_type='ALL', add_atoms=False, file_type="xyz"):
-         """Given the existence of TOPOND DataFrames, write files
+         """Given the existence of TOPOND TRHO DataFrames, write files
          with the critical points (CP) coordinates for further
          visualization.
 
@@ -3799,7 +3799,7 @@ class Properties_output:
          from ase import Atoms
 
          if not hasattr(self,'topo_df'):
-            print('ERROR: You need to succesfully run first read_topond_data() to use this.')
+            print('ERROR: You need to succesfully run first read_topond_trho() to use this.')
             sys.exit(1)
 
          # An ASE object is used as intermediate to generate different types of outputs
