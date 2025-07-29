@@ -305,6 +305,7 @@ class Crystal_output:
         """
         import os
         import re
+        import sys
         import warnings
 
         import numpy as np
@@ -367,41 +368,42 @@ class Crystal_output:
 
         # Write gui files
         if write_gui == True:
+            sys.exit('Functionality under mantainance')
             # Conventional atomic numbers
-            zconv = [[i, self.atom_numbers[i]] for i in range(self.n_atoms)]
-            if gui_name == None:
-                gui_name = os.path.splitext(self.name)[0]
-                gui_name = '{}.gui'.format(gui_name)
-
-            if symmetry == 'pymatgen':
-                gui = cry_pmg2gui(struc, gui_file=gui_name,
-                                  symmetry=True, zconv=zconv, **kwargs)
-            elif symmetry == None:
-                gui = cry_pmg2gui(struc, gui_file=gui_name,
-                                  symmetry=False, zconv=zconv)
-            elif symmetry == 'initial':
-                self.get_symmops()
-                gui = cry_pmg2gui(struc, gui_file=None,
-                                  symmetry=False, zconv=zconv)
-                gui.symmops = self.symmops
-                gui.n_symmops = self.n_symmops
-                gui.space_group = self.sg_number
-                gui.write_gui(gui_name, symm=True)
-            else:
-                warnings.warn('Symmetry adapted from reference geometry. Make sure that is desired.',
-                              stacklevel=2)
-                gui_ref = Crystal_gui().read_gui(symmetry)
-                gui = cry_pmg2gui(struc, gui_file=None,
-                                  symmetry=False, zconv=zconv)
-                # Replace the symmops with the reference file
-                gui.symmops = gui_ref.symmops
-                gui.n_symmops = gui_ref.n_symmops
-                gui.space_group = gui_ref.space_group
-                gui.write_gui(gui_list[idx_s], symm=True)
+            # zconv = [[i, self.atom_numbers[i]] for i in range(self.n_atoms)]
+            # if gui_name == None:
+            #     gui_name = os.path.splitext(self.name)[0]
+            #     gui_name = '{}.gui'.format(gui_name)
+            #
+            # if symmetry == 'pymatgen':
+            #     gui = cry_pmg2gui(struc, gui_file=gui_name,
+            #                       symmetry=True, zconv=zconv, **kwargs)
+            # elif symmetry == None:
+            #     gui = cry_pmg2gui(struc, gui_file=gui_name,
+            #                       symmetry=False, zconv=zconv)
+            # elif symmetry == 'initial':
+            #     self.get_symmops()
+            #     gui = cry_pmg2gui(struc, gui_file=None,
+            #                       symmetry=False, zconv=zconv)
+            #     gui.symmops = self.symmops
+            #     gui.n_symmops = self.n_symmops
+            #     gui.space_group = self.sg_number
+            #     gui.write_gui(gui_name, symm=True)
+            # else:
+            #     warnings.warn('Symmetry adapted from reference geometry. Make sure that is desired.',
+            #                   stacklevel=2)
+            #     gui_ref = Crystal_gui().read_gui(symmetry)
+            #     gui = cry_pmg2gui(struc, gui_file=None,
+            #                       symmetry=False, zconv=zconv)
+            #     # Replace the symmops with the reference file
+            #     gui.symmops = gui_ref.symmops
+            #     gui.n_symmops = gui_ref.n_symmops
+            #     gui.space_group = gui_ref.space_group
+            #     gui.write_gui(gui_list[idx_s], symm=True)
 
         return self.geometry
 
-    def get_last_geom(self, write_gui_file=True, symm_info='pymatgen'):
+    def get_last_geom(self, write_gui_file=False, symm_info='pymatgen'):
         """
         Return the last optimised geometry.
         """
@@ -2334,11 +2336,16 @@ class Crystal_output:
         Extracts the Equation of state output data and corresponding fittings
 
         Returns:
-            self.VvsE (np.array): numpy array containing the computed volumes and the corresponding energies in the first and second column respectively 
-            self.murnaghan (np.array): numpy array containing the fitted thermodynamics functions with the Murnaghan Equation
-            self.bmurnaghan (np.array): numpy array containing the fitted thermodynamics functions with the Birch-Murnaghan Equation
-            self.pt (np.array): numpy array containing the fitted thermodynamics functions with the Poirier-Tarantola Equation
-            self.vinet (np.array): numpy array containing the fitted thermodynamics functions with the Vinet Equation
+            self.VvsE (np.array): numpy array containing the computed volumes and 
+                                  the corresponding energies in the first and second column respectively 
+            self.murnaghan (np.array): numpy array containing the fitted thermodynamics 
+                                       functions with the Murnaghan Equation
+            self.bmurnaghan (np.array): numpy array containing the fitted thermodynamics 
+                                        functions with the Birch-Murnaghan Equation
+            self.pt (np.array): numpy array containing the fitted thermodynamics 
+                                functions with the Poirier-Tarantola Equation
+            self.vinet (np.array): numpy array containing the fitted thermodynamics 
+                                   functions with the Vinet Equation
         """
         import re
 

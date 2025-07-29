@@ -54,7 +54,6 @@ class GeomBASE():
                 countline += 1
             # Atom coordinates
             if re.match(r'^\s*ATOMS IN THE ASYMMETRIC UNIT', line):
-                print('passo atom coord ')
                 countline += 1
                 # For molecules - no PRIMITIVE CELL line
                 ndimen = 3 - len(re.findall('\(ANGSTROM\)', data[countline]))
@@ -84,7 +83,6 @@ class GeomBASE():
                 countline += 1
 
         if len(species) == 0 or len(coords) == 0:
-            print('passo raise')
             raise Exception('Geometry information not found.')
 
         return countline, struc
