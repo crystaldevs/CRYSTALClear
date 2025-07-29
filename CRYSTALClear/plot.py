@@ -2920,16 +2920,16 @@ def plot_cry_poisson(theta_1D, phi_1D, S, ndeg, poisson_choice):
 
 # ----------------------------------ELASTIC------------------------------------#
 
-def plot_cry_ela(choose, ndeg,  *args):
+def plot_cry_ela(co, choose, ndeg=200):
     """
     Plot crystal elastic properties on the basis of the elastic tensor. A
     variable number of elastic tensors can be provided in order to get
     multiple plots in one shot, establishing a fixed color scale among them.
 
     Args:
+        co (list): A `CRYSTALClear` object or a list thereof, with the `elatensor` attribute set by `CRYSTALClear.crystal_io.Crystal_output.get_elatensor`.
         choose (str): Property to plot. Options: "young", "comp", "shear avg", "shear min", "shear max", "poisson avg", "poisson min", "poisson max".
-        ndeg (int): Number of degrees for discretization.
-        *args: Variable number of elastic tensors.
+        ndeg (int): Angular resolution (default is 200).
 
     Returns:
         fig_list: list of matplotlib.figure.Figure
@@ -2939,20 +2939,25 @@ def plot_cry_ela(choose, ndeg,  *args):
         plt_list: list of matplotlib.pyplot
             A list of the pyplot objects for each plot, representing the actual plot.
     """
-    import math
 
     import matplotlib.pyplot as plt
     import numpy as np
     from matplotlib import animation, cm, colors
     from mpl_toolkits.mplot3d import Axes3D, axes3d
 
+    if not (isinstance(co, list) or isinstance(co, tuple)):
+        co = [co]
+
     i = 0
-    R = [None] * len(args)
+    R = [None] * len(co)
     tmin = []
     tmax = []
 
     # Compute elastic properties for each tensor -->
-    for C in args:
+    for element in co:
+
+        # Unpack crystal object
+        C = element.elatensor
 
         # Inverse of the matrix C in GPa (Compliance)
         S = np.linalg.inv(C)
