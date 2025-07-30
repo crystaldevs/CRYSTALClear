@@ -2348,11 +2348,14 @@ class Crystal_output:
         Extracts the elastic tensor from the data.
 
         Returns:
-            list: Symmetrized elastic tensor as a 6x6 nested list.
+            self.elatensor(array[float]): 2D numpy array containing the symmetrized 6x6 elastic tensor
         """
+
+        import numpy as np
+
         startstring = " SYMMETRIZED ELASTIC"
         stopstring = " ELASTIC MODULI"
-        self.tensor = []
+        self.elatensor = []
         buffer = []
         strtensor = []
         copy = False
@@ -2372,21 +2375,23 @@ class Crystal_output:
             strtensor.append(
                 buffer[i + 1].replace(" |", " ").replace("\n", ""))
             # Split strtensor strings and copy them in tensor
-            self.tensor.append(strtensor[i].split())
+            self.elatensor.append(strtensor[i].split())
             # Conversion str -> float
             for j in range(6 - i):
-                self.tensor[i][j] = float(self.tensor[i][j])
+                self.elatensor[i][j] = float(self.elatensor[i][j])
             # Add zeros
             for k in range(i):
-                self.tensor[i].insert(0, 0)
+                self.elatensor[i].insert(0, 0)
         buffer.clear()
 
         # Symmetrize tensor
         for i in range(6):
             for j in range(6):
-                self.tensor[j][i] = self.tensor[i][j]
+                self.elatensor[j][i] = self.elatensor[i][j]
 
-        return self.tensor
+        self.elatensor = np.array(self.elatensor)
+
+        return self
 
 
 class Properties_input:
