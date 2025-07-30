@@ -3899,6 +3899,8 @@ def plot_cry_EOS(eos, formula_unit=None, plot='VvsE', color='tab:blue', figsize=
     plot_type = ['VvsE', 'Murnaghan',
                  'Birch-Murnaghan', 'Poirier-Tarantola', 'Vinet']
 
+    plt.rcParams.update({'font.size': fontsize})
+
     # Check the type of plot required by the user -->
     if type(eos) is list:
         phase_transition = True
@@ -3924,8 +3926,8 @@ def plot_cry_EOS(eos, formula_unit=None, plot='VvsE', color='tab:blue', figsize=
                 ax.plot(phase.VvsE[:, 0]/formula_unit[index], phase.VvsE[:, 1]/formula_unit[index],
                         color=color[index], marker=marker[index], label=legend[index])
 
-            plt.xlabel('V/Z ($\AA$)', fontsize=fontsize)
-            plt.ylabel('E/Z (a.u)', fontsize=fontsize)
+            plt.xlabel('V/Z ($\AA$)')
+            plt.ylabel('E/Z (a.u)')
         # <--
 
         # Murnaghan EOS plot of delta of Gibbs free energy between the two phases-->
@@ -4020,10 +4022,10 @@ def plot_cry_EOS(eos, formula_unit=None, plot='VvsE', color='tab:blue', figsize=
                     color=color[1], label=legend[1])
         # <--
         if plot != plot_type[0]:
-            plt.xlabel('P (GPa)', fontsize=fontsize)
-            plt.ylabel('H/Z (a.u)', fontsize=fontsize)
+            plt.xlabel('P (GPa)')
+            plt.ylabel('H/Z (a.u)')
 
-        if legend != None:
+        if legend != ['Phase 1', 'Phase 2']:
             plt.legend()
 
     else:
@@ -4033,42 +4035,36 @@ def plot_cry_EOS(eos, formula_unit=None, plot='VvsE', color='tab:blue', figsize=
         if plot == plot_type[0]:
             ax.plot(eos.VvsE[:, 0], eos.VvsE[:, 1],
                     color=color, marker=marker)
+            plt.xlabel('V/Z ($\AA$)')
+            plt.ylabel('E/Z (a.u)')
         # <--
 
         # Murnaghan Pressure vs Gibbs Free Energy -->
         elif plot == plot_type[1]:
             ax.plot(eos.murnaghan[:, 1], eos.murnaghan[:, 3],
                     color=color, marker=marker)
-            pg = True
         # <--
 
         # Birch-Murnaghan Pressure vs Gibbs Free Energy -->
         elif plot == plot_type[2]:
             ax.plot(eos.bmurnaghan[:, 1], eos.bmurnaghan[:, 3],
                     color=color, marker=marker)
-            pg = True
         # <--
 
         # Poirier-Tarantola Pressure vs Gibbs Free Energy -->
         elif plot == plot_type[3]:
             ax.plot(eos.pt[:, 1], eos.pt[:, 3], color=color, marker=marker)
-            pg = True
         # <--
 
         # Vinet Pressure vs Gibbs Free Energy -->
         elif plot == plot_type[4]:
             ax.plot(eos.vinet[:, 1], eos.vinet[:, 3],
                     color=color, marker=marker)
-            pg = True
         # <--
 
-        if pg:
-            plt.xlabel('Pressure (GPa)', fontsize=fontsize)
-            plt.ylabel('Gibbs Free Energy (a. u.)', fontsize=fontsize)
-
-        else:
-            plt.xlabel('Volume ($\AA^3$)', fontsize=fontsize)
-            plt.ylabel('Energy (a.u.)', fontsize=fontsize)
+        if ploi != plot_type[0]:
+            plt.xlabel('P (GPa)')
+            plt.ylabel('H (a. u.)')
 
     # <--
 
