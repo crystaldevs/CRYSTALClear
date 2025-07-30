@@ -1615,8 +1615,8 @@ class Crystal_output:
 
     def get_mode(self):
         """
-        Deprecated.
-        """
+            Deprecated.
+            """
         return self.get_q_info()
 
     def get_phonon_eigenvector(self):
@@ -1625,36 +1625,102 @@ class Crystal_output:
         """
         return self.get_q_info()
 
-    def get_anh_spectra(self):
+    def get_anh_const(self):
         """
-        This method reads data from a CRYSTAL output file and processes it to 
-        extract anharmonic (VSCF and VCI) IR and Raman spectra.
+        Extract anharmonic terms of the PES (ANHAPES).
 
         Returns:
-            self.IR_HO_0K (array[float]): 2D numpy array containing harmonic IR frequency and intensities computed at 0 K. 
-            self.IR_HO_T (array[float]): 2D numpy array containing harmonic IR frequency and intensities computed at temperature T. 
-            self.IR_VSCF_0K (array[float]): 2D numpy array containing VSCF IR frequency and intensities computed at 0 K. 
+            self.PES_single(array[float]): 2D numpy array containing
+            single-mode anharmonic force constants (col 1: mode; cols 2-3: cubic and quartic single-mode terms of the PES, respectively).
+            self.PES_couple(array[float]): 2D numpy array contaning anharmonic force constants coupling two phonon modes (col 1: mode I; col 2: mode J; cols 3-7: two-mode anharmonic force constants of type IIJ, IJJ, IIIJ, IJJJ and IIJJ, respectively.)
+            self.PES_triplet(array[float]): 2D numpy array contaning anharmonic force constant coupling three phonon modes (col 1: mode I; col 2: mode J; col 3: mode K; cols 4-7: three-mode anharmonic force constants of type IJK, IIJK, IJJK and IJKK, respectively)
+        """
+
+        import re
+        import numpy as np
+
+        save = False
+        PES_single = []
+        PES_couple = []
+        PES_triplet = []
+
+        for i, line in enumerate(self.data):
+
+            if re.match(r'\s*CALCULATION OF CUBIC AND QUARTIC TERMS', line):
+                save = True
+
+            if re.match(r'\s*TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT SCANPES', line):
+                save = False
+
+            if (re.match(r'\s*MODE:', line) and save):
+                a = int(line.split()[1])
+                for k, line2 in enumerate(self.data[i:]):
+                    if re.match(r'\s*ETA', line2):
+                        b = float((self.data[i+k]).split()[6])
+                        c = float((self.data[i+k+1]).split()[7])
+                        break
+                PES_single.append([a, b, c])
+
+            if (re.match(r'\s*COUPLE', line) and save):
+                a = int(line.split()[3])
+                b = int(line.split()[4])
+                for k, line2 in enumerate(self.data[i:]):
+                    if re.match(r'\s*ETA', line2):
+                        c = float((self.data[i+k]).split()[6])
+                        d = float((self.data[i+k+1]).split()[6])
+                        e = float((self.data[i+k+2]).split()[7])
+                        f = float((self.data[i+k+3]).split()[7])
+                        g = float((self.data[i+k+4]).split()[7])
+                        break
+                PES_couple.append([a, b, c, d, e, f, g])
+
+            if (re.match(r'\s*TRIPLET', line) and save):
+                a = int(line.split()[3])
+                b = int(line.split()[4])
+                c = int(line.split()[5])
+                for k, line2 in enumerate(self.data[i:]):
+                    if re.match(r'\s*ETA', line2):
+                        d = float((self.data[i+k]).split()[6])
+                        e = float((self.data[i+k+1]).split()[7])
+                        f = float((self.data[i+k+2]).split()[7])
+                        g = float((self.data[i+k+3]).split()[7])
+                        break
+                PES_triplet.append([a, b, c, d, e, f, g])
+
+        self.PES_single = np.array(PES_single)
+        self.PES_couple = np.array(PES_couple)
+        self.PES_triplet = np.array(PES_triplet)
+
+
+    def get_anh_spectra(self):
+        """
+        Extract anharmonic (VSCF and VCI) IR and Raman spectra (in development).
+
+        Returns:
+            self.IR_HO_0K (array[float]): 2D numpy array containing harmonic IR frequency and intensities computed at 0 K.
+            self.IR_HO_T (array[float]): 2D numpy array containing harmonic IR frequency and intensities computed at temperature T.
+            self.IR_VSCF_0K (array[float]): 2D numpy array containing VSCF IR frequency and intensities computed at 0 K.
             self.IR_VSCF_T (array[float]): 2D numpy array containing VSCF IR frequency and intensities computed at temperature T.
-            self.IR_VCI_0K (array[float]): 2D numpy array containing VCI IR frequency and intensities computed at 0 K. 
+            self.IR_VCI_0K (array[float]): 2D numpy array containing VCI IR frequency and intensities computed at 0 K.
             self.IR_VCI_T (array[float]): 2D numpy array containing VCI IR frequency and intensities computed at temperature T.
 
-            self.Ram_HO_0K_tot (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (total) computed at 0 K. 
-            self.Ram_HO_0K_per (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (perpendicular component ) computed at temperature 0 K. 
-            self.Ram_HO_0K_par (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (parallel component ) computed at temperature 0 K. 
-            self.Ram_HO_T_tot (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (total) computed at temperature T. 
-            self.Ram_HO_T_per (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (perpendicular component ) computed at temperature T. 
-            self.Ram_HO_T_par (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (parallel component ) computed at temperature T. 
+            self.Ram_HO_0K_tot (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (total) computed at 0 K.
+            self.Ram_HO_0K_per (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (perpendicular component ) computed at temperature 0 K.
+            self.Ram_HO_0K_par (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (parallel component ) computed at temperature 0 K.
+            self.Ram_HO_T_tot (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (total) computed at temperature T.
+            self.Ram_HO_T_per (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (perpendicular component ) computed at temperature T.
+            self.Ram_HO_T_par (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (parallel component ) computed at temperature T.
 
-            self.Ram_VSCF_0K_tot (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (total) computed at 0 K. self.Ram_VSCF_0K_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at 0 K. 
-            self.Ram_VSCF_0K_par (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (parallel component) computed at 0 K. 
-            self.Ram_VSCF_T_tot (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (total) computed at temperature T. self.Ram_VSCF_T_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at temperature T. 
-            self.Ram_VSCF_T_par (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (parallel component) computed at temperature T. 
+            self.Ram_VSCF_0K_tot (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (total) computed at 0 K. self.Ram_VSCF_0K_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at 0 K.
+            self.Ram_VSCF_0K_par (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (parallel component) computed at 0 K.
+            self.Ram_VSCF_T_tot (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (total) computed at temperature T. self.Ram_VSCF_T_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at temperature T.
+            self.Ram_VSCF_T_par (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (parallel component) computed at temperature T.
 
-            self.Ram_VCI_0K_tot (array[float]): 2D numpy array containing VCI Raman frequency and intensities (total) computed at 0 K. 
+            self.Ram_VCI_0K_tot (array[float]): 2D numpy array containing VCI Raman frequency and intensities (total) computed at 0 K.
             self.Ram_VCI_0K_per (array[float]): 2D numpy array containing VCI Raman frequency and intensities (perpendicular component) computed at 0 K.
-            self.Ram_VCI_0K_par (array[float]): 2D numpy array containing VCI Raman frequency and intensities (parallel component) computed at 0 K. 
-            self.Ram_VCI_T_tot (array[float]): 2D numpy array containing VCI Raman frequency and intensities (total) computed at temperature T. 
-            self.Ram_VCI_T_per (array[float]): 2D numpy array containing VCI Raman frequency and intensities (perpendicular component) computed at temperature T. 
+            self.Ram_VCI_0K_par (array[float]): 2D numpy array containing VCI Raman frequency and intensities (parallel component) computed at 0 K.
+            self.Ram_VCI_T_tot (array[float]): 2D numpy array containing VCI Raman frequency and intensities (total) computed at temperature T.
+            self.Ram_VCI_T_per (array[float]): 2D numpy array containing VCI Raman frequency and intensities (perpendicular component) computed at temperature T.
             self.Ram_VCI_T_par (array[float]): 2D numpy array containing VCI Raman frequency and intensities (parallel component) computed at temperature T.
 
             self.Ram_HO_0K_comp_xx (array[float]): 2D numpy array containing harmonic Raman frequency and intensities (xx component) computed at 0 K.
@@ -1665,11 +1731,10 @@ class Crystal_output:
             self.Ram_VCI_T_comp_xx (array[float]): 2D numpy array containing VCI Raman frequency and intensities (xx component) computed at temperature T.
 
         Note:
-            Please, note that for the sake of brevity, only the xx Raman component attributes have been listed here, but the yy, zz, xy, xz, yz components are available as well.  
+            Please, note that for the sake of brevity, only the xx Raman component attributes have been listed here, but the yy, zz, xy, xz, yz components are available as well.
         """
 
         import re
-
         import numpy as np
 
         # Initialize some logical variables
@@ -1717,10 +1782,6 @@ class Crystal_output:
         Ram_VCI_T_comp = []
         # anscan
         IR_anscan = []
-        Ram_anscan_0K_tot = []
-        Ram_anscan_T_tot = []
-        Ram_anscan_0K_comp = []
-        Ram_anscan_T_comp = []
         # anscan
 
         # Initialize some buffers
@@ -2207,7 +2268,7 @@ class Crystal_output:
     # ANSCAN+DWELL
     def get_anscan(self, anscanwf):
         """
-        Work in progress for ANSCAN stuff
+        Work in progress for ANSCAN stuff (in development).
         """
 
         import re
@@ -2291,11 +2352,14 @@ class Crystal_output:
         Extracts the elastic tensor from the data.
 
         Returns:
-            list: Symmetrized elastic tensor as a 6x6 nested list.
+            self.elatensor(array[float]): 2D numpy array containing the symmetrized 6x6 elastic tensor
         """
+
+        import numpy as np
+
         startstring = " SYMMETRIZED ELASTIC"
         stopstring = " ELASTIC MODULI"
-        self.tensor = []
+        self.elatensor = []
         buffer = []
         strtensor = []
         copy = False
@@ -2315,21 +2379,23 @@ class Crystal_output:
             strtensor.append(
                 buffer[i + 1].replace(" |", " ").replace("\n", ""))
             # Split strtensor strings and copy them in tensor
-            self.tensor.append(strtensor[i].split())
+            self.elatensor.append(strtensor[i].split())
             # Conversion str -> float
             for j in range(6 - i):
-                self.tensor[i][j] = float(self.tensor[i][j])
+                self.elatensor[i][j] = float(self.elatensor[i][j])
             # Add zeros
             for k in range(i):
-                self.tensor[i].insert(0, 0)
+                self.elatensor[i].insert(0, 0)
         buffer.clear()
 
         # Symmetrize tensor
         for i in range(6):
             for j in range(6):
-                self.tensor[j][i] = self.tensor[i][j]
+                self.elatensor[j][i] = self.elatensor[i][j]
 
-        return self.tensor
+        self.elatensor = np.array(self.elatensor)
+
+        return self
 
     def get_EOS(self):
         """
@@ -2521,7 +2587,7 @@ class Properties_input:
             last_band (int): The index of the last band.
             print_eig (int): Printing options for eigenvalues (default is 0).
             print_option (int): Properties printing options (default is 1).
-            precision (int): Number of zeros in the calculation of the gcd            
+            precision (int): Number of zeros in the calculation of the gcd
             title (str): The title of the calculation (default is 'BAND STRUCTURE CALCULATION').
         """
 
@@ -2774,149 +2840,6 @@ class Properties_output:
         except:
             raise FileNotFoundError(
                 'EXITING: a CRYSTAL properties file needs to be specified')
-
-    def read_vecfield(self, properties_output, which_prop):
-        """Reads the fort.25 file to return data arrays containing one or more vectiorial density properties.
-
-        Args:
-            properties_output (str): The properties output file.
-            which_prop (str): The density property selected by the user.
-            'm' (magnetization), 'j' (spin current), 'J' (spin current density)
-        Returns:
-            Properties_output (str): The fort.25 output file.
-        """
-
-        import numpy as np
-
-        self.read_file(properties_output)
-
-        data = self.data
-
-        # Reads the header information
-        nrow = int(data[0].split()[1])
-        ncol = int(data[0].split()[2])
-        stepx = float(data[0].split()[3])
-        stepy = float(data[0].split()[4])
-        cosxy = float(data[0].split()[5])
-
-        A = np.array([float(data[1].split()[0]), float(
-            data[1].split()[1]), float(data[1].split()[2])])
-        B = np.array([float(data[1].split()[3]), float(
-            data[1].split()[4]), float(data[1].split()[5])])
-
-        C = np.array([float(data[2].split()[0]), float(
-            data[2].split()[1]), float(data[2].split()[2])])
-        naf = int(data[2].split()[3])
-        ldim = int(data[2].split()[4])
-
-        self.header = (nrow, ncol, stepx, stepy, cosxy, A, B, C, naf, ldim)
-
-        # Elaborates the header data
-        skip = 6 + naf
-
-        for i in range(2, 20):
-            if (nrow % i) == 0:
-                nrow_split = int(nrow/i)
-
-        for i in range(2, 20):
-            if (ncol % i) == 0:
-                ncol_split = int(ncol/i)
-
-        bline = (nrow*ncol)/6
-        if (bline % 6) == 0:
-            bline = int(bline)
-        else:
-            bline = int(bline) + 1
-
-        # Reads the types of density properties requested by the user and initializes the data arrays
-        check = np.zeros(3, dtype=int)
-        if 'm' in which_prop:
-            check[0] = 1
-            self.dens_m = np.zeros((nrow, ncol, 3), dtype=float)
-        if 'j' in which_prop:
-            check[1] = 1
-            self.dens_j = np.zeros((nrow, ncol, 3), dtype=float)
-        if 'J' in which_prop:
-            check[2] = 1
-            self.dens_JX = np.zeros((nrow, ncol, 3), dtype=float)
-            self.dens_JY = np.zeros((nrow, ncol, 3), dtype=float)
-            self.dens_JZ = np.zeros((nrow, ncol, 3), dtype=float)
-        if (not check[0]) and (not check[1]) and (not check[2]):
-            print('Error: Invalid Entry. Only the m, j, and J characters are supported')
-            sys.exit(1)
-
-        # Gathers the data
-        iamhere = 0
-
-        if check[0]:
-            iamhere = 3
-            r = 0
-            s = 0
-            for i in range(0, bline):
-                for j in range(0, len(data[i+iamhere].split())):
-                    self.dens_m[r, s, 0] = data[i+iamhere].split()[j]
-                    self.dens_m[r, s, 1] = data[i +
-                                                iamhere+bline+skip].split()[j]
-                    self.dens_m[r, s, 2] = data[i+iamhere +
-                                                (2*bline)+(2*skip)].split()[j]
-                    if s == (ncol - 1):
-                        r += 1
-                        s = 0
-                    else:
-                        s += 1
-            iamhere = iamhere + 3*bline + 2*skip
-        if check[1]:
-            if iamhere == 0:
-                iamhere = 3
-            else:
-                iamhere = iamhere + skip
-            r = 0
-            s = 0
-            for i in range(0, bline):
-                for j in range(0, len(data[i+iamhere].split())):
-                    self.dens_j[r, s, 0] = data[i+iamhere].split()[j]
-                    self.dens_j[r, s, 1] = data[i +
-                                                iamhere+bline+skip].split()[j]
-                    self.dens_j[r, s, 2] = data[i +
-                                                iamhere+2*bline+2*skip].split()[j]
-                    if s == (ncol - 1):
-                        r += 1
-                        s = 0
-                    else:
-                        s += 1
-            iamhere = iamhere + 3*bline + 2*skip
-        if check[2]:
-            if iamhere == 0:
-                iamhere = 3
-            else:
-                iamhere = iamhere + skip
-            r = 0
-            s = 0
-            for i in range(0, bline):
-                for j in range(0, len(data[i+iamhere].split())):
-                    self.dens_JX[r, s, 0] = data[i+iamhere].split()[j]
-                    self.dens_JX[r, s, 1] = data[i +
-                                                 iamhere+bline+skip].split()[j]
-                    self.dens_JX[r, s, 2] = data[i+iamhere +
-                                                 (2*bline)+(2*skip)].split()[j]
-                    self.dens_JY[r, s, 0] = data[i+iamhere +
-                                                 (3*bline)+(3*skip)].split()[j]
-                    self.dens_JY[r, s, 1] = data[i+iamhere +
-                                                 (4*bline)+(4*skip)].split()[j]
-                    self.dens_JY[r, s, 2] = data[i+iamhere +
-                                                 (5*bline)+(5*skip)].split()[j]
-                    self.dens_JZ[r, s, 0] = data[i+iamhere +
-                                                 (6*bline)+(6*skip)].split()[j]
-                    self.dens_JZ[r, s, 1] = data[i+iamhere +
-                                                 (7*bline)+(7*skip)].split()[j]
-                    self.dens_JZ[r, s, 2] = data[i+iamhere +
-                                                 (8*bline)+(8*skip)].split()[j]
-                    if s == (ncol - 1):
-                        r += 1
-                        s = 0
-                    else:
-                        s += 1
-        return self
 
     def read_electron_band(self, band_file, output=None):
         """
@@ -3523,6 +3446,205 @@ class Properties_output:
 
         return self
 
+    def read_vecfield(self, properties_output, which_prop):
+        """Reads the fort.25 file to return data arrays containing one or more vectiorial density properties.
+
+        Args:
+            properties_output (str): The properties output file.
+            which_prop (str): The density property selected by the user: 'm' (magnetization), 'j' (spin current), 'J' (spin current density)
+        Returns:
+            Properties_output (str): The fort.25 output file.
+        """
+
+        import numpy as np
+
+        self.read_file(properties_output)
+
+        data = self.data
+
+        # Reads the header information
+        self.nrow = int(data[0].split()[1])
+        self.ncol = int(data[0].split()[2])
+        self.stepx = float(data[0].split()[3])
+        self.stepy = float(data[0].split()[4])
+        self.cosxy = float(data[0].split()[5])
+
+        self.a = np.array([float(data[1].split()[0]), float(data[1].split()[1]),
+                           float(data[1].split()[2])])
+        self.b = np.array([float(data[1].split()[3]), float(data[1].split()[4]),
+                           float(data[1].split()[5])])
+        self.c = np.array([float(data[2].split()[0]), float(data[2].split()[1]),
+                           float(data[2].split()[2])])
+        self.naf = int(data[2].split()[3])
+        self.ldim = int(data[2].split()[4])
+
+        # Elaborates the header data
+
+        gridsize = (self.nrow*self.ncol)
+        lines = int(gridsize/6)
+        if (gridsize % 6) != 0:
+            lines += 1
+
+        # Reads the types of density properties requested by the user and initializes the data arrays
+        check = np.zeros(3, dtype=int)
+        if 'm' in which_prop:
+            check[0] = 1
+            dens_m_array = np.zeros(gridsize*3, dtype=float)
+            self.dens_m = np.zeros((self.nrow, self.ncol, 3), dtype=float)
+        if 'j' in which_prop:
+            check[1] = 1
+            dens_j_array = np.zeros(gridsize*3, dtype=float)
+            self.dens_j = np.zeros((self.nrow, self.ncol, 3), dtype=float)
+        if 'J' in which_prop:
+            check[2] = 1
+            dens_JX_array = np.zeros(gridsize*3, dtype=float)
+            self.dens_JX = np.zeros((self.nrow, self.ncol, 3), dtype=float)
+            dens_JY_array = np.zeros(gridsize*3, dtype=float)
+            self.dens_JY = np.zeros((self.nrow, self.ncol, 3), dtype=float)
+            dens_JZ_array = np.zeros(gridsize*3, dtype=float)
+            self.dens_JZ = np.zeros((self.nrow, self.ncol, 3), dtype=float)
+        if (not check[0]) and (not check[1]) and (not check[2]):
+            print('Error: Invalid Entry. Only the m, j, and J characters are supported')
+            sys.exit(1)
+
+        # Gathers the data
+        pointer = 0
+        skip = 6 + self.naf
+
+        if check[0]:
+            pointer = 3
+            k = 0
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_m_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_m_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_m_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+
+            k = 0
+            for dir in range(0, 3):
+                for j in range(0, self.ncol):
+                    for i in range(self.nrow - 1, -1, -1):
+                        self.dens_m[i, j, dir] = dens_m_array[k]
+                        k += 1
+            del dens_m_array
+
+        if check[1]:
+            if pointer == 0:
+                pointer = 3
+            k = 0
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_j_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_j_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_j_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+
+            k = 0
+            for dir in range(0, 3):
+                for j in range(0, self.ncol):
+                    for i in range(self.nrow - 1, -1, -1):
+                        self.dens_j[i, j, dir] = dens_j_array[k]
+                        k += 1
+            del dens_j_array
+
+        if check[2]:
+            if pointer == 0:
+                pointer = 3
+            k = 0
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JX_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JX_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JX_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+
+            k = 0
+            for dir in range(0, 3):
+                for j in range(0, self.ncol):
+                    for i in range(self.nrow - 1, -1, -1):
+                        self.dens_JX[i, j, dir] = dens_JX_array[k]
+                        k += 1
+            del dens_JX_array
+
+            k = 0
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JY_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JY_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JY_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+
+            k = 0
+            for dir in range(0, 3):
+                for j in range(0, self.ncol):
+                    for i in range(self.nrow - 1, -1, -1):
+                        self.dens_JY[i, j, dir] = dens_JY_array[k]
+                        k += 1
+            del dens_JY_array
+
+            k = 0
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JZ_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JZ_array[k] = data[i+pointer].split()[j]
+                    k += 1
+            pointer = pointer + lines + skip
+            for i in range(0, lines):
+                for j in range(0, len(data[i+pointer].split())):
+                    dens_JZ_array[k] = data[i+pointer].split()[j]
+                    k += 1
+
+            k = 0
+            for dir in range(0, 3):
+                for j in range(0, self.ncol):
+                    for i in range(self.nrow - 1, -1, -1):
+                        self.dens_JZ[i, j, dir] = dens_JZ_array[k]
+                        k += 1
+            del dens_JZ_array
+
+        return self
+
     def read_cry_ECHG(self, properties_output):
         """
         Read density profile data from a file.
@@ -3595,6 +3717,297 @@ class Properties_output:
         self.density_map = out1.density_map - out2.density_map
 
         return self
+    
+    # TOPOND related functions
+    def read_topond_trho(self, properties_output):
+        """Read the TOPOND TRHO run output file to create associated DataFrames:
+         * Coordinates for the nuclei at the unitcell (nuclei_df)
+         * Data of the critical points (CP) discoverd (topo_df)
+
+        Args:
+            properties_output (str): The properties output file.
+        Returns:
+            Properties_output: The updated Properties_output object.
+        """
+        import re
+
+        import numpy as np
+        import pandas as pd
+
+        self.read_file(properties_output)
+
+        self.topo_filename = str(properties_output).split('.')[0]
+
+        properties = ["type", "coord", "rho", "grho", "lap",
+                      "kinetic_g", "kinetic_k", "virial", "elf",
+                      "eigenval", "eigenvec", "ellip", "atom_a_id",
+                      "atom_a_cell" ,"atom_a_z", "atom_b_id",
+                      "atom_b_cell" ,"atom_b_z", "bp_length",
+                      "distance_ab", "bp/dist"]
+
+        self.topo_df = pd.DataFrame(columns=properties)
+        self.nuclei_df = pd.DataFrame(columns=['z','coord'])
+
+        atom_a_read = False
+        bp_step = False
+
+        file_lines = len(self.data)
+        i = 0
+        while  i < file_lines:
+            line = self.data[i]
+
+            if re.match(r' DIRECT LATTICE VECTOR COMPONENTS .ANGSTROM.',line) != None:
+                unitcell_mat = [self.data[i+1].strip().split(),
+                                self.data[i+2].strip().split(),
+                                self.data[i+3].strip().split()]
+                self.unitcell_mat = np.array(unitcell_mat, dtype=float)
+                i += 3
+
+            if re.match(r' N. OF ATOMS PER CELL', line) != None:
+                num_atoms = int(line.strip().split()[5])
+
+            if re.match(r'   ATOM N.AT.  SHELL', line) != None:
+                i += 1
+                for n_atom in range(1,num_atoms+1):
+                    atom_data = self.data[i+n_atom].strip().split()
+                    self.nuclei_df.loc[n_atom,'z'] = int(atom_data[1])
+                    self.nuclei_df.loc[n_atom,'coord'] = np.array(atom_data[4:7],dtype=float)
+                i += num_atoms
+
+            if re.match(r' SEARCH OF BOND PATH',line) != None:
+                bp_step = True
+
+            if re.match(r' CP N.',line) != None:
+                if bp_step == False:
+                    crit_point_line = i
+                    crit_point_number = line.strip().split()[2]
+
+                    if crit_point_number == "X(ANG)":
+                        break
+
+                    cp_type = self.data[crit_point_line+3].strip().split()[3]
+                    cp_coord = self.data[crit_point_line+4].strip().split()[5:]
+                    if self.data[crit_point_line+5].strip().split()[1] == 'FRACT.':
+                        crit_point_line += 1
+                        i += 1
+                    cp_prop = self.data[crit_point_line+5].strip().split()[3:]
+                    cp_kener = self.data[crit_point_line+6].strip().split()[5:]
+                    cp_virial = self.data[crit_point_line+7].strip().split()[3]
+                    cp_elf = self.data[crit_point_line+8].strip().split()[2]
+                    eigenval = self.data[crit_point_line+12].strip().split()[5:]
+                    eigenvec = []
+                    eigenvec.append(self.data[crit_point_line+13].strip().split()[2:])
+                    eigenvec.append(self.data[crit_point_line+14].strip().split())
+                    eigenvec.append(self.data[crit_point_line+15].strip().split())
+
+                    # To skip already filtered lines
+                    i+= 14
+
+                    # Only bond cp has ellipticity calculated
+                    if cp_type == "(3,-1)":
+                        ellip = self.data[crit_point_line+17].strip().split()[2]
+                        i += 1
+                    else:
+                        ellip = 0
+
+                    # Populating the dataframe
+                    self.topo_df.loc[crit_point_number,'type'] = cp_type
+                    self.topo_df.loc[crit_point_number,'coord'] = np.array(cp_coord, dtype=float)
+                    self.topo_df.loc[crit_point_number,'rho'] = float(cp_prop[0])
+                    self.topo_df.loc[crit_point_number,'grho'] = float(cp_prop[1])
+                    self.topo_df.loc[crit_point_number,'lap'] = float(cp_prop[2])
+                    self.topo_df.loc[crit_point_number,'kinetic_g'] = float(cp_kener[0])
+                    self.topo_df.loc[crit_point_number,'kinetic_k'] = float(cp_kener[1])
+                    self.topo_df.loc[crit_point_number,'virial'] = float(cp_virial)
+                    self.topo_df.loc[crit_point_number,'elf'] = float(cp_elf)
+                    self.topo_df.loc[crit_point_number,'eigenval'] = np.array(eigenval, dtype=float)
+                    self.topo_df.loc[crit_point_number,'eigenvec'] = np.array(eigenvec, dtype=float)
+                    self.topo_df.loc[crit_point_number,'ellip'] = float(ellip)
+                
+                else:
+                    # ecrit stands for extra critical point, li
+                    ecrit_point_line = i
+                    ecrit_point_number = line.strip().split()[2]
+
+                    if ecrit_point_number == "X(ANG)":
+                        break
+
+                    cp_type = self.data[ecrit_point_line+3].strip().split()[4]
+                    cp_coord = self.data[ecrit_point_line+4].strip().split()[5:]
+                    if self.data[ecrit_point_line+5].strip().split()[1] == 'FRACT.':
+                        ecrit_point_line += 1
+                        i += 1
+                    cp_prop = self.data[ecrit_point_line+5].strip().split()[3:]
+
+                    # Populating DF
+                    self.topo_df.loc[ecrit_point_number,'type'] = cp_type
+                    self.topo_df.loc[ecrit_point_number,'coord'] = np.array(cp_coord, dtype=float)
+                    self.topo_df.loc[ecrit_point_number,'rho'] = float(cp_prop[0])
+                    self.topo_df.loc[ecrit_point_number,'grho'] = float(cp_prop[1])
+                    self.topo_df.loc[ecrit_point_number,'lap'] = float(cp_prop[2])
+
+            # Data of first attractor associated to BCP
+            if ((re.match(r' CLUSTER OF ATOMS AROUND THE TERMINUS ',line) != None) and
+                    bp_step and
+                    (not atom_a_read)):
+                atom_a_read = True
+                atom_a_start = i
+                atom_a_data = self.data[atom_a_start+2].strip().split()
+                i += 2
+                atom_a_id = atom_a_data[1]
+
+                if len(atom_a_data) > 7:
+                    atom_a_cell = atom_a_data[2:5]
+                    atom_a_z = atom_a_data[5]
+                else:
+                    atom_a_cell = []
+                    atom_a_z = atom_a_data[2]
+
+            # Data of second attractor associated to BCP
+            elif (re.match(r' CLUSTER OF ATOMS AROUND THE TERMINUS ',line) != None and
+                    bp_step and
+                    atom_a_read):
+                atom_a_read = False
+                atom_b_start = i
+                atom_b_data = self.data[atom_b_start+2].strip().split()
+                i += 2
+                atom_b_id = atom_b_data[1]
+
+                if len(atom_b_data) > 7:
+                    atom_b_cell = atom_b_data[2:5]
+                    atom_b_z = atom_b_data[5]
+                else:
+                    atom_b_cell = []
+                    atom_b_z = atom_b_data[2]
+
+            if re.match(r' BPL',line) != None:
+                bp_step = False
+                bp_length = line.strip().split()[7]
+                distance_ab = line.strip().split()[8]
+                bp_dist_ratio = line.strip().split()[9]
+
+                # Populating info for atoms involved in bond CPs
+                self.topo_df.loc[crit_point_number,'atom_a_id'] = int(atom_a_id)
+                self.topo_df.loc[crit_point_number,'atom_a_cell'] = np.array(atom_a_cell, dtype=float)
+                self.topo_df.loc[crit_point_number,'atom_a_z'] = int(atom_a_z)
+                self.topo_df.loc[crit_point_number,'atom_b_id'] = int(atom_b_id)
+                self.topo_df.loc[crit_point_number,'atom_b_cell'] = np.array(atom_b_cell, dtype=float)
+                self.topo_df.loc[crit_point_number,'atom_b_z'] = int(atom_b_z)
+                self.topo_df.loc[crit_point_number,'bp_length'] = float(bp_length)
+                self.topo_df.loc[crit_point_number,'distance_ab'] = float(distance_ab)
+                self.topo_df.loc[crit_point_number,'bp/dist'] = float(bp_dist_ratio)
+
+            # Next line iterator
+            i += 1
+
+        return self
+
+    def topond_viz_file(self, cp_type='ALL', add_atoms=False, file_type="xyz"):
+        """Given the existence of TOPOND TRHO DataFrames, write files
+         with the critical points (CP) coordinates for further
+         visualization.
+
+         Args:
+             cp_type (str): Generate file for a given type CP.
+                    Options: 'ALL' to include all CP in the system,
+                             'BCP' for Bond CPs,
+                             'RCP' for Ring CPs,
+                             'CCP' for Cage CPs,
+                             'NNA' for Nuclear/Non-Nuclear Atractors.
+             add_atoms (bool): Include the Nuclei atoms read from the
+                    TOPOND output in the same file.
+             file_type (str): Type of output file to be generated.
+
+         Returns:
+             ase_obj: The generated ASE object.
+        """
+        import sys
+        from ase import Atoms
+
+        if not hasattr(self,'topo_df'):
+            print('ERROR: You need first to succesfully run read_topond_trho() to use this.')
+            sys.exit(1)
+
+         # An ASE object is used as intermediate to generate different types of outputs
+        if cp_type == 'ALL':
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(self.topo_df['type']),
+                    positions = list(self.topo_df['coord']*0.529177), # factor for Bohr2Angs
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(self.topo_df['type']),
+                    positions = list(self.topo_df['coord']*0.529177) 
+                ) 
+        elif cp_type == 'BCP':
+            df_bcp =  self.topo_df[self.topo_df['type']=='(3,-1)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_bcp['type']),
+                    positions = list(df_bcp['coord']*0.529177), 
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_bcp['type']),
+                    positions = list(df_bcp['coord']*0.529177)
+                )
+        elif cp_type == 'RCP':
+            df_rcp =  self.topo_df[self.topo_df['type']=='(3,1)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_rcp['type']),
+                    positions = list(df_rcp['coord']*0.529177), 
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_rcp['type']),
+                    positions = list(df_rcp['coord']*0.529177)
+                )
+        elif cp_type == 'CCP':
+            df_ccp =  self.topo_df[self.topo_df['type']=='(3,3)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_ccp['type']),
+                    positions = list(df_ccp['coord'] * 0.529177), 
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_ccp['type']),
+                    positions = list(df_ccp['coord'] * 0.529177)
+                )
+        elif cp_type == 'NNA':
+            df_nna =  self.topo_df[self.topo_df['type']=='(3,-3)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_nna['type']),
+                    positions = list(df_nna['coord'] * 0.529177), # factor for Bohr2Angs
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_nna['type']),
+                    positions = list(df_nna['coord'] * 0.529177)
+                )
+
+        if add_atoms:
+            for i in range(len(self.nuclei_df['z'])):
+                ase_obj.append(self.nuclei_df.loc[i + 1, 'z'])
+                ase_obj.positions[-1] = self.nuclei_df.loc[i + 1, 'coord']
+
+        ase_obj.write(self.topo_filename + '_' + cp_type + '.' +file_type)
+        print(self.topo_filename + '_' + cp_type + '.' + file_type + " generated.")
+
+        return ase_obj
 
 
 class Crystal_gui:
