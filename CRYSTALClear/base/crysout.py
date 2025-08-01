@@ -3,6 +3,8 @@
 """
 Classes and methods to phrase 'crystal' output file.
 """
+
+
 class GeomBASE():
     """
     A container of basic methods for SCF geometry.
@@ -23,14 +25,15 @@ class GeomBASE():
             struc (Pymatgen Structure | Molecule)
         """
         import re
+
         import numpy as np
         from pymatgen.core.lattice import Lattice
-        from pymatgen.core.structure import Structure, Molecule
+        from pymatgen.core.structure import Molecule, Structure
 
-        pbc = {0 : (False, False, False),
-               1 : (True, False, False),
-               2 : (True, True, False),
-               3 : (True, True, True)}
+        pbc = {0: (False, False, False),
+               1: (True, False, False),
+               2: (True, True, False),
+               3: (True, True, True)}
 
         species = []
         coords = []
@@ -68,7 +71,9 @@ class GeomBASE():
                 countline += 1
                 coords = np.array(coords, dtype=float)
                 if ndimen != 0:
-                    coords[:, 0:ndimen] = coords[:, 0:ndimen] @ latt_mx[0:ndimen, 0:ndimen] # to cartesian coords
+                    # to cartesian coords
+                    coords[:, 0:ndimen] = coords[:,
+                                                 0:ndimen] @ latt_mx[0:ndimen, 0:ndimen]
                     struc = Structure(lattice=latt, species=species,
                                       coords=coords, coords_are_cartesian=True)
                 else:
@@ -96,6 +101,7 @@ class GeomBASE():
             conv_z (array): Int array of conventional atom numbers
         """
         import re
+
         import numpy as np
 
         conv_z = []
@@ -139,7 +145,9 @@ class SCFBASE():
         """
         import re
         import warnings
+
         import numpy as np
+
         from CRYSTALClear.units import H_to_eV
 
         e = []
@@ -166,7 +174,8 @@ class SCFBASE():
                 countline += 1
 
         if endflag != 'converged':
-            warnings.warn('SCF convergence not achieved or missing.', stacklevel=3)
+            warnings.warn(
+                'SCF convergence not achieved or missing.', stacklevel=3)
 
         ncyc = len(e)
         e = np.array(e, dtype=float)
@@ -189,7 +198,9 @@ class SCFBASE():
         """
         import re
         import warnings
+
         import numpy as np
+
         from CRYSTALClear.units import H_to_eV
 
         if history == True:
@@ -209,7 +220,7 @@ class SCFBASE():
                     break
                 else:
                     efermi.append(line_data[5])
-                    countline -= 1 # Note the reversed sequence here
+                    countline -= 1  # Note the reversed sequence here
             # spin flag
             elif re.match(r'^\s*SUMMED SPIN DENSITY', line):
                 spin = True
@@ -265,6 +276,7 @@ class SCFBASE():
         """
         import re
         import warnings
+
         import numpy as np
 
         if history == True:
@@ -353,9 +365,11 @@ class OptBASE():
         """
         import re
         import warnings
+
         import numpy as np
-        from CRYSTALClear.units import H_to_eV
+
         from CRYSTALClear.base.crysout import GeomBASE
+        from CRYSTALClear.units import H_to_eV
 
         e = []
         de = []
@@ -409,7 +423,8 @@ class OptBASE():
                 countline += 1
 
         if endflag != 'converged':
-            warnings.warn('Optimisation convergence not achieved.', stacklevel=3)
+            warnings.warn(
+                'Optimisation convergence not achieved.', stacklevel=3)
 
         e = np.array(e, dtype=float)
         de = np.array(de, dtype=float)
@@ -441,6 +456,7 @@ class PhononBASE():
             Raman (array[bool]): nmode \* 1
         """
         import re
+
         import numpy as np
 
         frequency = []
@@ -490,8 +506,9 @@ class PhononBASE():
             countline (int): Line number of output file.
             eigvt (array[float]): nmode\*natom\*3 array.
         """
-        import numpy as np
         import re
+
+        import numpy as np
 
         # Read the eigenvector region as its original shape
         total_data = []
@@ -522,10 +539,10 @@ class PhononBASE():
             else:
                 break
 
-        eigvt = np.hstack([i for i in total_data]) # (3*natom) * nmode
+        eigvt = np.hstack([i for i in total_data])  # (3*natom) * nmode
         eigvt = np.array(eigvt, dtype=float)
         # 1st dimension, nmode
-        eigvt = np.transpose(eigvt) # nmode * (3*natom)
+        eigvt = np.transpose(eigvt)  # nmode * (3*natom)
         # 2nd dimension, natom
         natom = int(nmode / 3)
         eigvt = np.reshape(eigvt, [nmode, natom, 3], order='C')
@@ -547,15 +564,16 @@ class PhononBASE():
             classic_a (array): nfreq\*3natom\*3natom array, or 3natom\*3natom
                 if ``freq`` is float. The diagonal matrix of classical amplitude.
         """
-        from CRYSTALClear.units import amu_to_me, thz_to_hartree
         import numpy as np
+
+        from CRYSTALClear.units import amu_to_me, thz_to_hartree
 
         if type(freq) == float:
             freq = np.array([freq])
 
         natom = struc.num_sites
         nmode = int(3*natom)
-        mass_rev = np.zeros([nmode, nmode]) # In AU
+        mass_rev = np.zeros([nmode, nmode])  # In AU
         for i in range(0, nmode, 3):
             atid = i // 3
             atmass = amu_to_me(float(struc.species[atomid].atomic_mass))
@@ -602,8 +620,9 @@ class PhononBASE():
             crysout (Crystal_output): :code:`CRYSTALClear.crystal_io.Crystal_output` object
             threshold (float): The q point overlap threshold.
         """
-        import numpy as np
         import warnings
+
+        import numpy as np
 
         if crysout.nqpoint <= 1:
             return crysout
@@ -611,7 +630,7 @@ class PhononBASE():
         overlap = []
         for idx_q1 in range(crysout.nqpoint - 1):
             qvec1 = crysout.qpoint[idx_q1][0]
-            for idx_q2 in range(idx_q1 + 1, crysout.nqpoint): # q1 < q2
+            for idx_q2 in range(idx_q1 + 1, crysout.nqpoint):  # q1 < q2
                 qvec2 = crysout.qpoint[idx_q2][0]
                 if np.linalg.norm(qvec1 - qvec2) < threshold:
                     warnings.warn('Overlap of q points is detected between q points {:3d} and {:3d}'.format(idx_q1, idx_q2),
@@ -621,21 +640,26 @@ class PhononBASE():
         overlap = np.array(overlap, dtype=int)
         weight = np.array([i[1] for i in crysout.qpoint])
         for idx_q in range(crysout.nqpoint, 1, -1):
-            if len(overlap) == 0: # No overlap
+            if len(overlap) == 0:  # No overlap
                 break
             for idx_o in np.where(overlap[:, 1] == idx_q)[0]:
                 crysout.nqpoint -= 1
                 del crysout.qpoint[overlap[idx_o, 1]]
                 weight = np.delete(weight, overlap[idx_o, 1])
                 crysout.nmode = np.delete(crysout.nmode, overlap[idx_o, 1])
-                crysout.frequency  = np.delete(crysout.frequency, overlap[idx_o, 1], axis=0)
+                crysout.frequency = np.delete(
+                    crysout.frequency, overlap[idx_o, 1], axis=0)
                 if len(crysout.intens) != 0:
-                    crysout.intens = np.delete(crysout.intens, overlap[idx_o, 1], axis=0)
-                    crysout.IR = np.delete(crysout.IR, overlap[idx_o, 1], axis=0)
-                    crysout.Raman = np.delete(crysout.Raman, overlap[idx_o, 1], axis=0)
+                    crysout.intens = np.delete(
+                        crysout.intens, overlap[idx_o, 1], axis=0)
+                    crysout.IR = np.delete(
+                        crysout.IR, overlap[idx_o, 1], axis=0)
+                    crysout.Raman = np.delete(
+                        crysout.Raman, overlap[idx_o, 1], axis=0)
                 if len(crysout.eigenvector) != 0:
-                    crysout.eigenvector = np.delete(crysout.eigenvector, overlap[idx_o, 1], axis=0)
-                break # Avoid repeatly deleting
+                    crysout.eigenvector = np.delete(
+                        crysout.eigenvector, overlap[idx_o, 1], axis=0)
+                break  # Avoid repeatly deleting
 
         # Update weight
         weight = weight * 1 / np.sum(weight)
@@ -654,8 +678,9 @@ class PhononBASE():
             crysout (Crystal_output): :code:`CRYSTALClear.crystal_io.Crystal_output` object
             threshold (float): The threshold to identify a phonon mode as negative.
         """
-        import numpy as np
         import warnings
+
+        import numpy as np
 
         for q, freq in enumerate(crysout.frequency):
             if np.isnan(freq[0]) or freq[0] > threshold:
