@@ -412,7 +412,7 @@ class Crystal_output:
         Return the last optimised geometry.
         """
         struc = self.get_geometry(
-            initial=False, write_gui=write_gui_file, symm_info=symm_info)
+            initial=False, write_gui=write_gui_file, symmetry=symm_info)
         if 'Molecule' in str(type(struc)):
             self.last_geom = [[[500., 0., 0.], [0., 500., 0.], [0., 0., 500.]],
                               self.atom_numbers,
