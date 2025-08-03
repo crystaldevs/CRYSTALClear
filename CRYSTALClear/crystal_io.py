@@ -305,7 +305,6 @@ class Crystal_output:
         """
         import os
         import re
-        import sys
         import warnings
 
         import numpy as np
@@ -328,7 +327,6 @@ class Crystal_output:
                 # Use atom coords to read molecule geometries. Go 4 lines up for periodic systems
                 if re.match(r'^\s*ATOMS IN THE ASYMMETRIC UNIT', line):
                     bg_line = len(self.data[:self.eoo]) - nline - 4
-                    print(bg_line)
                     break
 
         if bg_line < 0:
@@ -368,62 +366,65 @@ class Crystal_output:
 
         # Write gui files
         if write_gui == True:
-            sys.exit('Functionality under mantainance')
             # Conventional atomic numbers
-            # zconv = [[i, self.atom_numbers[i]] for i in range(self.n_atoms)]
-            # if gui_name == None:
-            #     gui_name = os.path.splitext(self.name)[0]
-            #     gui_name = '{}.gui'.format(gui_name)
-            #
-            # if symmetry == 'pymatgen':
-            #     gui = cry_pmg2gui(struc, gui_file=gui_name,
-            #                       symmetry=True, zconv=zconv, **kwargs)
-            # elif symmetry == None:
-            #     gui = cry_pmg2gui(struc, gui_file=gui_name,
-            #                       symmetry=False, zconv=zconv)
-            # elif symmetry == 'initial':
-            #     self.get_symmops()
-            #     gui = cry_pmg2gui(struc, gui_file=None,
-            #                       symmetry=False, zconv=zconv)
-            #     gui.symmops = self.symmops
-            #     gui.n_symmops = self.n_symmops
-            #     gui.space_group = self.sg_number
-            #     gui.write_gui(gui_name, symm=True)
-            # else:
-            #     warnings.warn('Symmetry adapted from reference geometry. Make sure that is desired.',
-            #                   stacklevel=2)
-            #     gui_ref = Crystal_gui().read_gui(symmetry)
-            #     gui = cry_pmg2gui(struc, gui_file=None,
-            #                       symmetry=False, zconv=zconv)
-            #     # Replace the symmops with the reference file
-            #     gui.symmops = gui_ref.symmops
-            #     gui.n_symmops = gui_ref.n_symmops
-            #     gui.space_group = gui_ref.space_group
-            #     gui.write_gui(gui_list[idx_s], symm=True)
+            zconv = [[i, self.atom_numbers[i]] for i in range(self.n_atoms)]
+            if gui_name == None:
+                gui_name = os.path.splitext(self.name)[0]
+                gui_name = '{}.gui'.format(gui_name)
+
+            if symmetry == 'pymatgen':
+                # zconv needs to be None, given SpacegroupAnalyzer usage
+                gui = cry_pmg2gui(struc, gui_file=gui_name,
+                                  symmetry=True, zconv=None, **kwargs)
+            elif symmetry == None:
+                gui = cry_pmg2gui(struc, gui_file=gui_name,
+                                  symmetry=False, zconv=zconv)
+            elif symmetry == 'initial':
+                self.get_symmops()
+                gui = cry_pmg2gui(struc, gui_file=None,
+                                  symmetry=False, zconv=zconv)
+                gui.symmops = self.symmops
+                # Translation vector of the symmop to cartesian
+                for n, symmops in enumerate(gui.symmops):
+                    symmops[3][0] = symmops[3][0]*struc.lattice.a
+                    symmops[3][1] = symmops[3][1]*struc.lattice.b
+                    symmops[3][2] = symmops[3][2]*struc.lattice.c
+                    gui.symmops[n][3] = symmops[3]
+                gui.n_symmops = self.n_symmops
+                gui.space_group = self.sg_number
+                gui.write_gui(gui_name, symm=True)
+            else:
+                warnings.warn('Symmetry adapted from reference geometry. Make sure that is desired.',
+                              stacklevel=2)
+                gui_ref = Crystal_gui().read_gui(symmetry)
+                gui = cry_pmg2gui(struc, gui_file=None,
+                                  symmetry=False, zconv=zconv)
+                # Replace the symmops with the reference file
+                gui.symmops = gui_ref.symmops
+                gui.n_symmops = gui_ref.n_symmops
+                gui.space_group = gui_ref.space_group
+                gui.write_gui(gui_list[idx_s], symm=True)
 
         return self.geometry
 
-    def get_last_geom(self, write_gui_file=False, symm_info='pymatgen'):
+    def get_last_geom(self, write_gui_file=False, symm_info='initial'):
         """
         Return the last optimised geometry.
         """
         struc = self.get_geometry(
-            initial=False, write_gui=write_gui_file, symm_info=symm_info)
+            initial=False, write_gui=write_gui_file, symmetry=symm_info)
         if 'Molecule' in str(type(struc)):
             self.last_geom = [[[500., 0., 0.], [0., 500., 0.], [0., 0., 500.]],
                               self.atom_numbers,
                               self.atom_positions_cart.tolist()]
         else:
-            # self.last_geom = [struc.lattice.matrix.tolist(),
-            #                   self.atom_numbers,
-            #                   self.atom_positions_cart.tolist()]
-
             self.last_geom = [struc.lattice.abc,
                               struc.lattice.angles,
                               struc.lattice.volume,
                               struc.lattice.matrix.tolist(),
-                              # self.atom_numbers,
+                              self.atom_numbers,
                               self.atom_positions_cart.tolist()]
+
         return self.last_geom
 
     def get_lattice(self, initial=True):
@@ -2402,15 +2403,15 @@ class Crystal_output:
         Extracts the Equation of state output data and corresponding fittings
 
         Returns:
-            self.VvsE (np.array): numpy array containing the computed volumes and 
-                                  the corresponding energies in the first and second column respectively 
-            self.murnaghan (np.array): numpy array containing the fitted thermodynamics 
+            self.VvsE (np.array): numpy array containing the computed volumes and
+                                  the corresponding energies in the first and second column respectively
+            self.murnaghan (np.array): numpy array containing the fitted thermodynamics
                                        functions with the Murnaghan Equation
-            self.bmurnaghan (np.array): numpy array containing the fitted thermodynamics 
+            self.bmurnaghan (np.array): numpy array containing the fitted thermodynamics
                                         functions with the Birch-Murnaghan Equation
-            self.pt (np.array): numpy array containing the fitted thermodynamics 
+            self.pt (np.array): numpy array containing the fitted thermodynamics
                                 functions with the Poirier-Tarantola Equation
-            self.vinet (np.array): numpy array containing the fitted thermodynamics 
+            self.vinet (np.array): numpy array containing the fitted thermodynamics
                                    functions with the Vinet Equation
         """
         import re
@@ -2760,7 +2761,7 @@ class Properties_input:
         elif all(isinstance(x, str) for x in flat_proj):
             if output_file == None:
                 print(
-                    'EXITING: please specify an outut file to use the atoms projection.')
+                    'EXITING: please specify an output file to use the atoms projection.')
                 sys.exit(1)
             else:
                 output = Crystal_output(output_file)
@@ -2910,7 +2911,7 @@ class Properties_output:
         return self.read_electron_dos(properties_output)
 
     def read_cry_contour(self, properties_output):
-        """Read the CRYSTAL contour files (SURFRHOO, SURFLAPP, SURFLAPM, SURFGRHO, 
+        """Read the CRYSTAL contour files (SURFRHOO, SURFLAPP, SURFLAPM, SURFGRHO,
            SURFELFB, SURFVIRI, SURFGKIN, SURFKKIN) to create the contour objects.
 
         Args:
@@ -3717,7 +3718,7 @@ class Properties_output:
         self.density_map = out1.density_map - out2.density_map
 
         return self
-    
+
     # TOPOND related functions
     def read_topond_trho(self, properties_output):
         """Read the TOPOND TRHO run output file to create associated DataFrames:
@@ -3823,7 +3824,7 @@ class Properties_output:
                     self.topo_df.loc[crit_point_number,'eigenval'] = np.array(eigenval, dtype=float)
                     self.topo_df.loc[crit_point_number,'eigenvec'] = np.array(eigenvec, dtype=float)
                     self.topo_df.loc[crit_point_number,'ellip'] = float(ellip)
-                
+
                 else:
                     # ecrit stands for extra critical point, li
                     ecrit_point_line = i
@@ -3940,14 +3941,14 @@ class Properties_output:
             else:
                 ase_obj = Atoms(
                     symbols = ["X"] * len(self.topo_df['type']),
-                    positions = list(self.topo_df['coord']*0.529177) 
-                ) 
+                    positions = list(self.topo_df['coord']*0.529177)
+                )
         elif cp_type == 'BCP':
             df_bcp =  self.topo_df[self.topo_df['type']=='(3,-1)']
             if hasattr(self,'unitcell_mat'):
                 ase_obj = Atoms(
                     symbols = ["X"] * len(df_bcp['type']),
-                    positions = list(df_bcp['coord']*0.529177), 
+                    positions = list(df_bcp['coord']*0.529177),
                     cell = self.unitcell_mat,
                     pbc=[True,True,True]
                 )
@@ -3961,7 +3962,7 @@ class Properties_output:
             if hasattr(self,'unitcell_mat'):
                 ase_obj = Atoms(
                     symbols = ["X"] * len(df_rcp['type']),
-                    positions = list(df_rcp['coord']*0.529177), 
+                    positions = list(df_rcp['coord']*0.529177),
                     cell = self.unitcell_mat,
                     pbc=[True,True,True]
                 )
@@ -3975,7 +3976,7 @@ class Properties_output:
             if hasattr(self,'unitcell_mat'):
                 ase_obj = Atoms(
                     symbols = ["X"] * len(df_ccp['type']),
-                    positions = list(df_ccp['coord'] * 0.529177), 
+                    positions = list(df_ccp['coord'] * 0.529177),
                     cell = self.unitcell_mat,
                     pbc=[True,True,True]
                 )
