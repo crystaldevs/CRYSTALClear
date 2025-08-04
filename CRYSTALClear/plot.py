@@ -1277,18 +1277,19 @@ def plot_cry_density_profile(lapl_obj):
 # -------------------------------------SEEBACK---------------------------------#
 
 
-def plot_cry_seebeck_potential(seebeck_obj):
+def plot_cry_seebeck_potential(seebeck_obj,direction,temperature):
     """
     Plot the Seebeck coefficient as a function of chemical potential.
 
     Args:
         seebeck_obj (object): Seebeck object containing the data for the Seebeck coefficient.
+        direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
+        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
 
     Returns:
-        None
+        Figure object
 
     Notes:
-        - Prompts the user to choose the direction to plot among S_xx, S_xy, S_xz, S_yx, S_yy, S_yz, S_yz, S_zx, S_zy, S_zz.
         - Plots the Seebeck coefficient as a function of chemical potential for each temperature.
         - Distinguishes between n-type and p-type conduction with dashed and solid lines, respectively.
     """
@@ -1298,37 +1299,46 @@ def plot_cry_seebeck_potential(seebeck_obj):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    case = input(
-        'Please, choose the direction you want to plot. \nYou can choose among S_xx, S_xy, S_xz, S_yx, S_yy, S_yz, S_yz, S_zx, S_zy, S_zz\n')
+    
 
-    case = case.lower().replace('_', '')
+    direction = direction.lower().replace('_', '')
 
-    if case.isalpha() == True:
+    if direction.isalpha() == True:
         pass
     else:
-        sys.exit('Please, select a valid chioce')
+        sys.exit('Please, select a valid direction')
 
-    if case == 'sxx':
+    if direction == 'sxx':
         col = 3
-    elif case == 'sxy':
+    elif direction == 'sxy':
         col = 4
-    elif case == 'sxz':
+    elif direction == 'sxz':
         col = 5
-    elif case == 'syx':
+    elif direction == 'syx':
         col = 6
-    elif case == 'syy':
+    elif direction == 'syy':
         col = 7
-    elif case == 'syz':
+    elif direction == 'syz':
         col = 8
-    elif case == 'szx':
+    elif direction == 'szx':
         col = 9
-    elif case == 'szy':
+    elif direction == 'szy':
         col = 10
-    elif case == 'szz':
+    elif direction == 'szz':
         col = 11
 
     else:
-        sys.exit('please, choose a valid chioce')
+        sys.exit('please, choose a valid direction')
+
+    
+    listtemp = []
+
+    for k in range(0,len(seebeck_obj.all_data)):
+       listtemp.append(seebeck_obj.temp[k])
+    
+
+    if temperature != 'all' and temperature not in listtemp:
+        sys.exit('Please, choose a valid temperature.')
 
     vol = seebeck_obj.volume
 
@@ -1381,52 +1391,60 @@ def plot_cry_seebeck_potential(seebeck_obj):
     endx = []
     endy = []
 
-    for k in range(0, len(seebeck_obj.all_data)):
+    
+
+
+    if temperature != 'all':
+        k = listtemp.index(temperature)
         endx = [xposfin[k][-1], xnegfin[k][0]]
         endy = [yposfin[k][-1], ynegfin[k][0]]
         plt.figure()
         plt.plot(endx, endy, color=colours[k])
         plt.plot(xposfin[k], yposfin[k], color=colours[k],
-                 label=str(seebeck_obj.temp[k])+' K')
+                    label=str(seebeck_obj.temp[k])+' K')
         plt.plot(xnegfin[k], ynegfin[k], '--', color=colours[k])
         plt.xlabel('Chemical Potential (eV)', fontsize=12)
         plt.ylabel('Seebeck Coefficient ($\mu$V/K)', fontsize=12)
         plt.axhline(0, color='k')
         plt.title('Seebeck at ' + str(seebeck_obj.temp[k]) + ' K')
         plt.legend(loc='upper left', fontsize=12)
-        plt.savefig('seebeck_potential_at_' + str(seebeck_obj.temp[k]) + 'K___' + time.strftime(
-            "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
-        plt.show()
+        fig = plt.gcf()
+            #plt.savefig('seebeck_potential_at_' + str(seebeck_obj.temp[k]) + 'K___' + time.strftime(
+                #"%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
+        return fig
+    else:
 
-    from matplotlib.pyplot import figure
-    figure(figsize=(7, 7))
-    for k in range(0, len(seebeck_obj.all_data)):
-        endx = [xposfin[k][-1], xnegfin[k][0]]
-        endy = [yposfin[k][-1], ynegfin[k][0]]
-        plt.plot(endx, endy, color=colours[k])
-        plt.plot(xposfin[k], yposfin[k], color=colours[k],
-                 label=str(seebeck_obj.temp[k])+' K')
-        plt.plot(xnegfin[k], ynegfin[k], '--', color=colours[k])
-        plt.xlabel('Chemical Potential (eV)', fontsize=12)
-        plt.axhline(0, color='k')
-        plt.title('Seebeck at different T')
-    plt.savefig('seebeck_potential_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
-                '.jpg', format='jpg', dpi=100, bbox_inches='tight')
-    plt.show()
+        from matplotlib.pyplot import figure
+        figure(figsize=(7, 7))
+        for k in range(0, len(seebeck_obj.all_data)):
+            endx = [xposfin[k][-1], xnegfin[k][0]]
+            endy = [yposfin[k][-1], ynegfin[k][0]]
+            plt.plot(endx, endy, color=colours[k])
+            plt.plot(xposfin[k], yposfin[k], color=colours[k],
+                    label=str(seebeck_obj.temp[k])+' K')
+            plt.plot(xnegfin[k], ynegfin[k], '--', color=colours[k])
+            plt.xlabel('Chemical Potential (eV)', fontsize=12)
+            plt.axhline(0, color='k')
+            plt.title('Seebeck at different T')
+            fig = plt.gcf()
+        #plt.savefig('seebeck_potential_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
+                    #'.jpg', format='jpg', dpi=100, bbox_inches='tight')
+        return fig
 
 
-def plot_cry_seebeck_carrier(seebeck_obj):
+def plot_cry_seebeck_carrier(seebeck_obj,direction,temperature):
     """
     Plot the Seebeck coefficient as a function of charge carrier concentration.
 
     Args:
         seebeck_obj: Seebeck object containing the data for the Seebeck coefficient.
+        direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
+        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
 
     Returns:
-        None
+        Figure object
 
     Notes:
-        - Prompts the user to choose the direction to plot among S_xx, S_xy, S_xz, S_yx, S_yy, S_yz, S_yz, S_zx, S_zy, S_zz.
         - Plots the Seebeck coefficient as a function of charge carrier concentration for each temperature, distinguishing between n-type and p-type conduction.
     """
     import sys
@@ -1435,36 +1453,43 @@ def plot_cry_seebeck_carrier(seebeck_obj):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    case = input(
-        'Please, choose the direction you want to plot. \nYou can choose among S_xx, S_xy, S_xz, S_yx, S_yy, S_yz, S_yz, S_zx, S_zy, S_zz\n')
+    
+    direction = direction.lower().replace('_', '')
 
-    case = case.lower().replace('_', '')
-
-    if case.isalpha() == True:
+    if direction.isalpha() == True:
         pass
     else:
-        sys.exit('Please, select a valid chioce')
+        sys.exit('Please, select a valid direction')
 
-    if case == 'sxx':
+    if direction == 'sxx':
         col = 3
-    elif case == 'sxy':
+    elif direction == 'sxy':
         col = 4
-    elif case == 'sxz':
+    elif direction == 'sxz':
         col = 5
-    elif case == 'syx':
+    elif direction == 'syx':
         col = 6
-    elif case == 'syy':
+    elif direction == 'syy':
         col = 7
-    elif case == 'syz':
+    elif direction == 'syz':
         col = 8
-    elif case == 'szx':
+    elif direction == 'szx':
         col = 9
-    elif case == 'szy':
+    elif direction == 'szy':
         col = 10
-    elif case == 'szz':
+    elif direction == 'szz':
         col = 11
     else:
-        sys.exit('please, choose a valid chioce')
+        sys.exit('please, choose a valid direction')
+
+    listtemp = []
+
+    for k in range(0,len(seebeck_obj.all_data)):
+       listtemp.append(seebeck_obj.temp[k])
+    
+
+    if temperature != 'all' and temperature not in listtemp:
+        sys.exit('Please, choose a valid temperature.')
 
     vol = seebeck_obj.volume
 
@@ -1510,7 +1535,8 @@ def plot_cry_seebeck_carrier(seebeck_obj):
     colours = ['royalblue', 'orange', 'green', 'red',
                'purple', 'brown', 'pink', 'grey', 'olive', 'cyan']
 
-    for k in range(0, len(seebeck_obj.all_data)):
+    if temperature != 'all':
+        k = listtemp.index(temperature)
         endx = [xposfin[k][-1], xnegfin[k][0]]
         endy = [yposfin[k][-1], ynegfin[k][0]]
         plt.figure()
@@ -1525,45 +1551,54 @@ def plot_cry_seebeck_carrier(seebeck_obj):
         plt.legend(loc='upper left', fontsize=12)
         plt.xscale('log')
         plt.show()
-
-    from matplotlib.pyplot import figure
-
-    figure(figsize=(7, 7))
-    for k in range(0, len(seebeck_obj.all_data)):
-        endx = [xposfin[k][-1], xnegfin[k][0]]
-        endy = [yposfin[k][-1], ynegfin[k][0]]
-        plt.plot(endx, endy, color=colours[k])
-        plt.plot(xposfin[k], yposfin[k], color=colours[k],
-                 label=str(seebeck_obj.temp[k])+' K')
-        plt.plot(abs(np.array(xnegfin[k])), ynegfin[k], '--', color=colours[k])
-        plt.xlabel('Charge Carrier Concentration (cm$^{-3}$)', fontsize=12)
-        plt.ylabel('Seebeck Coefficient ($\mu$V/K)', fontsize=12)
-        plt.axhline(0, color='k')
-        plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
-        plt.xscale('log')
-        plt.title('Seebeck at different T')
-    plt.savefig('seebeck_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
-                '.jpg', format='jpg', dpi=100, bbox_inches='tight')
-    plt.show()
+        fig = plt.gcf()
+        return fig
 
 
-def plot_cry_multiseebeck(*seebeck):
+    else:
+
+        from matplotlib.pyplot import figure
+
+        figure(figsize=(7, 7))
+        for k in range(0, len(seebeck_obj.all_data)):
+            endx = [xposfin[k][-1], xnegfin[k][0]]
+            endy = [yposfin[k][-1], ynegfin[k][0]]
+            plt.plot(endx, endy, color=colours[k])
+            plt.plot(xposfin[k], yposfin[k], color=colours[k],
+                    label=str(seebeck_obj.temp[k])+' K')
+            plt.plot(abs(np.array(xnegfin[k])), ynegfin[k], '--', color=colours[k])
+            plt.xlabel('Charge Carrier Concentration (cm$^{-3}$)', fontsize=12)
+            plt.ylabel('Seebeck Coefficient ($\mu$V/K)', fontsize=12)
+            plt.axhline(0, color='k')
+            plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
+            plt.xscale('log')
+            plt.title('Seebeck at different T')
+        #plt.savefig('seebeck_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
+         #           '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+        plt.show()
+        fig = plt.gcf()
+        return fig
+
+
+def plot_cry_multiseebeck(direction,temperature,minpot,maxpot,*seebeck):
     """
-    Plot the multiseebeck coefficient for different temperatures.
+    Plot the seebeck coefficient from different files.
 
     Args:
-        *seebeck: Variable number of seebeck objects containing the data for the Seebeck coefficient.
+        direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
+        temperature (value): choose the temperature to be considered 
+        minpot (value): lower value of chemical potential you want to plot in eV  
+        maxpot (value): higher value of chemical potential you want to plot in eV 
+        *seebeck (obj): Variable number of seebeck objects containing the data for the Seebeck coefficient.
 
     Returns:
-        None
+        Figure object
 
     Notes:
-        - Prompts the user to input the index of the temperature to plot.
-        - Prompts the user to input the lower and higher values of chemical potential to plot in eV.
-        - Prompts the user to choose the direction to plot among S_xx, S_xy, S_xz, S_yx, S_yy, S_yz, S_yz, S_zx, S_zy, S_zz.
-        - Plots the multiseebeck coefficient for each seebeck object.
+    
+        - Plots the seebeck coefficient for each seebeck object.
         - Differentiates transport coefficients due to n-type or p-type conduction using dashed and solid lines.
-        - Saves the plot to a file named 'multiseebeckYYYY-MM-DD_HHMMSS.jpg', where YYYY-MM-DD_HHMMSS represents the current date and time.
+
     """
     import sys
     import time
@@ -1571,50 +1606,57 @@ def plot_cry_multiseebeck(*seebeck):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    k = int(input(
-        'Insert the index of temperature you want to plot \n(i.e. if your temperature are [T1, T2, T3] indexes are [0, 1, 2])'))
-    minpot = float(
-        input('Insert the lower value of chemical potential you want to plot in eV'))
-    maxpot = float(
-        input('Inser the higher value of chemical potential you want to plot in eV'))
+    #k = int(input(
+     #   'Insert the index of temperature you want to plot \n(i.e. if your temperature are [T1, T2, T3] indexes are [0, 1, 2])'))
+    #minpot = float(
+     #   input('Insert the lower value of chemical potential you want to plot in eV'))
+    #maxpot = float(
+     #   input('Inser the higher value of chemical potential you want to plot in eV'))
 
-    case = input(
-        'Please, choose the direction you want to plot. \nYou can choose among S_xx, S_xy, S_xz, S_yx, S_yy, S_yz, S_yz, S_zx, S_zy, S_zz\n')
+    
 
-    case = case.lower().replace('_', '')
+    direction = direction.lower().replace('_', '')
 
-    if case.isalpha() == True:
+    if direction.isalpha() == True:
         pass
     else:
-        sys.exit('Please, select a valid chioce')
+        sys.exit('Please, select a valid direction')
 
-    if case == 'sxx':
+    if direction == 'sxx':
         col = 3
-    elif case == 'sxy':
+    elif direction == 'sxy':
         col = 4
-    elif case == 'sxz':
+    elif direction == 'sxz':
         col = 5
-    elif case == 'syx':
+    elif direction == 'syx':
         col = 6
-    elif case == 'syy':
+    elif direction == 'syy':
         col = 7
-    elif case == 'syz':
+    elif direction == 'syz':
         col = 8
-    elif case == 'szx':
+    elif direction == 'szx':
         col = 9
-    elif case == 'szy':
+    elif direction == 'szy':
         col = 10
-    elif case == 'szz':
+    elif direction == 'szz':
         col = 11
 
     else:
-        sys.exit('please, choose a valid chioce')
+        sys.exit('please, choose a valid direction')
+
+    
 
     print('To differentiate transport coefficients due to n-type or p-type conduction (electrons or holes as majority carriers) dashed and solid lines are used, respectively.')
 
     i = 0
     for n in seebeck:
         vol = n.volume
+
+        listtemp = []
+        for k in range(0,len(n.all_data)):
+            listtemp.append(n.temp[k])
+        if temperature != 'all' and temperature not in listtemp:
+            sys.exit('Please, choose a valid temperature.')
 
         x = []
         for kq in range(0, len(n.all_data)):
@@ -1663,6 +1705,7 @@ def plot_cry_multiseebeck(*seebeck):
         endx = []
         endy = []
 
+        k = listtemp.index(temperature)
         endx = [xposfin[k][-1], xnegfin[k][0]]
         endy = [yposfin[k][-1], ynegfin[k][0]]
         plt.plot(endx, endy, color=colours[i])
@@ -1675,25 +1718,29 @@ def plot_cry_multiseebeck(*seebeck):
         plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
         i = 1+i
     plt.title('MultiSeebeck ' + str(n.temp[k]) + ' K')
-    plt.savefig('multiseebeck' + time.strftime("%Y-%m-%d_%H%M%S") +
-                '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+    #plt.savefig('multiseebeck' + time.strftime("%Y-%m-%d_%H%M%S") +
+               # '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+    plt.show()
+    fig = plt.gcf()
+    return fig
 
 
 # -------------------------------------SIGMA-----------------------------------#
 
-def plot_cry_sigma_potential(sigma_obj):
+def plot_cry_sigma_potential(sigma_obj,direction,temperature):
     """
     Plot the electrical conductivity as a function of chemical potential.
 
     Args:
         sigma_obj (object): Sigma object containing the data for electrical conductivity.
+        direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
+        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
 
     Returns:
-        None
+        Returns figure object
 
     Notes:
-        - Prompts the user to choose the direction to plot among S_xx, S_xy, S_xz, S_yy, S_yz, S_zz.
-        - Plots the electrical conductivity as a function of chemical potential for each temperature.
+        - Plots the electrical conductivity as a function of chemical potential the selected temperature.
         - Distinguishes between n-type and p-type conduction with dashed and solid lines, respectively.
 
     """
@@ -1703,30 +1750,38 @@ def plot_cry_sigma_potential(sigma_obj):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    case = input(
-        'Please, choose the direction you want to plot. \nYou can choose among S_xx, S_xy, S_xz, S_yy, S_yz, S_zz\n')
+    
 
-    case = case.lower().replace('_', '')
+    direction = direction.lower().replace('_', '')
 
-    if case.isalpha() == True:
+    if direction.isalpha() == True:
         pass
     else:
         sys.exit('Please, select a valid chioce')
 
-    if case == 'sxx':
+    if direction == 'sxx':
         col = 3
-    elif case == 'sxy':
+    elif direction == 'sxy':
         col = 4
-    elif case == 'sxz':
+    elif direction == 'sxz':
         col = 5
-    elif case == 'syy':
+    elif direction == 'syy':
         col = 6
-    elif case == 'syz':
+    elif direction == 'syz':
         col = 7
-    elif case == 'szz':
+    elif direction == 'szz':
         col = 8
     else:
         sys.exit('please, choose a valid chioce')
+
+    listtemp = []
+
+    for k in range(0,len(sigma_obj.all_data)):
+       listtemp.append(sigma_obj.temp[k])
+    
+
+    if temperature != 'all' and temperature not in listtemp:
+        sys.exit('Please, choose a valid temperature.')
 
     vol = sigma_obj.volume
 
@@ -1778,7 +1833,8 @@ def plot_cry_sigma_potential(sigma_obj):
     endx = []
     endy = []
 
-    for k in range(0, len(sigma_obj.all_data)):
+    if temperature != 'all':
+        k = listtemp.index(temperature)
         endx = [xposfin[k][-1], xnegfin[k][0]]
         endy = [yposfin[k][-1], ynegfin[k][0]]
         plt.figure()
@@ -1791,39 +1847,53 @@ def plot_cry_sigma_potential(sigma_obj):
         plt.axhline(0, color='k')
         plt.title('Sigma at '+str(sigma_obj.temp[k]) + 'K')
         plt.legend(loc='upper left', fontsize=12)
-        plt.savefig('sigma_potential_at_' + str(sigma_obj.temp[k]) + 'K___' + time.strftime(
-            "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
+        #plt.savefig('sigma_potential_at_' + str(sigma_obj.temp[k]) + 'K___' + time.strftime(
+         #   "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
         plt.show()
+        fig = plt.gcf()
+        return fig
+    
+    else:
+        from matplotlib.pyplot import figure
 
-    for k in range(0, len(sigma_obj.all_data)):
-        endx = [xposfin[k][-1], xnegfin[k][0]]
-        endy = [yposfin[k][-1], ynegfin[k][0]]
-        plt.plot(endx, endy, color=colours[k])
-        plt.plot(xposfin[k], yposfin[k], color=colours[k],
-                 label=str(sigma_obj.temp[k])+' K')
-        plt.plot(xnegfin[k], ynegfin[k], '--', color=colours[k])
-        plt.xlabel('Chemical Potential (eV)', fontsize=12)
-        plt.ylabel('Electrical Conductivity (S/m)', fontsize=12)
-        plt.title('Sigma at different T')
-        plt.axhline(0, color='k')
-        plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
-    plt.savefig('sigma_potential_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
-                '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+        figure(figsize=(7, 7))
+
+        for i in range(0, len(sigma_obj.all_data)):
+            endx = [xposfin[i][-1], xnegfin[i][0]]
+            endy = [yposfin[i][-1], ynegfin[i][0]]
+            plt.plot(endx, endy, color=colours[i])
+            plt.plot(xposfin[i], yposfin[i], color=colours[i],
+                    label=str(sigma_obj.temp[i])+' K')
+            plt.plot(xnegfin[i], ynegfin[i], '--', color=colours[i])
+            plt.xlabel('Chemical Potential (eV)', fontsize=12)
+            plt.ylabel('Electrical Conductivity (S/m)', fontsize=12)
+            plt.title('Sigma at different T')
+            plt.axhline(0, color='k')
+            plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
+        #plt.savefig('sigma_potential_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
+         #           '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+        plt.show()
+        fig = plt.gcf()
+        return fig
 
 
-def plot_cry_sigma_carrier(sigma_obj):
+
+def plot_cry_sigma_carrier(sigma_obj,direction,temperature):
     """
     Plot the electrical conductivity as a function of charge carrier concentration.
 
-    Args:
-        sigma_obj: Sigma object containing the data for the electrical conductivity.
+   Args:
+        sigma_obj (object): Sigma object containing the data for electrical conductivity.
+        direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
+        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
+
 
     Returns:
-        None
+        Returns Figure object
 
     Notes:
-        - Prompts the user to choose the direction to plot among S_xx, S_xy, S_xz, S_yy, S_yz, S_zz.
-        - Plots the electrical conductivity as a function of charge carrier concentration for each temperature, distinguishing between n-type and p-type conduction.
+        - Plots the electrical conductivity as a function of charge carrier concentration the selected temperature.
+        - Distinguishes between n-type and p-type conduction with dashed and solid lines, respectively.
     """
     import sys
     import time
@@ -1831,30 +1901,39 @@ def plot_cry_sigma_carrier(sigma_obj):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    case = input(
-        'Please, choose the direction you want to plot. \nYou can choose among S_xx, S_xy, S_xz, S_yy, S_yz, S_zz\n')
+    
 
-    case = case.lower().replace('_', '')
+    direction = direction.lower().replace('_', '')
 
-    if case.isalpha() == True:
+    if direction.isalpha() == True:
         pass
     else:
         sys.exit('Please, select a valid chioce')
 
-    if case == 'sxx':
+    if direction == 'sxx':
         col = 3
-    elif case == 'sxy':
+    elif direction == 'sxy':
         col = 4
-    elif case == 'sxz':
+    elif direction == 'sxz':
         col = 5
-    elif case == 'syy':
+    elif direction == 'syy':
         col = 6
-    elif case == 'syz':
+    elif direction == 'syz':
         col = 7
-    elif case == 'szz':
+    elif direction == 'szz':
         col = 8
     else:
         sys.exit('please, choose a valid chioce')
+
+
+    listtemp = []
+
+    for k in range(0,len(sigma_obj.all_data)):
+       listtemp.append(sigma_obj.temp[k])
+    
+
+    if temperature != 'all' and temperature not in listtemp:
+        sys.exit('Please, choose a valid temperature.')
 
     vol = sigma_obj.volume
 
@@ -1900,7 +1979,8 @@ def plot_cry_sigma_carrier(sigma_obj):
     colours = ['royalblue', 'orange', 'green', 'red',
                'purple', 'brown', 'pink', 'grey', 'olive', 'cyan']
 
-    for k in range(0, len(sigma_obj.all_data)):
+    if temperature != 'all':
+        k = listtemp.index(temperature)
         endx = [xposfin[k][-1], xnegfin[k][0]]
         endy = [yposfin[k][-1], ynegfin[k][0]]
         plt.figure()
@@ -1917,41 +1997,47 @@ def plot_cry_sigma_carrier(sigma_obj):
         plt.savefig('sigma_carrier_at_' + str(sigma_obj.temp[k]) + 'K___' + time.strftime(
             "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
         plt.show()
+        fig=plt.gcf()
+        return fig
+    else:
 
-    for k in range(0, len(sigma_obj.all_data)):
-        endx = [xposfin[k][-1], xnegfin[k][0]]
-        endy = [yposfin[k][-1], ynegfin[k][0]]
-        plt.plot(endx, endy, color=colours[k])
-        plt.plot(xposfin[k], yposfin[k], color=colours[k],
-                 label=str(sigma_obj.temp[k])+' K')
-        plt.plot(abs(np.array(xnegfin[k])), ynegfin[k], '--', color=colours[k])
-        plt.xlabel('Charge Carrier Concentration (cm$^{-3}$)', fontsize=12)
-        plt.ylabel('Electrical Conductivity (S/m)', fontsize=12)
-        plt.title('Sigma at different T')
-        plt.axhline(0, color='k')
-        plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
-        plt.xscale('log')
-    plt.savefig('sigma_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
-                '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+        for i in range(0, len(sigma_obj.all_data)):
+            endx = [xposfin[i][-1], xnegfin[i][0]]
+            endy = [yposfin[i][-1], ynegfin[i][0]]
+            plt.plot(endx, endy, color=colours[k])
+            plt.plot(xposfin[i], yposfin[i], color=colours[i],
+                    label=str(sigma_obj.temp[i])+' K')
+            plt.plot(abs(np.array(xnegfin[i])), ynegfin[i], '--', color=colours[i])
+            plt.xlabel('Charge Carrier Concentration (cm$^{-3}$)', fontsize=12)
+            plt.ylabel('Electrical Conductivity (S/m)', fontsize=12)
+            plt.title('Sigma at different T')
+            plt.axhline(0, color='k')
+            plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
+            plt.xscale('log')
+        #plt.savefig('sigma_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
+        #           '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+        plt.show()
+        fig=plt.gcf()
+        return fig
 
-
-def plot_cry_multisigma(*sigma):
+def plot_cry_multisigma(direction,temperature,minpot,maxpot,*sigma):
     """
-    Plot the multisigma conductivity for different temperatures.
+    Plot the electron cinductivity from different files.
 
     Args:
-        *sigma: Variable number of sigma objects containing the data for the conductivity.
+        direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
+        temperature (value): choose the temperature to be considered 
+        minpot (value): lower value of chemical potential you want to plot in eV  
+        maxpot (value): higher value of chemical potential you want to plot in eV 
+        *seebeck (obj): Variable number of seebeck objects containing the data for the electron conductivity (sigma).
 
     Returns:
-        None
+        Figure object
 
     Notes:
-        - Prompts the user to input the index of the temperature to plot.
-        - Prompts the user to input the lower and higher values of chemical potential to plot in eV.
-        - Prompts the user to choose the direction to plot among S_xx, S_xy, S_xz, S_yy, S_yz, S_zz.
-        - Plots the multisigma conductivity for each sigma object.
+    
+        - Plots the electron conductivity for each sigma object.
         - Differentiates transport coefficients due to n-type or p-type conduction using dashed and solid lines.
-        - Saves the plot to a file named 'multisigmaYYYY-MM-DD_HHMMSS.jpg', where YYYY-MM-DD_HHMMSS represents the current date and time.
     """
     import sys
     import time
@@ -1959,43 +2045,39 @@ def plot_cry_multisigma(*sigma):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    k = int(input(
-        'Insert the index of temperature you want to plot \n(i.e. if your temperature are [T1, T2, T3] indexes are [0, 1, 2])'))
-    minpot = float(
-        input('Insert the lower value of chemical potential you want to plot in eV'))
-    maxpot = float(
-        input('Inser the higher value of chemical potential you want to plot in eV'))
+    
+    direction = direction.lower().replace('_', '')
 
-    case = input(
-        'Please, choose the direction you want to plot. \nYou can choose among S_xx, S_xy, S_xz, S_yy, S_yz, S_zz\n')
-
-    case = case.lower().replace('_', '')
-
-    if case.isalpha() == True:
+    if direction.isalpha() == True:
         pass
     else:
-        sys.exit('Please, select a valid chioce')
+        sys.exit('Please, select a valid direction')
 
-    if case == 'sxx':
+    if direction == 'sxx':
         col = 3
-    elif case == 'sxy':
+    elif direction == 'sxy':
         col = 4
-    elif case == 'sxz':
+    elif direction == 'sxz':
         col = 5
-    elif case == 'syy':
+    elif direction == 'syy':
         col = 6
-    elif case == 'syz':
+    elif direction == 'syz':
         col = 7
-    elif case == 'szz':
+    elif direction == 'szz':
         col = 8
 
     else:
-        sys.exit('please, choose a valid chioce')
+        sys.exit('please, choose a valid direction')
 
     i = 0
     print('To differentiate transport coefficients due to n-type or p-type conduction (electrons or holes as majority carriers) dashed and solid lines are used, respectively.')
     for n in sigma:
         vol = n.volume
+        listtemp = []
+        for k in range(0,len(n.all_data)):
+            listtemp.append(n.temp[k])
+        if temperature != 'all' and temperature not in listtemp:
+            sys.exit('Please, choose a valid temperature.')
 
         x = []
         for kq in range(0, len(n.all_data)):
@@ -2043,6 +2125,7 @@ def plot_cry_multisigma(*sigma):
                    'purple', 'brown', 'pink', 'grey', 'olive', 'cyan']
         endx = []
         endy = []
+        k = listtemp.index(temperature)
 
         endx = [xposfin[k][-1], xnegfin[k][0]]
         endy = [yposfin[k][-1], ynegfin[k][0]]
@@ -2056,8 +2139,11 @@ def plot_cry_multisigma(*sigma):
         plt.xlim(minpot, maxpot)
         i = 1+i
     plt.title('MultiSigma ' + str(sigma[0].temp[k]) + ' K')
-    plt.savefig('multisigma' + time.strftime("%Y-%m-%d_%H%M%S") +
-                '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+   # plt.savefig('multisigma' + time.strftime("%Y-%m-%d_%H%M%S") +
+               # '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+    plt.show()
+    fig = plt.gcf()
+    return fig
 
 
 # --------------------------------POWERFACTOR----------------------------------#
