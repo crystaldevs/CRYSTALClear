@@ -453,7 +453,9 @@ class BandsBASE():
             data (list[str]): A list of string (fort.25).
         """
         import re
+
         import numpy as np
+
         from CRYSTALClear.units import H_to_eV, cm_to_thz
 
         data_in_block = []

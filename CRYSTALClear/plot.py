@@ -3006,40 +3006,44 @@ def plot_cry_poisson(theta_1D, phi_1D, S, ndeg, poisson_choice):
 
 # ----------------------------------ELASTIC------------------------------------#
 
-def plot_cry_ela(choose, ndeg,  *args, twoD=False):
+def plot_cry_ela(co, choose, ndeg=200):
     """
     Plot crystal elastic properties on the basis of the elastic tensor. A
     variable number of elastic tensors can be provided in order to get
     multiple plots in one shot, establishing a fixed color scale among them.
 
     Args:
+        co (list): A `CRYSTALClear` object or a list thereof, with the `elatensor` attribute set by `CRYSTALClear.crystal_io.Crystal_output.get_elatensor`.
         choose (str): Property to plot. Options: "young", "comp", "shear avg", "shear min", "shear max", "poisson avg", "poisson min", "poisson max".
-        ndeg (int): Number of degrees for discretization.
-        *args: Variable number of elastic tensors.
+        ndeg (int): Angular resolution (default is 200).
 
     Returns:
-        Tuple of lists:
-        - fig_list : list of matplotlib.figure.Figure
+        fig_list: list of matplotlib.figure.Figure
             A list containing matplotlib Figure objects for each plot.
-        - ax_list : list of matplotlib.axes._axes.Axes
+        ax_list: list of matplotlib.axes._axes.Axes
             A list containing the Axes objects associated with each plot.
-        - plt_list : list of matplotlib.pyplot
+        plt_list: list of matplotlib.pyplot
             A list of the pyplot objects for each plot, representing the actual plot.
     """
-    import math
 
     import matplotlib.pyplot as plt
     import numpy as np
     from matplotlib import animation, cm, colors
     from mpl_toolkits.mplot3d import Axes3D, axes3d
 
+    if not (isinstance(co, list) or isinstance(co, tuple)):
+        co = [co]
+
     i = 0
-    R = [None] * len(args)
+    R = [None] * len(co)
     tmin = []
     tmax = []
 
     # Compute elastic properties for each tensor -->
-    for C in args:
+    for element in co:
+
+        # Unpack crystal object
+        C = element.elatensor
 
         # Inverse of the matrix C in GPa (Compliance)
         S = np.linalg.inv(C)
@@ -3091,29 +3095,6 @@ def plot_cry_ela(choose, ndeg,  *args, twoD=False):
 
         norm = colors.Normalize(vmin=vmin, vmax=vmax, clip=False)
 
-        # if twoD == True:
-        #     fig, ax = plt.subplots()
-        #     ax.plot(X, Y)
-        #     ax.set_xlabel("X")
-        #     ax.set_ylabel("Y")
-        #     fig_list.append(fig)
-        #     ax_list.append(ax)
-        #     plt_list.append(plt)
-        #     fig, ax = plt.subplots()
-        #     ax.plot(X, Z)
-        #     ax.set_xlabel("X")
-        #     ax.set_ylabel("Z")
-        #     fig_list.append(fig)
-        #     ax_list.append(ax)
-        #     plt_list.append(plt)
-        #     fig, ax = plt.subplots()
-        #     ax.plot(Y, Z)
-        #     ax.set_xlabel("Y")
-        #     ax.set_ylabel("Z")
-        #     fig_list.append(fig)
-        #     ax_list.append(ax)
-        #     plt_list.append(plt)
-
         fig, ax = plt.subplots(subplot_kw=dict(projection="3d"))
 
         ax.plot_surface(
@@ -3135,10 +3116,7 @@ def plot_cry_ela(choose, ndeg,  *args, twoD=False):
         ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
         ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
         ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
-        # Make the grid lines transparent
-        #  ax.xaxis._axinfo["grid"]['color'] =  (1,1,1,0)
-        #  ax.yaxis._axinfo["grid"]['color'] =  (1,1,1,0)
-        #  ax.zaxis._axinfo["grid"]['color'] =  (1,1,1,0)
+
         # Fixing limits
         ax.set_xlim(-1 * np.max(R), np.max(R))
         ax.set_ylim(-1 * np.max(R), np.max(R))
@@ -3531,12 +3509,12 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
 # -----------------------------------ANHARMONIC--------------------------------#
 
 def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0.5,
-                  fmin=None, fmax=None, ylim=None, savefig=False, dpi=300,
-                  filetype='png', exp_spec=None, sep=";", show=True,
+                  fmin=None, fmax=None, ylim=None, 
+                  exp_spec=None, sep=";", multi=False,
                   export_csv=False, label=None, xlabel='Wavenumber [cm$^{-1}$]',
-                  ylabel='Intensity [arb. u.]', linewidth=2.0, padd=100,
-                  fontsize=12, style=None, compstyle=None, nopadding=False,
-                  figsize=(16, 6)):
+                  ylabel='Intensity [dm$^3\cdot$ mol $^{-1}\cdot$ cm$^{-1}$]', 
+                  linewidth=2.0, padd=100, fontsize=12, linestyle=None, 
+                  color=None, compstyle=None, figsize=(16, 6), offset=0):
     """
     This function enables the simulation of vibrational spectra based on a 2D 
     NumPy array containing a list of transition frequencies and the 
@@ -3562,22 +3540,18 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
         fmin (float, optional): Minimum frequency.
         fmax(float, optional): Maximum frequency.
         ylim (float, optional): Maximum intensity.
-        savefig (bool, optional): Whether to save the figure (default is `False`).
-        dpi (float, optional): Dots per inches (default is 300).
-        filetype (str, optional): File extension (default is 'png').
-        show (bool, optional): Whether to show the figure (default is `True`).
         export_csv (bool, optional): Whether to save plot in csv format (default is 
         `False`).
-        xlabel (str, optional): x-axis label (default is 'Wavenumber [cm$^{-1}$]').
+        xlabel (str, optional): x-axis label (default is 'Wavenumber [dm$^3\cdot$ mol $^{-1}\cdot$ cm$^{-1}$]').
         ylabel (str, optional): y-axis label (default is 'Intensity [arb. u.]').
         linewidth (float): Linewidth (default is 2.0).
         padd (float, optional): left- and right- hand side padding expressed in the
         same unit of the quantity reported in x-axis (default is 100).
         fontsize (integer, optional): Fontsize (default is 12).
-        style (str, optional): String specifying Matplotlib style. 
+        linestyle (str, optional): String specifying plot linestyle. 
+        color (str, optional): String specifying plot color. 
         compstyle (str|list, optional): List containing Matplotlib styles to plot
         each component. 
-        nopadding (bool, optional): Whether to remove padding (default is `False`).
         figsize (real|list, optional): List of two numbers specifying the aspect
         ratio of the figure (default is [16, 6]).
 
@@ -3594,9 +3568,9 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
     import numpy as np
     from numpy import genfromtxt
 
-    if (show):
+    if(not multi): 
         plt.figure(figsize=figsize)
-    if (ylim is not None):
+    if(ylim is not None):
         plt.ylim(0, ylim)
 
     plt.xticks(fontsize=fontsize)
@@ -3713,22 +3687,16 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
         exp_data[:, 1] = exp_data[:, 1] * norm_fac - baseline  # * 0.5
         plt.plot(exp_data[:, 0], exp_data[:, 1], 'r-', linewidth=linewidth)
 
-    if ((label is not None) and (style is None)):
-        plt.plot(spec_data[:, 0], spec_data[:, 1], linewidth=linewidth,
-                 label=label)
-    elif ((label is None) and (style is not None)):
-        plt.plot(spec_data[:, 0], spec_data[:, 1], style, linewidth=linewidth)
-    elif ((label is not None) and (style is not None)):
-        plt.plot(spec_data[:, 0], spec_data[:, 1], style, linewidth=linewidth,
-                 label=label)
-    else:
-        plt.plot(spec_data[:, 0], spec_data[:, 1], linewidth=linewidth)
+    args = {
+            'linestyle' : linestyle,
+            'label' : label,
+            'color': color,
+            'linewidth' : linewidth
+            }
 
-    if (savefig):
-        plt.savefig(typeS + time.strftime("%Y-%m-%d_%H%M%S.") + filetype,
-                    format=filetype, dpi=dpi)
-    if (show):
-        plt.show()
+    filtered_args = {k: v for k, v in args.items() if v is not None}
+
+    plt.plot(spec_data[:, 0], spec_data[:, 1] + offset, **filtered_args)
 
     if (export_csv):
         np.savetxt(typeS + time.strftime("%Y-%m-%d_%H%M%S.") + 'csv',
@@ -3737,12 +3705,13 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
 
 
 def plot_cry_spec_multi(files, typeS, components=False, bwidth=5, stdev=3,
-                        eta=0.5, fmin=None, fmax=None, ylim=None,
-                        savefig=False, dpi=300, filetype='png', label=None,
+                        eta=0.5, fmin=None, fmax=None, ylim=None, label=None,
                         xlabel='Wavenumber [cm$^{-1}$]',
-                        ylabel='Intensity [arb. u.]', linewidth=2.0, padd=100,
-                        fontsize=12, style=None, nopadding=False,
-                        figsize=(16, 6), exp_spec=None, norm_fac=1, sep=';'):
+                        ylabel='Intensity [dm$^3\cdot$ mol $^{-1}\cdot$ cm$^{-1}$]', 
+                        padd=100, fontsize=12, 
+                        linestyle=None, color=None, linewidth=None, 
+                        figsize=(16, 6), exp_spec=None, 
+                        norm_fac=1, sep=';', offset=0):
     """
     This function is a wrapper for `plot_spec` function, enablng the simulation 
     of many vibrational spectra coming from a list of NumPy array.  
@@ -3763,29 +3732,28 @@ def plot_cry_spec_multi(files, typeS, components=False, bwidth=5, stdev=3,
         fmin (float, optional): Minimum frequency.
         fmax(float, optional): Maximum frequency
         ylim (float, optional): Maximum intensity.
-        savefig (bool, optional): Whether to save the figure (default is `False`).
         dpi (float, optional): Dots per inches (default is 300).
         filetype (str, optional): File extension (default is 'png').
-        xlabel (str, optional): x-axis label (default is 'Wavenumber [cm$^{-1}$]').
+        xlabel (str, optional): x-axis label (default is 'Wavenumber [dm$^3\cdot$ mol $^{-1}\cdot$ cm$^{-1}$]').
         ylabel (str, optional): y-axis label (default is 'Intensity [arb. u.]').
-        linewidth (float): Linewidth (default is 2.0).
+        linewidth (str|float): List of linewidths (default is 2.0).
         padd (float, optional): left- and right- hand side padding expressed in the
         same unit of the quantity reported in x-axis (default is 100).
         fontsize (integer, optional): Fontsize (default is 12).
-        style (str, optional): String specifying Matplotlib style. 
-        nopadding (bool, optional): Whether to remove padding (default is `False`).
+        linestyle (str|list, optional): List of string specifying styles. 
+        color (str|list, optional): List of string specifying colors. 
         figsize (real|list, optional): List of two numbers specifying the aspect
         ratio of the figure (default is [16, 6]).
+        offset(float, optional): Allows the user to define an offset between 
+        different spectra (default is 0). 
 
     Returns:
-        :class:`matplotlib.pyplot`
-        A matplotlib object representing the result of the plot
+        Matplotlib object 
     """
-
-    import time
 
     import matplotlib.pyplot as plt
     from numpy import genfromtxt
+
 
     plt.figure(figsize=figsize)
     plt.xlabel(xlabel, fontsize=fontsize)
@@ -3800,42 +3768,55 @@ def plot_cry_spec_multi(files, typeS, components=False, bwidth=5, stdev=3,
         exp_data[:, 1] = exp_data[:, 1] * norm_fac - baseline
         plt.plot(exp_data[:, 0], exp_data[:, 1], 'r-', linewidth=linewidth)
 
-    compstyle = []
-    if (style is not None):
-        for i in range(len(style)):
-            compstyle.append([style[i]] * 100)
+    #compstyle = []
+    #if (linestyle is not None):
+     #   for i in range(len(linestyle)):
+     #       compstyle.append([linestyle[i]] * 100)
+
+
+    add_offset = 0
 
     for i, transitions in enumerate(files):
-        if ((label is not None) and (style is None)):
-            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
-                          fmin, fmax, ylim, show=False, savefig=False,
-                          label=label[i], linewidth=linewidth, padd=padd,
-                          nopadding=nopadding, fontsize=fontsize, xlabel=xlabel,
-                          ylabel=ylabel)
-        elif ((style is not None) and (label is None)):
-            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
-                          fmin, fmax, ylim, show=False, savefig=False,
-                          linewidth=linewidth, padd=padd, nopadding=nopadding,
-                          fontsize=fontsize, style=style[i], xlabel=xlabel,
-                          ylabel=ylabel, compstyle=compstyle[i])
-        elif ((style is not None) and (label is not None)):
-            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
-                          fmin, fmax, ylim, show=False, savefig=False,
-                          linewidth=linewidth, padd=padd, nopadding=nopadding,
-                          fontsize=fontsize, style=style[i], label=label[i],
-                          xlabel=xlabel, ylabel=ylabel, compstyle=compstyle[i])
+
+        if(linestyle is None):
+            linestyle2 = None
         else:
-            plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta, fmin,
-                          fmax, ylim, show=False, savefig=False,
-                          linewidth=linewidth, padd=padd, nopadding=nopadding,
-                          fontsize=fontsize, xlabel=xlabel, ylabel=ylabel)
+            linestyle2 = linestyle[i]
+
+        if(label is None):
+            label2 = None
+        else:
+            label2 = label[i]
+
+        if(color is None):
+            color2 = None
+        else:
+            color2 = color[i]
+
+        if(linewidth is None):
+            linewidth2 = 2.0
+        else:
+            linewidth2 = linewidth[i]
+
+
+        args = {
+                'linestyle' : linestyle2,
+                'label' : label2,
+                'color' : color2,
+                'linewidth' : linewidth2
+                }
+
+        filtered_args = {k: v for k, v in args.items() if v is not None}
+
+        plot_cry_spec(transitions, typeS, components=components, bwidth=bwidth, 
+                      stdev=stdev, eta=eta, fmin=fmin, fmax=fmax, ylim=ylim, 
+                      padd=padd, fontsize=fontsize, xlabel=xlabel, ylabel=ylabel, 
+                      offset=add_offset, multi=True, **filtered_args)
+
+        add_offset += offset
 
     if (label is not None):
         plt.legend(loc='upper left', fontsize=fontsize)
-
-    if (savefig):
-        plt.savefig("multi_" + typeS + time.strftime("%Y-%m-%d_%H%M%S.") +
-                    filetype, format=filetype, dpi=dpi)
 
     return plt
 
@@ -3861,8 +3842,7 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
         figsize (list[float])
 
     Returns:
-        :class:`matplotlib.pyplot`
-        A matplotlib object representing the result of the plot
+        Matplotlib object 
     """
 
     import math
@@ -3976,3 +3956,202 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     plt.ylim([harm_freq, abs(harm_freq)*5])
 
     return plt
+
+# --------------------------------------EOS-----------------------------------#
+
+
+def plot_cry_EOS(eos, formula_unit=None, plot='VvsE', color='tab:blue', figsize=(5, 5), dpi=72, marker='o', fontsize=12, legend=None):
+    """
+    This function provides a tool to plot quantities extracted from the EOS module
+
+    Args:
+        eos[obj/list]: CRYSTAL object or list of two CRYSTAL objects containing quantities extracted 
+                       from the EOS module generated by the get_EOS() function
+        formula_unit[list]: List containing the formula unit associated with each CRYSTAL object,
+                            the order should be the same as in the eos list (default:None)
+        plot[str]: String identifing the Equation of State/Computed data the user wants to plot (default:VvsE)
+        color[str/list]: String or list of defining the colors of the plotted series of data requested (default:'tab:blue')
+        figsize[tuple]: Tuple of floats defining the size of the figure (default:(5,5))
+        dpi[int]: Integer defining the resolution of the figure (default:72)
+        fontsize[int]: Integer defining the fontsize of the text (default:12)
+        legend[list]: List of strings that will be used as legend in the plot (default:None)
+
+    Returns:
+        Matplotlib object
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    plot_type = ['VvsE', 'Murnaghan',
+                 'Birch-Murnaghan', 'Poirier-Tarantola', 'Vinet']
+
+    plt.rcParams.update({'font.size': fontsize})
+
+    # Check the type of plot required by the user -->
+    if type(eos) is list:
+        phase_transition = True
+        if type(color) is not list:
+            color = ['tab:blue', 'tab:orange']
+        if type(marker) is not list:
+            marker = ['o', 'o']
+        if legend == None:
+            legend = ['Phase 1', 'Phase 2']
+        if formula_unit is None:
+            formula_unit = [1, 1]
+    else:
+        phase_transition = False
+    # <--
+
+    # Plotting -->
+    if phase_transition:
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+
+        # Plot of the Volumes against the Energy -->
+        if plot == plot_type[0]:
+            for index, phase in enumerate(eos):
+                ax.plot(phase.VvsE[:, 0]/formula_unit[index], phase.VvsE[:, 1]/formula_unit[index],
+                        color=color[index], marker=marker[index], label=legend[index])
+
+            plt.xlabel('V/Z ($\AA$)')
+            plt.ylabel('E/Z (a.u)')
+        # <--
+
+        # Murnaghan EOS plot of delta of Gibbs free energy between the two phases-->
+        if plot == plot_type[1]:
+            maxp = []
+            minp = []
+            for _, phase in enumerate(eos):
+                maxp.append(max(phase.murnaghan[:, 1]))
+                minp.append(min(phase.murnaghan[:, 1]))
+
+            maxp = max(maxp)
+            minp = min(minp)
+
+            referencex = np.linspace(minp-10, maxp+10, 2)
+            referencey = np.zeros(2)
+
+            ax.plot(referencex, referencey, color='black', label=legend[0])
+
+            deltag = eos[1].murnaghan[:, 3]/formula_unit[1] - \
+                eos[0].murnaghan[:, 3]/formula_unit[0]
+
+            ax.plot(eos[1].murnaghan[:, 1], deltag,
+                    color=color[1], label=legend[1])
+        # <--
+
+        # Birch-Murnaghan EOS plot of delta of Gibbs free energy between the two phases-->
+        if plot == plot_type[2]:
+            maxp = []
+            minp = []
+            for _, phase in enumerate(eos):
+                maxp.append(max(phase.bmurnaghan[:, 1]))
+                minp.append(min(phase.bmurnaghan[:, 1]))
+
+            maxp = max(maxp)
+            minp = min(minp)
+
+            referencex = np.linspace(minp-10, maxp+10, 2)
+            referencey = np.zeros(2)
+
+            ax.plot(referencex, referencey, color='black', label=legend[0])
+
+            deltag = eos[1].bmurnaghan[:, 3]/formula_unit[1] - \
+                eos[0].bmurnaghan[:, 3]/formula_unit[0]
+
+            ax.plot(eos[1].bmurnaghan[:, 1], deltag,
+                    color=color[1], label=legend[1])
+        # <--
+
+        # Poirier-Tarantola EOS plot of delta of Gibbs free energy between the two phases-->
+        if plot == plot_type[3]:
+            maxp = []
+            minp = []
+            for _, phase in enumerate(eos):
+                maxp.append(max(phase.pt[:, 1]))
+                minp.append(min(phase.pt[:, 1]))
+
+            maxp = max(maxp)
+            minp = min(minp)
+
+            referencex = np.linspace(minp-10, maxp+10, 2)
+            referencey = np.zeros(2)
+
+            ax.plot(referencex, referencey, color='black', label=legend[0])
+
+            deltag = eos[1].pt[:, 3]/formula_unit[1] - \
+                eos[0].pt[:, 3]/formula_unit[0]
+
+            ax.plot(eos[1].pt[:, 1], deltag,
+                    color=color[1], label=legend[1])
+        # <--
+
+        # Vinet EOS plot of delta of Gibbs free energy between the two phases-->
+        if plot == plot_type[4]:
+            maxp = []
+            minp = []
+            for _, phase in enumerate(eos):
+                maxp.append(max(phase.vinet[:, 1]))
+                minp.append(min(phase.vinet[:, 1]))
+
+            maxp = max(maxp)
+            minp = min(minp)
+
+            referencex = np.linspace(minp-10, maxp+10, 2)
+            referencey = np.zeros(2)
+
+            ax.plot(referencex, referencey, color='black', label=legend[0])
+
+            deltag = eos[1].vinet[:, 3]/formula_unit[1] - \
+                eos[0].vinet[:, 3]/formula_unit[0]
+
+            ax.plot(eos[1].vinet[:, 1], deltag,
+                    color=color[1], label=legend[1])
+        # <--
+        if plot != plot_type[0]:
+            plt.xlabel('P (GPa)')
+            plt.ylabel('H/Z (a.u)')
+
+        if legend != ['Phase 1', 'Phase 2']:
+            plt.legend()
+
+    else:
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+
+        # Plot of the Volume against the Energy -->
+        if plot == plot_type[0]:
+            ax.plot(eos.VvsE[:, 0], eos.VvsE[:, 1],
+                    color=color, marker=marker)
+            plt.xlabel('V/Z ($\AA$)')
+            plt.ylabel('E/Z (a.u)')
+        # <--
+
+        # Murnaghan Pressure vs Gibbs Free Energy -->
+        elif plot == plot_type[1]:
+            ax.plot(eos.murnaghan[:, 1], eos.murnaghan[:, 3],
+                    color=color, marker=marker)
+        # <--
+
+        # Birch-Murnaghan Pressure vs Gibbs Free Energy -->
+        elif plot == plot_type[2]:
+            ax.plot(eos.bmurnaghan[:, 1], eos.bmurnaghan[:, 3],
+                    color=color, marker=marker)
+        # <--
+
+        # Poirier-Tarantola Pressure vs Gibbs Free Energy -->
+        elif plot == plot_type[3]:
+            ax.plot(eos.pt[:, 1], eos.pt[:, 3], color=color, marker=marker)
+        # <--
+
+        # Vinet Pressure vs Gibbs Free Energy -->
+        elif plot == plot_type[4]:
+            ax.plot(eos.vinet[:, 1], eos.vinet[:, 3],
+                    color=color, marker=marker)
+        # <--
+
+        if ploi != plot_type[0]:
+            plt.xlabel('P (GPa)')
+            plt.ylabel('H (a. u.)')
+
+    # <--
+
+    return fig, ax

@@ -444,8 +444,6 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
     import warnings
 
     import numpy as np
-    from crystal_io import Crystal_gui
-    from geometry import get_sg_symmops
     from pymatgen.core.structure import Molecule, Structure
     from pymatgen.core.surface import center_slab
     from pymatgen.symmetry.analyzer import (PointGroupAnalyzer,
@@ -577,6 +575,9 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
         gui.lattice = structure.lattice.matrix
         gui.n_atoms = structure.num_sites
 
+        # SpacegroupAnalyzer will probably change the unit cell size. Given
+        # this some variables need to be updated to those stored in the new
+        # structure.
         if symmetry == True:
             if gui.dimensionality == 3:
                 structure = SpacegroupAnalyzer(
@@ -607,6 +608,11 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
             else:
                 warnings.warn(
                     'Check the polymer is correctly centered in the cell and that the correct symmops are used.')
+            gui.n_atoms = len(structure.atomic_numbers)
+            if gui.lattice != structure.lattice.matrix:
+                warnings.warn(
+                    'New unit cell after usage of SpacegroupAnalyzer. Consider this in further procedures.')
+            gui.lattice = structure.lattice.matrix
         else:
             gui.space_group = 1
             gui.n_symmops = 1
@@ -618,8 +624,7 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
         gui.atom_positions = structure.cart_coords
 
     if zconv != None:
-        for atom in zconv:
-            gui.atom_number[atom[0]] = atom[1]
+        gui.atom_number = [atom[1] for atom in zconv]
 
     if gui_file != None:
         gui.write_gui(gui_file, symm=symmetry)

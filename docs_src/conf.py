@@ -44,7 +44,7 @@ release = __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary',
-              'sphinx.ext.napoleon', 'sphinx.ext.githubpages']
+              'sphinx.ext.napoleon', 'sphinx.ext.githubpages','nbsphinx']
 # Set `Returns` section to behave like the `Args` section
 # For Google Doc format
 napoleon_custom_sections = [('Returns', 'params_style')]
@@ -131,7 +131,7 @@ latex_elements = {
 }
 
 # -- To put jupyter notebooks into the documentation site ---------------
-extensions = [
-    "nbsphinx",
-]
+#extensions = [
+#    "nbsphinx",
+#]
 nbsphinx_allow_errors = True
