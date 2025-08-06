@@ -65,22 +65,6 @@ CRYSTALClear.plot
    :undoc-members:
    :show-inheritance:
 
-CRYSTALClear.thermodynamics
-----------------------------------
-
-.. automodule:: CRYSTALClear.thermodynamics
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-CRYSTALClear.unit\_test
-------------------------------
-
-.. automodule:: CRYSTALClear.unit_test
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 CRYSTALClear.units
 -------------------------
 
