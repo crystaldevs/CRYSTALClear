@@ -1,8 +1,3 @@
-.. image:: _static/CRYSTAL_logo.png
-   :width: 400 px
-   :alt: CRYSTALClear
-   :align: center
-
 Installation
 ============
 
@@ -51,8 +46,8 @@ a Python session:
 
 .. code-block:: bash
 
-        import crystalclear
-        print(crystalclear.__version__)
+        import CRYSTALClear
+        print(CRYSTALClear.__version__)
 
 
 If no errors occur and the version number is printed, you're ready to start 

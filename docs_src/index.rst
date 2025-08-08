@@ -1,5 +1,4 @@
-.. CRYSTALClear documentation master file, created by
-   sphinx-quickstart on Fri Aug  9 20:47:16 2024.
+.. CRYSTALClear documentation master file
 
 CRYSTALClear documentation
 ==========================
@@ -19,9 +18,9 @@ CRYSTALClear documentation
 .. toctree::
    :hidden: 
    :maxdepth: 3
-   :caption: Contents
-   :glob:
    :caption: API Documentation
+   :glob:
+
    Modules<CRYSTALClear>
    
 .. include:: introduction.rst
