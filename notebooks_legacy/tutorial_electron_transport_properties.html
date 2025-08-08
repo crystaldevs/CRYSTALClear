@@ -1,0 +1,731 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Transport properties plot &#8212; Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=ea69a5af"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks_legacy/tutorial_electron_transport_properties';</script>
+    <link rel="canonical" href="https://crystaldevs.github.io/CRYSTALClear/notebooks_legacy/tutorial_electron_transport_properties.html" />
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/CRYSTAL_logo.png" class="logo__image only-light" alt="Documentation - Home"/>
+    <script>document.write(`<img src="../_static/CRYSTAL_logo.png" class="logo__image only-dark" alt="Documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Welcome to the CRYSTALClear Documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../notebooks/index.html">Example Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/elastic_properties/elastic_properties_tutorial.html">Elastic Properties: A Quick Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/electron_transport_properties/tutorial_electron_transport_properties.html">Transport properties plot</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../cite.html">How to Cite CRYSTALClear</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../CRYSTALClear.html">Modules</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/crystaldevs/CRYSTALClear" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks_legacy/tutorial_electron_transport_properties.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Transport properties plot</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Transport-properties-plot">
+<h1>Transport properties plot<a class="headerlink" href="#Transport-properties-plot" title="Link to this heading">#</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">CRYSTALClear</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Requirement already satisfied: CRYSTALClear in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (0.2.7)
+Requirement already satisfied: pymatgen in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from CRYSTALClear) (2024.8.9)
+Requirement already satisfied: mendeleev in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from CRYSTALClear) (1.1.0)
+Requirement already satisfied: ase in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from CRYSTALClear) (3.25.0)
+Requirement already satisfied: numpy&gt;=1.19.5 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ase-&gt;CRYSTALClear) (2.0.2)
+Requirement already satisfied: scipy&gt;=1.6.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ase-&gt;CRYSTALClear) (1.13.1)
+Requirement already satisfied: matplotlib&gt;=3.3.4 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ase-&gt;CRYSTALClear) (3.9.4)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (1.3.0)
+Requirement already satisfied: cycler&gt;=0.10 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (4.59.0)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (1.4.7)
+Requirement already satisfied: packaging&gt;=20.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (25.0)
+Requirement already satisfied: pillow&gt;=8 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (11.3.0)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (3.2.3)
+Requirement already satisfied: python-dateutil&gt;=2.7 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (2.9.0.post0)
+Requirement already satisfied: importlib-resources&gt;=3.2.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (6.5.2)
+Requirement already satisfied: zipp&gt;=3.1.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from importlib-resources&gt;=3.2.0-&gt;matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (3.23.0)
+Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib&gt;=3.3.4-&gt;ase-&gt;CRYSTALClear) (1.17.0)
+Requirement already satisfied: Pygments&lt;3.0.0,&gt;=2.11.2 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (2.19.2)
+Requirement already satisfied: SQLAlchemy&gt;=1.4.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (2.0.42)
+Requirement already satisfied: colorama&lt;0.5.0,&gt;=0.4.6 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (0.4.6)
+Requirement already satisfied: deprecated&lt;2.0.0,&gt;=1.2.14 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (1.2.18)
+Requirement already satisfied: pandas&gt;=1.1.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (2.3.1)
+Requirement already satisfied: pydantic&lt;3.0.0,&gt;=2.9.2 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (2.11.7)
+Requirement already satisfied: pyfiglet&lt;0.9,&gt;=0.8.post1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from mendeleev-&gt;CRYSTALClear) (0.8.post1)
+Requirement already satisfied: wrapt&lt;2,&gt;=1.10 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from deprecated&lt;2.0.0,&gt;=1.2.14-&gt;mendeleev-&gt;CRYSTALClear) (1.17.2)
+Requirement already satisfied: annotated-types&gt;=0.6.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pydantic&lt;3.0.0,&gt;=2.9.2-&gt;mendeleev-&gt;CRYSTALClear) (0.7.0)
+Requirement already satisfied: pydantic-core==2.33.2 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pydantic&lt;3.0.0,&gt;=2.9.2-&gt;mendeleev-&gt;CRYSTALClear) (2.33.2)
+Requirement already satisfied: typing-extensions&gt;=4.12.2 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pydantic&lt;3.0.0,&gt;=2.9.2-&gt;mendeleev-&gt;CRYSTALClear) (4.14.1)
+Requirement already satisfied: typing-inspection&gt;=0.4.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pydantic&lt;3.0.0,&gt;=2.9.2-&gt;mendeleev-&gt;CRYSTALClear) (0.4.1)
+Requirement already satisfied: pytz&gt;=2020.1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pandas&gt;=1.1.0-&gt;mendeleev-&gt;CRYSTALClear) (2025.2)
+Requirement already satisfied: tzdata&gt;=2022.7 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pandas&gt;=1.1.0-&gt;mendeleev-&gt;CRYSTALClear) (2025.2)
+Requirement already satisfied: greenlet&gt;=1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from SQLAlchemy&gt;=1.4.0-&gt;mendeleev-&gt;CRYSTALClear) (3.2.4)
+Requirement already satisfied: joblib&gt;=1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (1.5.1)
+Requirement already satisfied: monty&gt;=2024.7.29 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (2025.3.3)
+Requirement already satisfied: networkx&gt;=2.2 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (3.2.1)
+Requirement already satisfied: palettable&gt;=3.3.3 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (3.3.3)
+Requirement already satisfied: plotly&gt;=4.5.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (6.2.0)
+Requirement already satisfied: pybtex&gt;=0.24.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (0.25.1)
+Requirement already satisfied: requests&gt;=2.32 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (2.32.4)
+Requirement already satisfied: ruamel.yaml&gt;=0.17.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (0.18.14)
+Requirement already satisfied: spglib&gt;=2.5.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (2.6.0)
+Requirement already satisfied: sympy&gt;=1.2 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (1.14.0)
+Requirement already satisfied: tabulate&gt;=0.9 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (0.9.0)
+Requirement already satisfied: tqdm&gt;=4.60 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (4.67.1)
+Requirement already satisfied: uncertainties&gt;=3.1.4 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pymatgen-&gt;CRYSTALClear) (3.2.3)
+Requirement already satisfied: narwhals&gt;=1.15.1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from plotly&gt;=4.5.0-&gt;pymatgen-&gt;CRYSTALClear) (2.0.1)
+Requirement already satisfied: PyYAML&gt;=3.01 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pybtex&gt;=0.24.0-&gt;pymatgen-&gt;CRYSTALClear) (6.0.2)
+Requirement already satisfied: latexcodec&gt;=1.0.4 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pybtex&gt;=0.24.0-&gt;pymatgen-&gt;CRYSTALClear) (3.0.1)
+Requirement already satisfied: importlib_metadata in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pybtex&gt;=0.24.0-&gt;pymatgen-&gt;CRYSTALClear) (8.7.0)
+Requirement already satisfied: charset_normalizer&lt;4,&gt;=2 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from requests&gt;=2.32-&gt;pymatgen-&gt;CRYSTALClear) (3.4.2)
+Requirement already satisfied: idna&lt;4,&gt;=2.5 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from requests&gt;=2.32-&gt;pymatgen-&gt;CRYSTALClear) (3.10)
+Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from requests&gt;=2.32-&gt;pymatgen-&gt;CRYSTALClear) (2.5.0)
+Requirement already satisfied: certifi&gt;=2017.4.17 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from requests&gt;=2.32-&gt;pymatgen-&gt;CRYSTALClear) (2025.8.3)
+Requirement already satisfied: ruamel.yaml.clib&gt;=0.2.7 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ruamel.yaml&gt;=0.17.0-&gt;pymatgen-&gt;CRYSTALClear) (0.2.12)
+Requirement already satisfied: mpmath&lt;1.4,&gt;=1.1.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from sympy&gt;=1.2-&gt;pymatgen-&gt;CRYSTALClear) (1.3.0)
+Note: you may need to restart the kernel to use updated packages.
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">ipykernel</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Requirement already satisfied: ipykernel in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (6.30.1)
+Requirement already satisfied: comm&gt;=0.1.1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (0.2.3)
+Requirement already satisfied: debugpy&gt;=1.6.5 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (1.8.16)
+Requirement already satisfied: ipython&gt;=7.23.1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (8.18.1)
+Requirement already satisfied: jupyter-client&gt;=8.0.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (8.6.3)
+Requirement already satisfied: jupyter-core!=5.0.*,&gt;=4.12 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (5.8.1)
+Requirement already satisfied: matplotlib-inline&gt;=0.1 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (0.1.7)
+Requirement already satisfied: nest-asyncio&gt;=1.4 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (1.6.0)
+Requirement already satisfied: packaging&gt;=22 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (25.0)
+Requirement already satisfied: psutil&gt;=5.7 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (7.0.0)
+Requirement already satisfied: pyzmq&gt;=25 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (27.0.1)
+Requirement already satisfied: tornado&gt;=6.2 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (6.5.1)
+Requirement already satisfied: traitlets&gt;=5.4.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipykernel) (5.14.3)
+Requirement already satisfied: decorator in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (5.2.1)
+Requirement already satisfied: jedi&gt;=0.16 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (0.19.2)
+Requirement already satisfied: prompt-toolkit&lt;3.1.0,&gt;=3.0.41 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (3.0.51)
+Requirement already satisfied: pygments&gt;=2.4.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (2.19.2)
+Requirement already satisfied: stack-data in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (0.6.3)
+Requirement already satisfied: typing-extensions in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (4.14.1)
+Requirement already satisfied: exceptiongroup in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (1.3.0)
+Requirement already satisfied: pexpect&gt;4.3 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from ipython&gt;=7.23.1-&gt;ipykernel) (4.9.0)
+Requirement already satisfied: wcwidth in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from prompt-toolkit&lt;3.1.0,&gt;=3.0.41-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (0.2.13)
+Requirement already satisfied: parso&lt;0.9.0,&gt;=0.8.4 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from jedi&gt;=0.16-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (0.8.4)
+Requirement already satisfied: importlib-metadata&gt;=4.8.3 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from jupyter-client&gt;=8.0.0-&gt;ipykernel) (8.7.0)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from jupyter-client&gt;=8.0.0-&gt;ipykernel) (2.9.0.post0)
+Requirement already satisfied: zipp&gt;=3.20 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from importlib-metadata&gt;=4.8.3-&gt;jupyter-client&gt;=8.0.0-&gt;ipykernel) (3.23.0)
+Requirement already satisfied: platformdirs&gt;=2.5 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from jupyter-core!=5.0.*,&gt;=4.12-&gt;ipykernel) (4.3.8)
+Requirement already satisfied: ptyprocess&gt;=0.5 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from pexpect&gt;4.3-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (0.7.0)
+Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from python-dateutil&gt;=2.8.2-&gt;jupyter-client&gt;=8.0.0-&gt;ipykernel) (1.17.0)
+Requirement already satisfied: executing&gt;=1.2.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from stack-data-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (2.2.0)
+Requirement already satisfied: asttokens&gt;=2.1.0 in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from stack-data-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (3.0.0)
+Requirement already satisfied: pure-eval in /opt/hostedtoolcache/Python/3.9.23/x64/lib/python3.9/site-packages (from stack-data-&gt;ipython&gt;=7.23.1-&gt;ipykernel) (0.2.3)
+Note: you may need to restart the kernel to use updated packages.
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.crystal_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Properties_output</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot</span> <span class="k">as</span> <span class="n">CCplt</span>
+</pre></div>
+</div>
+</div>
+<p>Read a seebeck files</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seebeck</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_seebeck</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_SEEBECK.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seebeck1</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_seebeck</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_antisito_SEEBECK.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Plot seebeck versus the chemical potential</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_seebeck_potential</span><span class="p">(</span><span class="n">seebeck</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[6], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_seebeck_potential</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">seebeck</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-red-fg">TypeError</span>: plot_cry_seebeck_potential() missing 2 required positional arguments: &#39;direction&#39; and &#39;temperature&#39;
+</pre></div></div>
+</div>
+<p>Plot seebeck versus the charge carrier concentration</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_seebeck_carrier</span><span class="p">(</span><span class="n">seebeck</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[7], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_seebeck_carrier</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">seebeck</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-red-fg">TypeError</span>: plot_cry_seebeck_carrier() missing 2 required positional arguments: &#39;direction&#39; and &#39;temperature&#39;
+</pre></div></div>
+</div>
+<p>Read a sigma files</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sigma</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_sigma</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_SIGMA.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sigma1</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_sigma</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_antisito_SIGMA.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Plot sigma versus the chemical potential</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_sigma_potential</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[10], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_sigma_potential</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">sigma</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-red-fg">TypeError</span>: plot_cry_sigma_potential() missing 2 required positional arguments: &#39;direction&#39; and &#39;temperature&#39;
+</pre></div></div>
+</div>
+<p>Plot multiseebeck</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_multiseebeck</span><span class="p">(</span><span class="n">seebeck</span><span class="p">,</span> <span class="n">seebeck1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[11], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_multiseebeck</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">seebeck</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">seebeck1</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-red-fg">TypeError</span>: plot_cry_multiseebeck() missing 2 required positional arguments: &#39;minpot&#39; and &#39;maxpot&#39;
+</pre></div></div>
+</div>
+<p>Plot multisigma</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_multisigma</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">sigma1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[12], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_multisigma</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">sigma</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">sigma1</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-red-fg">TypeError</span>: plot_cry_multisigma() missing 2 required positional arguments: &#39;minpot&#39; and &#39;maxpot&#39;
+</pre></div></div>
+</div>
+<p>Plot powerfactor</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_powerfactor_potential</span><span class="p">(</span><span class="n">seebeck</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[13], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_powerfactor_potential</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">seebeck</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">sigma</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-red-fg">TypeError</span>: plot_cry_powerfactor_potential() missing 2 required positional arguments: &#39;direction&#39; and &#39;temperature&#39;
+</pre></div></div>
+</div>
+<p>Plot ZT</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_zt</span><span class="p">(</span><span class="n">seebeck</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[14], line 1</span>
+<span class="ansi-green-fg">----&gt; 1</span> <span class="ansi-yellow-bg">CCplt</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">plot_cry_zt</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">seebeck</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">sigma</span><span class="ansi-yellow-bg">)</span>
+
+<span class="ansi-red-fg">TypeError</span>: plot_cry_zt() missing 3 required positional arguments: &#39;direction&#39;, &#39;temperature&#39;, and &#39;ktot&#39;
+</pre></div></div>
+</div>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CRYSTALClear Development Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, CRYSTALClear Development Team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
