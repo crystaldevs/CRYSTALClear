@@ -783,7 +783,7 @@ def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down'
                           dos_prj=None, energy_range=None, dos_range=None,
                           color_band='blue', color_dos='blue', labels=None, linestl_band='-',
                           linestl_dos=None, linewidth=1, fermi='forestgreen',
-                          title=None, figsize=None):
+                          title=None, figsize=None, legend=False):
     """
     A wrapper of plot_cry_es for electron band structure + dos. For spin-polarized cases, beta state.
 
