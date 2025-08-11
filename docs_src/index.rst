@@ -21,6 +21,11 @@ CRYSTALClear documentation
    :caption: API Documentation
    :glob:
 
-   Modules<CRYSTALClear>
+   convert
+   crystal_io
+   execute
+   flatmaps
+   plot
+   units
    
 .. include:: introduction.rst
