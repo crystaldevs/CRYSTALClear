@@ -14,24 +14,21 @@ Functions to visualize physical properties computed with CRYSTAL .
 
 
 def plot_dens_ECHG(obj_echg, levels=150, xticks=5,
-                   yticks=5, cmap_max=None, cmap_min=None,
-                   dpi=400, savefig=False, name='echg_map'):
+                   yticks=5, cmap_max=None, cmap_min=None):
     """
     Plots the 2D ECHG density map from a fort.25 file.
 
-    Args:
+    Args: 
         obj_echg (crystal_io.Properties_output): Properties output object.
         levels (int or array-like, optional): Determines the number and positions of the contour lines/regions. Default is 150.
         xticks (int, optional): Number of ticks in the x direction. Default is 5.
         yticks (int, optional): Number of ticks in the y direction. Default is 5.
         cmap_max(float, optional): Maximum value used for the colormap. Default is None.
         cmap_min(float, optional): Minimun value used for the colormap. Default is None.
-        dpi (int, optional): DPI (dots per inch) for the output image. Default is 400.
-        savefig (bool): Chose to save the figure or not. Default is False.
-        name (str): Name for the colormap.
 
    Returns:
-        None
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -78,15 +75,13 @@ def plot_dens_ECHG(obj_echg, levels=150, xticks=5,
     ax.set_aspect(1.0)
     ax.set_xlim(np.amin(mesh_x), np.amax(mesh_x))
     ax.set_ylim(0, np.amax(mesh_y) * np.sqrt(1 - (obj_echg.cosxy**2)))
-    if savefig:
-        plt.savefig(name, dpi=dpi)
 
-    plt.show()
+    return fig, ax
 
 # ----------------------------------SPIN CURRENTS------------------------------#
 
 
-def plot_vecfield2D_m(header, dens, quivscale, name='MAG', levels=150, dpi=400):
+def plot_vecfield2D_m(header, dens, quivscale, levels=150):
     """
     Plots the 2D magnetization vector field.
 
@@ -94,12 +89,10 @@ def plot_vecfield2D_m(header, dens, quivscale, name='MAG', levels=150, dpi=400):
         header (list): List containing information about the fort.25 header.
         dens (numpy.ndarray): Array containing the vector field data.
         quivscale (float): Scale factor for the quiver plot.
-        name (str, optional):  Name used for saving the plots.
         levels (int or array-like, optional): Determines the number and positions of the contour lines/regions.
-        dpi (int, optional): DPI (dots per inch) for the output image. Default is 400.
 
     Returns:
-        None
+        matplotlib.figure.Figure
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -189,12 +182,10 @@ def plot_vecfield2D_m(header, dens, quivscale, name='MAG', levels=150, dpi=400):
     m = plt.quiver(mesh_projx, mesh_projy, projx_m, projy_m, scale=quivscale)
     m = plt.xlabel('$\AA$')
     m = plt.ylabel('$\AA$')
-    m = plt.savefig(name, dpi=dpi)
 
-    plt.show()
+    return m
 
-
-def plot_vecfield2D_j(header, dens, quivscale, name='SC', levels=150, dpi=400):
+def plot_vecfield2D_j(header, dens, quivscale, levels=150):
     """
     Plots the 2D vector field of the spin current.
 
@@ -202,12 +193,10 @@ def plot_vecfield2D_j(header, dens, quivscale, name='SC', levels=150, dpi=400):
         header (list): List containing information about the fort.25 header.
         dens (numpy.ndarray): Array representing the vector field.
         quivscale (float): Scale factor for the quiver plot.
-        name (str, optional):  Name used for saving the plots.
         levels (int or array-like, optional): Determines the number and positions of the contour lines/regions.
-        dpi (int, optional): DPI (dots per inch) for the output image. Defaults to 400.
 
     Returns:
-        None
+        matplotlib.figure.Figure
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -295,12 +284,10 @@ def plot_vecfield2D_j(header, dens, quivscale, name='SC', levels=150, dpi=400):
     j = plt.quiver(mesh_projx, mesh_projy, projx_j, projy_j, scale=quivscale)
     j = plt.xlabel('$\AA$')
     j = plt.ylabel('$\AA$')
-    j = plt.savefig(name, dpi=dpi)
 
-    plt.show()
+    return j
 
-
-def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, name='SCD', levels=150, dpi=400):
+def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, levels=150):
     """
     Plots the 2D spin current density vector fields.
 
@@ -310,12 +297,12 @@ def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, name='SCD', 
         dens_JY (numpy.ndarray): Array representing the Y-component of the spin current density.
         dens_JZ (numpy.ndarray): Array representing the Z-component of the spin current density.
         quivscale: Scale factor for the quiver plot.
-        name (str, optional): Name used for saving the plots.
         levels (int or array-like, optional): Determines the number and positions of the contour lines/regions.
-        dpi (int, optional): DPI (Dots per inch) for saving the plots. Defaults to 400.
 
     Returns:
-        None
+        JX (matplotlib.figure.Figure)
+        JY (matplotlib.figure.Figure)
+        JZ (matplotlib.figure.Figure)
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -428,7 +415,6 @@ def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, name='SCD', 
                     projy_JX, scale=quivscale)
     JX = plt.xlabel('$\AA$')
     JX = plt.ylabel('$\AA$')
-    JX = plt.savefig(name+'_JX', dpi=dpi)
 
     JY = plt.figure()
     JY = plt.contourf(mesh_x, mesh_y, mod_JY, levels, cmap='summer')
@@ -437,7 +423,6 @@ def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, name='SCD', 
                     projy_JY, scale=quivscale)
     JY = plt.xlabel('$\AA$')
     JY = plt.ylabel('$\AA$')
-    JY = plt.savefig(name+'_JY', dpi=dpi)
 
     JZ = plt.figure()
     JZ = plt.contourf(mesh_x, mesh_y, mod_JZ, levels, cmap='summer')
@@ -446,9 +431,8 @@ def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, name='SCD', 
                     projy_JZ, scale=quivscale)
     JZ = plt.xlabel('$\AA$')
     JZ = plt.ylabel('$\AA$')
-    JZ = plt.savefig(name+'_JZ', dpi=dpi)
 
-    plt.show()
+    return JX, JY, JZ
 
 
 # --------------------------------BAND STRUCTURES------------------------------#

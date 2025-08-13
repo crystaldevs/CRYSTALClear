@@ -1,8 +1,5 @@
 .. CRYSTALClear documentation master file
 
-CRYSTALClear documentation
-==========================
-
 .. toctree::
    :hidden: 
    :maxdepth: 2
