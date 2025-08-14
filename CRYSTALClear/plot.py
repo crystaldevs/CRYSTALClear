@@ -1579,7 +1579,6 @@ def plot_cry_multiseebeck(direction,temperature,minpot,maxpot,*seebeck):
         Figure object
 
     Notes:
-    
         - Plots the seebeck coefficient for each seebeck object.
         - Differentiates transport coefficients due to n-type or p-type conduction using dashed and solid lines.
 
@@ -2019,7 +2018,6 @@ def plot_cry_multisigma(direction,temperature,minpot,maxpot,*sigma):
         Figure object
 
     Notes:
-    
         - Plots the electron conductivity for each sigma object.
         - Differentiates transport coefficients due to n-type or p-type conduction using dashed and solid lines.
     """
@@ -2371,6 +2369,7 @@ def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj,direction,temperature):
 
     Returns:
         Figure object
+
     Notes:
         - Calculates the power factor using the Seebeck coefficient and electrical conductivity data for each temperature.
         - Plots the power factor for each temperature as a function of the charge carrier concentration, distinguishing between n-type and p-type conduction.
@@ -3565,13 +3564,12 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
 
 # -----------------------------------ANHARMONIC--------------------------------#
 
-def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0.5,
-                  fmin=None, fmax=None, ylim=None, savefig=False, dpi=300,
-                  filetype='png', exp_spec=None, sep=";", show=True,
-                  export_csv=False, label=None, xlabel='Wavenumber [cm$^{-1}$]',
-                  ylabel='Intensity [arb. u.]', linewidth=2.0, padd=100,
-                  fontsize=12, style=None, compstyle=None, nopadding=False,
-                  figsize=(16, 6)):
+def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5, 
+                  stdev=3, eta=0.5, fmin=None, fmax=None, ylim=None, 
+                  exp_spec=None, sep=";", export_csv=False, label=None, 
+                  xlabel='Wavenumber [cm$^{-1}$]', ylabel='Intensity [arb. u.]', 
+                  linewidth=2.0, padd=100, style=None, compstyle=None, 
+                  figsize=(16, 6), fig=None, ax=None, offset=0):
     """
     This function enables the simulation of vibrational spectra based on a 2D 
     NumPy array containing a list of transition frequencies and the 
@@ -3582,43 +3580,27 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
     additionally plot contributions arising from each transition.
 
     Args:
-        transitions (float|numpy.ndarray): Array containing transition frequencies
-        (axis=0) and corresponding intensities (axis=1).
-        typeS (str): String specifying the spectral profile: 'bars',
-        'lorentz', 'gauss', 'pvoigt'. 
-        components (bool, optional): Whether to plot contributions arising from
-        each transition (default is `False`).  
-        bwidth (float, optional): Half-width at half-maximum of the Lorentzian 
-        profile (default is 5).
-        stdev (float, optional): Standard deviation of the Gaussian profile 
-        (default is 5).
-        eta (float, optional): Fraction of Lorentzian character in pseudo-Voigt
-        profile (default is 0.5).
+        transitions (numpy.ndarray): 2D array containing transition frequencies (axis=0) and corresponding intensities (axis=1).
+        typeS (str): String specifying the spectral profile: "bars", "lorentz", "gauss", "pvoigt" (default is "lorentz"). 
+        components (bool, optional): Whether to plot contributions arising from each transition (default is `False`).  
+        bwidth (float, optional): Half-width at half-maximum of the Lorentzian profile (default is 5).
+        stdev (float, optional): Standard deviation of the Gaussian profile (default is 5).
+        eta (float, optional): Fraction of Lorentzian character in pseudo-Voigt profile (default is 0.5).
         fmin (float, optional): Minimum frequency.
         fmax(float, optional): Maximum frequency.
         ylim (float, optional): Maximum intensity.
-        savefig (bool, optional): Whether to save the figure (default is `False`).
-        dpi (float, optional): Dots per inches (default is 300).
-        filetype (str, optional): File extension (default is 'png').
-        show (bool, optional): Whether to show the figure (default is `True`).
-        export_csv (bool, optional): Whether to save plot in csv format (default is 
-        `False`).
-        xlabel (str, optional): x-axis label (default is 'Wavenumber [cm$^{-1}$]').
-        ylabel (str, optional): y-axis label (default is 'Intensity [arb. u.]').
-        linewidth (float): Linewidth (default is 2.0).
-        padd (float, optional): left- and right- hand side padding expressed in the
-        same unit of the quantity reported in x-axis (default is 100).
-        fontsize (integer, optional): Fontsize (default is 12).
+        export_csv (bool, optional): Whether to save plot in csv format (default is `False`).
+        xlabel (str, optional): x-axis label (default is "Wavenumber [cm$^{-1}$]").
+        ylabel (str, optional): y-axis label (default is "Intensity [arb. u.]").
+        linewidth (float, optional): Linewidth (default is 2.0).
+        padd (float, optional): left- and right- hand side padding expressed in the same unit of the quantity reported in x-axis (default is 100).
         style (str, optional): String specifying Matplotlib style. 
-        compstyle (str|list, optional): List containing Matplotlib styles to plot
-        each component. 
-        nopadding (bool, optional): Whether to remove padding (default is `False`).
-        figsize (real|list, optional): List of two numbers specifying the aspect
-        ratio of the figure (default is [16, 6]).
+        compstyle (list[string], optional): List containing Matplotlib styles to plot each component. 
+        figsize (list[real], optional): List of two numbers specifying the aspect ratio of the figure (default is [16, 6]).
 
     Returns:
-        :class:`matplotlib.pyplot`
-        A matplotlib object representing the result of the plot
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
     """
 
     import math
@@ -3629,15 +3611,14 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
     import numpy as np
     from numpy import genfromtxt
 
-    if (show):
-        plt.figure(figsize=figsize)
-    if (ylim is not None):
-        plt.ylim(0, ylim)
+    if(ax is None): 
+        fig, ax = plt.subplots(figsize=figsize)
 
-    plt.xticks(fontsize=fontsize)
-    plt.yticks(fontsize=fontsize)
-    plt.xlabel(xlabel, fontsize=fontsize)
-    plt.ylabel(ylabel, fontsize=fontsize)
+    if(ylim is not None):
+        ax.set_ylim(0, ylim)
+
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
 
     bars = False
     lorentz = False
@@ -3684,12 +3665,12 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
                 sbuff[j, 1] = lorentz
             L.append(deepcopy(sbuff))
             iL = iL + 1
-        if (not components):
+        if(not components):
             for i in range(len(L)):
                 spec_data[:, 1] = spec_data[:, 1] + L[i][:, 1]
         else:
             for i in range(len(L)):
-                plt.plot(spec_data[:, 0], L[i][:, 1], linewidth=linewidth)
+                ax.plot(spec_data[:, 0], L[i][:, 1], linewidth=linewidth)
             for i in range(len(L)):
                 spec_data[:, 1] = spec_data[:, 1] + L[i][:, 1]
 
@@ -3704,12 +3685,12 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
                              (2*stdev**2))*transitions[i, 1]
                 sbuff[j, 1] = gauss
             G.append(deepcopy(sbuff))
-        if (not components):
+        if(not components):
             for i in range(len(G)):
                 spec_data[:, 1] = spec_data[:, 1] + G[i][:, 1]
         else:
             for i in range(len(G)):
-                plt.plot(spec_data[:, 0], G[i][:, 1], linewidth=linewidth)
+                ax.plot(spec_data[:, 0], G[i][:, 1], linewidth=linewidth)
             for i in range(len(G)):
                 spec_data[:, 1] = spec_data[:, 1] + G[i][:, 1]
 
@@ -3726,153 +3707,128 @@ def plot_cry_spec(transitions, typeS, components=False, bwidth=5, stdev=3, eta=0
                     ((f-transitions[i, 0])**2+bwidth**2)*transitions[i, 1]
                 sbuff[j, 1] = eta*lorentz + (1-eta)*gauss
             V.append(deepcopy(sbuff))
-        if (not components):
+        if(not components):
             for i in range(len(V)):
                 spec_data[:, 1] = spec_data[:, 1] + V[i][:, 1]
         else:
             for i in range(len(V)):
                 if (compstyle is not None):
-                    plt.plot(spec_data[:, 0], V[i][:, 1], compstyle[i],
+                    ax.plot(spec_data[:, 0], V[i][:, 1], compstyle[i],
                              linewidth=linewidth)
                 else:
-                    plt.plot(spec_data[:, 0], V[i][:, 1], linewidth=linewidth)
+                    ax.plot(spec_data[:, 0], V[i][:, 1], linewidth=linewidth)
             for i in range(len(V)):
                 spec_data[:, 1] = spec_data[:, 1] + V[i][:, 1]
 
-    if (exp_spec is not None):
+    if(exp_spec is not None):
         exp_data = genfromtxt(exp_spec, delimiter=sep)
         area_spec_data = np.trapz(spec_data[:, 1], spec_data[:, 0])
         area_exp_data = np.trapz(exp_data[:, 1], exp_data[:, 0])
         norm_fac = area_spec_data / area_exp_data
         baseline = 0.2
         exp_data[:, 1] = exp_data[:, 1] * norm_fac - baseline  # * 0.5
-        plt.plot(exp_data[:, 0], exp_data[:, 1], 'r-', linewidth=linewidth)
+        ax.plot(exp_data[:, 0], exp_data[:, 1], 'r-', linewidth=linewidth)
 
-    if ((label is not None) and (style is None)):
-        plt.plot(spec_data[:, 0], spec_data[:, 1], linewidth=linewidth,
+    if((label is not None) and (style is None)):
+        ax.plot(spec_data[:, 0], spec_data[:, 1] + offset, linewidth=linewidth,
                  label=label)
-    elif ((label is None) and (style is not None)):
-        plt.plot(spec_data[:, 0], spec_data[:, 1], style, linewidth=linewidth)
-    elif ((label is not None) and (style is not None)):
-        plt.plot(spec_data[:, 0], spec_data[:, 1], style, linewidth=linewidth,
+    elif((label is None) and (style is not None)):
+        ax.plot(spec_data[:, 0], spec_data[:, 1] + offset, style, linewidth=linewidth)
+    elif((label is not None) and (style is not None)):
+        ax.plot(spec_data[:, 0], spec_data[:, 1] + offset, style, linewidth=linewidth,
                  label=label)
     else:
-        plt.plot(spec_data[:, 0], spec_data[:, 1], linewidth=linewidth)
+        ax.plot(spec_data[:, 0], spec_data[:, 1] + offset, linewidth=linewidth)
 
-    if (savefig):
-        plt.savefig(typeS + time.strftime("%Y-%m-%d_%H%M%S.") + filetype,
-                    format=filetype, dpi=dpi)
-    if (show):
-        plt.show()
-
-    if (export_csv):
+    if(export_csv):
         np.savetxt(typeS + time.strftime("%Y-%m-%d_%H%M%S.") + 'csv',
                    spec_data, delimiter=';')
-    return plt
+    return fig, ax
 
 
-def plot_cry_spec_multi(files, typeS, components=False, bwidth=5, stdev=3,
-                        eta=0.5, fmin=None, fmax=None, ylim=None,
-                        savefig=False, dpi=300, filetype='png', label=None,
-                        xlabel='Wavenumber [cm$^{-1}$]',
+def plot_cry_spec_multi(files, typeS="lorentz", components=False, bwidth=5, 
+                        stdev=3, eta=0.5, fmin=None, fmax=None, ylim=None, 
+                        label=None, xlabel='Wavenumber [cm$^{-1}$]',
                         ylabel='Intensity [arb. u.]', linewidth=2.0, padd=100,
-                        fontsize=12, style=None, nopadding=False,
-                        figsize=(16, 6), exp_spec=None, norm_fac=1, sep=';'):
+                        style=None, figsize=(16, 6), exp_spec=None, norm_fac=1, 
+                        sep=';', offset=0):
     """
     This function is a wrapper for `plot_spec` function, enablng the simulation 
     of many vibrational spectra coming from a list of NumPy array.  
 
     Args:
-        transitions (float|numpy.ndarray): Array containing transition frequencies
-        (axis=0) and corresponding intensities (axis=1).
-        typeS (str): String specifying the spectral profile: 'bars',
-        'lorentz', 'gauss', 'pvoigt'. 
-        components (bool, optional): Whether to plot contributions arising from
-        each transition (default is `False`).  
-        bwidth (float, optional): Half-width at half-maximum of the Lorentzian 
-        profile (default is 5).
-        stdev (float, optional): Standard deviation of the Gaussian profile 
-        (default is 5).
-        eta (float, optional): Fraction of Lorentzian character in pseudo-Voigt
-        profile (default is 0.5).
+        transitions (list[numpy.ndarray]): List of 2D arrays containing transition frequencies (axis=0) and corresponding intensities (axis=1).
+        typeS (str): String specifying the spectral profile: "bars", "lorentz", "gauss", "pvoigt". 
+        components (bool, optional): Whether to plot contributions arising from each transition (default is `False`).  
+        bwidth (float, optional): Half-width at half-maximum of the Lorentzian profile (default is 5).
+        stdev (float, optional): Standard deviation of the Gaussian profile (default is 5).
+        eta (float, optional): Fraction of Lorentzian character in pseudo-Voigt profile (default is 0.5).
         fmin (float, optional): Minimum frequency.
         fmax(float, optional): Maximum frequency
         ylim (float, optional): Maximum intensity.
-        savefig (bool, optional): Whether to save the figure (default is `False`).
-        dpi (float, optional): Dots per inches (default is 300).
-        filetype (str, optional): File extension (default is 'png').
-        xlabel (str, optional): x-axis label (default is 'Wavenumber [cm$^{-1}$]').
-        ylabel (str, optional): y-axis label (default is 'Intensity [arb. u.]').
-        linewidth (float): Linewidth (default is 2.0).
-        padd (float, optional): left- and right- hand side padding expressed in the
-        same unit of the quantity reported in x-axis (default is 100).
-        fontsize (integer, optional): Fontsize (default is 12).
+        xlabel (str, optional): x-axis label (default is "Wavenumber [cm$^{-1}$]").
+        ylabel (str, optional): y-axis label (default is "Intensity [arb. u.]").
+        linewidth (float, optional): Linewidth (default is 2.0).
+        padd (float, optional): left- and right- hand side padding expressed in the same unit of the quantity reported in x-axis (default is 100).
         style (str, optional): String specifying Matplotlib style. 
-        nopadding (bool, optional): Whether to remove padding (default is `False`).
-        figsize (real|list, optional): List of two numbers specifying the aspect
-        ratio of the figure (default is [16, 6]).
+        figsize (list[float], optional): List of two numbers specifying the aspect ratio of the figure (default is [16, 6]).
+        offset (float, optional) : Offset along the y axis (default is 0). 
 
     Returns:
-        :class:`matplotlib.pyplot`
-        A matplotlib object representing the result of the plot
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
     """
-
-    import time
 
     import matplotlib.pyplot as plt
     from numpy import genfromtxt
 
-    plt.figure(figsize=figsize)
-    plt.xlabel(xlabel, fontsize=fontsize)
-    plt.ylabel(ylabel, fontsize=fontsize)
+    fig, ax = plt.subplots(figsize=figsize)
 
-    if (exp_spec is not None):
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+
+    if(exp_spec is not None):
         exp_data = genfromtxt(exp_spec, delimiter=sep)
         # area_spec_data = np.trapz(spec_data[:, 1], spec_data[:, 0])
         # area_exp_data = np.trapz(exp_data[:, 1], exp_data[:, 0])
         # norm_fac = area_spec_data / area_exp_data
         baseline = 0.2
         exp_data[:, 1] = exp_data[:, 1] * norm_fac - baseline
-        plt.plot(exp_data[:, 0], exp_data[:, 1], 'r-', linewidth=linewidth)
+        ax.plot(exp_data[:, 0], exp_data[:, 1], 'r-', linewidth=linewidth)
 
     compstyle = []
-    if (style is not None):
+    if(style is not None):
         for i in range(len(style)):
             compstyle.append([style[i]] * 100)
 
     for i, transitions in enumerate(files):
         if ((label is not None) and (style is None)):
             plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
-                          fmin, fmax, ylim, show=False, savefig=False,
-                          label=label[i], linewidth=linewidth, padd=padd,
-                          nopadding=nopadding, fontsize=fontsize, xlabel=xlabel,
-                          ylabel=ylabel)
+                          fmin, fmax, ylim, label=label[i], linewidth=linewidth, 
+                          padd=padd, xlabel=xlabel, ylabel=ylabel, fig=fig,
+                          ax=ax, offset=offset*i)
         elif ((style is not None) and (label is None)):
             plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
-                          fmin, fmax, ylim, show=False, savefig=False,
-                          linewidth=linewidth, padd=padd, nopadding=nopadding,
-                          fontsize=fontsize, style=style[i], xlabel=xlabel,
-                          ylabel=ylabel, compstyle=compstyle[i])
+                          fmin, fmax, ylim, linewidth=linewidth, padd=padd, 
+                          style=style[i], xlabel=xlabel, ylabel=ylabel, 
+                          compstyle=compstyle[i], fig=fig, ax=ax,
+                          offset=offset*i)
         elif ((style is not None) and (label is not None)):
             plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
-                          fmin, fmax, ylim, show=False, savefig=False,
-                          linewidth=linewidth, padd=padd, nopadding=nopadding,
-                          fontsize=fontsize, style=style[i], label=label[i],
-                          xlabel=xlabel, ylabel=ylabel, compstyle=compstyle[i])
+                          fmin, fmax, ylim, linewidth=linewidth, padd=padd, 
+                          style=style[i], label=label[i], xlabel=xlabel, 
+                          ylabel=ylabel, compstyle=compstyle[i], fig=fig,
+                          ax=ax, offset=offset*i)
         else:
             plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta, fmin,
-                          fmax, ylim, show=False, savefig=False,
-                          linewidth=linewidth, padd=padd, nopadding=nopadding,
-                          fontsize=fontsize, xlabel=xlabel, ylabel=ylabel)
+                          fmax, ylim, linewidth=linewidth, padd=padd, 
+                          xlabel=xlabel, ylabel=ylabel, fig=fig, ax=ax,
+                          offset=offset*i)
 
-    if (label is not None):
-        plt.legend(loc='upper left', fontsize=fontsize)
+    if(label is not None):
+        ax.legend(loc='upper left')
 
-    if (savefig):
-        plt.savefig("multi_" + typeS + time.strftime("%Y-%m-%d_%H%M%S.") +
-                    filetype, format=filetype, dpi=dpi)
-
-    return plt
+    return fig, ax
 
 
 def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
@@ -3895,9 +3851,8 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
         the scan potential provided by ANSCAN (default is True). 
         figsize (list[float])
 
-    Returns:
-        :class:`matplotlib.pyplot`
-        A matplotlib object representing the result of the plot
+    Notes:
+        - This is a work in progress.
     """
 
     import math

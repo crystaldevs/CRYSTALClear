@@ -1652,7 +1652,7 @@ class Crystal_output:
 
         self.IR_HO_0K = np.stack([thz_to_cm(self.frequency), self.intens], axis=2).reshape(-1, 2)
 
-        return self.IR_HO_0K
+        return self
 
     def get_Raman(self):
         """
