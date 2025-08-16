@@ -1704,9 +1704,9 @@ class Crystal_output:
                             - int(line.split()[0].replace("-", "")) \
                             + 1
                     freq = float(line.split()[2])
-                    intens_tot = float(line.split()[5]) / ndeg 
-                    intens_par = float(line.split()[6]) / ndeg 
-                    intens_per = float(line.split()[7]) / ndeg 
+                    intens_tot = float(line.split()[-3]) / ndeg 
+                    intens_par = float(line.split()[-2]) / ndeg 
+                    intens_per = float(line.split()[-1]) / ndeg 
                     for k in range(ndeg):
                         self.Ram_HO_0K_tot.append([freq, intens_tot]) 
                         self.Ram_HO_0K_par.append([freq, intens_par]) 
@@ -1717,12 +1717,12 @@ class Crystal_output:
                             - int(line.split()[0].replace("-", "")) \
                             + 1
                     freq = float(line.split()[2])
-                    intens_xx = float(line.split()[5]) / ndeg 
-                    intens_xy = float(line.split()[6]) / ndeg 
-                    intens_xz = float(line.split()[7]) / ndeg 
-                    intens_yy = float(line.split()[8]) / ndeg 
-                    intens_yz = float(line.split()[9]) / ndeg 
-                    intens_zz = float(line.split()[10]) / ndeg 
+                    intens_xx = float(line.split()[-6]) / ndeg 
+                    intens_xy = float(line.split()[-5]) / ndeg 
+                    intens_xz = float(line.split()[-4]) / ndeg 
+                    intens_yy = float(line.split()[-3]) / ndeg 
+                    intens_yz = float(line.split()[-2]) / ndeg 
+                    intens_zz = float(line.split()[-1]) / ndeg 
                     for k in range(ndeg):
                         self.Ram_HO_0K_comp_xx.append([freq, intens_xx])
                         self.Ram_HO_0K_comp_xy.append([freq, intens_xy])
