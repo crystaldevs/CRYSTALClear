@@ -4023,7 +4023,7 @@ def plot_cry_EOS(eos, formula_unit=None, plot='VvsE', color='tab:blue', figsize=
         # <--
         if plot != plot_type[0]:
             plt.xlabel('P (GPa)')
-            plt.ylabel('H/Z (a.u)')
+            plt.ylabel('$\Delta$H/Z (a.u)')
 
         if legend != ['Phase 1', 'Phase 2']:
             plt.legend()
