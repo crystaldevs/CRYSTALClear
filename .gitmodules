@@ -1,0 +1,3 @@
+[submodule "docs_src/notebooks"]
+	path = docs_src/notebooks
+	url = https://github.com/crystaldevs/CRYSTALClear_Notebooks

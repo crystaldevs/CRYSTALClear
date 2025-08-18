@@ -41,7 +41,7 @@ def cm_to_thz(freq):
 
 
 def thz_to_cm(freq):
-    # Conversion from cm^-1 to THz
+    # Conversion from THz to cm^-1
     return freq/(constants.physical_constants['speed of light in vacuum'][0] * 1e-10)
 
 

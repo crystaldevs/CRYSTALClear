@@ -119,7 +119,7 @@ class GeomBASE():
                 conv_z = np.array(conv_z, dtype=int)
                 break
             else:
-                countline += 3
+                countline += 1
 
         if len(conv_z) == 0:
             raise Exception('Geometry information not found.')
