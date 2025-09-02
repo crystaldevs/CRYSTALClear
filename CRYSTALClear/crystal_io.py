@@ -4130,6 +4130,330 @@ class Properties_output:
         print(self.topo_filename + '_' + cp_type + '.' + file_type + " generated.")
 
         return ase_obj
+    
+    def read_topond_tlap(self,properties_output):
+        """Read the TOPOND TLAP run output file to create associated DataFrames:
+         * Coordinates for the nuclei at the unitcell (nuclei_df)
+         * Data of the laplacian critical points (CP) discoverd (tlap_df)
+
+        Args:
+            properties_output (str): Properties output file.
+        Returns:
+            Properties_output: Updated Properties_output object.
+        """
+        import re
+
+        import numpy as np
+        import pandas as pd
+
+        self.read_file(properties_output)
+
+        self.tlap_filename = str(properties_output).split('.')[0]
+
+        properties = ["central_atom_id","central_atom_type","type", "coord", "rho", "grho", "-lap",
+                    "kinetic_g", "kinetic_k", "virial", "elf",
+                    "eigenval", "eigenvec"] 
+                  # To be included. Attr stands for attractor.
+                  # "attr_a_id","attr_a_cell" ,"attr_a_z", 
+                  # "attr_b_id", "attr_b_cell" ,"attr_b_z", 
+                  # "bp_length", "distance_ab", "bp/dist"]
+
+        self.tlap_df = pd.DataFrame(columns=properties)
+        self.tlap_df['eigenval'] = self.tlap_df['eigenval'].astype(object)
+        self.tlap_df['eigenvec'] = self.tlap_df['eigenvec'].astype(object)
+    
+        # To be included
+        # self.topo_df['attr_a_cell'] = self.topo_df['atom_a_cell'].astype(object)
+        # self.topo_df['attr_b_cell'] = self.topo_df['atom_b_cell'].astype(object)
+
+        self.nuclei_df = pd.DataFrame(columns=['z','coord'])
+
+        atom_a_read = False
+        bp_steps = 0
+        outdiag_props = False
+        global_cp_id = 0
+        bp_cp_id = global_cp_id
+
+        file_lines = len(self.data)
+        i = 0
+        while  i < file_lines:
+            line = self.data[i]
+
+            if re.match(r' DIRECT LATTICE VECTOR COMPONENTS .ANGSTROM.',line) != None:
+                unitcell_mat = [self.data[i+1].strip().split(),
+                                self.data[i+2].strip().split(),
+                                self.data[i+3].strip().split()]
+                self.unitcell_mat = np.array(unitcell_mat, dtype=float)
+                i += 3
+        
+            if re.match(r' N. OF ATOMS PER CELL', line) != None:
+                num_atoms = int(line.strip().split()[5])
+
+            if re.match(r'   ATOM N.AT.  SHELL', line) != None:
+                i += 1
+                for n_atom in range(1,num_atoms+1):
+                    atom_data = self.data[i+n_atom].strip().split()
+                    self.nuclei_df.loc[n_atom,'z'] = int(atom_data[1])
+                    self.nuclei_df.loc[n_atom,'coord'] = np.array(atom_data[4:7],dtype=float)
+                i += num_atoms
+            
+            if re.match(r' ATTRACTORS OF THE UNIQUE PAIRS',line) != None:
+                bp_steps = 2
+
+            if re.match(r' \*\*\*\*\*\* CP SEARCH FOR NON',line) != None:
+                c_atom = line.strip().split()[6:8]
+
+            if re.match(r' CP N.',line) != None:
+                global_cp_id += 1
+                if not bp_steps:
+                    bp_cp_id +=1
+                    crit_point_line = i
+                    crit_point_number = line.strip().split()[2]
+
+                    if crit_point_number == "X(ANG)":
+                        break
+            
+                    cp_type = self.data[crit_point_line+3].strip().split()[3]
+                    cp_coord = self.data[crit_point_line+4].strip().split()[5:]
+                    if self.data[crit_point_line+5].strip().split()[1] == 'FRACT.':
+                        crit_point_line += 1
+                        i += 1
+                    cp_prop = self.data[crit_point_line+5].strip().split()[3:]
+                    self.tlap_df.loc[global_cp_id,'central_atom_id'] = c_atom[0]
+                    self.tlap_df.loc[global_cp_id,'central_atom_type'] = c_atom[1]
+                    self.tlap_df.loc[global_cp_id,'type'] = cp_type
+                    self.tlap_df.at[global_cp_id,'coord'] = np.array(cp_coord, dtype=float)
+                    self.tlap_df.loc[global_cp_id,'rho'] = float(cp_prop[2])
+                    self.tlap_df.loc[global_cp_id,'grho'] = float(cp_prop[1])
+                    self.tlap_df.loc[global_cp_id,'-lap'] = float(cp_prop[0])
+                    
+                    if not self.data[crit_point_line+6].strip():
+                        outdiag_props = False
+                    elif self.data[crit_point_line+6].strip().split()[0] == 'KINETIC':
+                        outdiag_props = True
+                        cp_kener = self.data[crit_point_line+6].strip().split()[5:]
+                        cp_virial = self.data[crit_point_line+7].strip().split()[3]
+                        cp_elf = self.data[crit_point_line+8].strip().split()[2]
+                        self.tlap_df.loc[global_cp_id,'kinetic_g'] = float(cp_kener[0])
+                        self.tlap_df.loc[global_cp_id,'kinetic_k'] = float(cp_kener[1])
+                        self.tlap_df.loc[global_cp_id,'virial'] = float(cp_virial)
+                        self.tlap_df.loc[global_cp_id,'elf'] = float(cp_elf)
+                        crit_point_line += 3
+                        i += 3
+                    else:
+                        print("Non considered case, check output and code.")
+
+                    eigenval = self.data[crit_point_line+9].strip().split()[5:]
+                    eigenvec = []
+                    eigenvec.append(self.data[crit_point_line+10].strip().split()[2:])
+                    eigenvec.append(self.data[crit_point_line+11].strip().split())
+                    eigenvec.append(self.data[crit_point_line+12].strip().split())
+                    self.tlap_df.at[global_cp_id,'eigenval'] = np.array(eigenval, dtype=float)
+                    self.tlap_df.at[global_cp_id,'eigenvec'] = np.array(eigenvec, dtype=float)
+                    i += 12
+                    
+
+                elif bp_steps:
+                    #global_cp_id += 1
+                    # ecrit stands for extra critical point, li
+                    ecrit_point_line = i
+                    ecrit_point_number = line.strip().split()[2]
+
+                    if ecrit_point_number == "X(ANG)":
+                        break
+
+                    cp_type = self.data[ecrit_point_line+3].strip().split()[4]
+                    cp_coord = self.data[ecrit_point_line+4].strip().split()[5:]
+                    if self.data[ecrit_point_line+5].strip().split()[1] == 'FRACT.':
+                        ecrit_point_line += 1
+                        i += 1
+                    cp_prop = self.data[ecrit_point_line+5].strip().split()[3:]
+
+                    # Populating DF
+                    self.tlap_df.loc[global_cp_id,'central_atom_id'] = c_atom[0]
+                    self.tlap_df.loc[global_cp_id,'central_atom_type'] = c_atom[1]
+                    self.tlap_df.loc[global_cp_id,'type'] = cp_type
+                    self.tlap_df.at[global_cp_id,'coord'] = np.array(cp_coord, dtype=float)
+                    self.tlap_df.loc[global_cp_id,'rho'] = float(cp_prop[2])
+                    self.tlap_df.loc[global_cp_id,'grho'] = float(cp_prop[1])
+                    self.tlap_df.loc[global_cp_id,'-lap'] = float(cp_prop[0])
+
+            if re.match(r' MAX. NUMBER OF STEP EXCEEDED',line) != None:
+                bp_steps -= 1
+
+            if ((re.match(r' CLUSTER OF ATOMS AROUND THE TERMINUS ',line) != None) and
+                    bp_steps == 2):
+                bp_steps -= 1
+                # Following should be fixed, as it takes info of closest atom and not
+                # of the corresponding attractor.
+                # atom_a_start = i
+                # atom_a_data = self.data[atom_a_start+2].strip().split()
+                # i += 2
+                # atom_a_id = atom_a_data[1]
+
+                # if len(atom_a_data) > 7:
+                #     atom_a_cell = atom_a_data[2:5]
+                #     atom_a_z = atom_a_data[5]
+                # else:
+                #     atom_a_cell = []
+                #     atom_a_z = atom_a_data[2]
+
+                # self.topo_df.loc[bp_cp_id,'atom_a_id'] = int(atom_a_id)
+                # self.topo_df.at[bp_cp_id,'atom_a_cell'] = np.array(atom_a_cell, dtype=float)
+                # self.topo_df.loc[bp_cp_id,'atom_a_z'] = int(atom_a_z)
+
+            # Data of second attractor associated to BCP
+            elif (re.match(r' CLUSTER OF ATOMS AROUND THE TERMINUS ',line) != None and
+                    bp_steps == 1):
+                bp_steps -= 1
+                # Following should be fixed, as it takes info of closest atom and not
+                # of the corresponding attractor.
+                # atom_b_start = i
+                # atom_b_data = self.data[atom_b_start+2].strip().split()
+                # i += 2
+                # atom_b_id = atom_b_data[1]
+
+                # if len(atom_b_data) > 7:
+                #     atom_b_cell = atom_b_data[2:5]
+                #     atom_b_z = atom_b_data[5]
+                # else:
+                #     atom_b_cell = []
+                #     atom_b_z = atom_b_data[2]
+                
+                # self.topo_df.loc[bp_cp_id,'atom_b_id'] = int(atom_b_id)
+                # self.topo_df.at[bp_cp_id,'atom_b_cell'] = np.array(atom_b_cell, dtype=float)
+                # self.topo_df.loc[bp_cp_id,'atom_b_z'] = int(atom_b_z)
+
+
+            if re.match(r' TTRAJ',line) != None:
+                bp_steps = 0
+                # This works, but first the attractors info should be fixed.
+                # bp_length = line.strip().split()[6]
+                # distance_ab = line.strip().split()[7]
+                # bp_dist_ratio = line.strip().split()[8]
+
+                # # Populating info for atoms involved in bond CPs
+                
+                # self.topo_df.loc[bp_cp_id,'bp_length'] = float(bp_length)
+                # self.topo_df.loc[bp_cp_id,'distance_ab'] = float(distance_ab)
+                # self.topo_df.loc[bp_cp_id,'bp/dist'] = float(bp_dist_ratio)
+                bp_cp_id = global_cp_id
+
+            # Next line iterator
+            i += 1
+
+        return self
+
+    def topond_viz_tlap_file(self, cp_type='+3', add_atoms=False, file_type="xyz"):
+        """Given the existence of TOPOND TLAP DataFrames, write files
+         with the critical points (CP) coordinates for further
+         visualization.
+
+         Args:
+             cp_type (str): Generate file for a given type CP.
+                    Options: 'ALL' to include all CP in the system,
+                             '+3' for CPs with +3 signature,
+                             '+1' for CPs with +1 signature,
+                             '-1' for CPs with -1 signature,
+                             '+1' for CPs with -3 signature.
+             add_atoms (bool): Include the Nuclei atoms read from the
+                    TOPOND output in the same file.
+             file_type (str): Type of output file to be generated.
+
+         Returns:
+             ase_obj: The generated ASE object.
+        """
+        import sys
+        from ase import Atoms
+
+        if not hasattr(self,'tlap_df'):
+            print('ERROR: You need first to succesfully run read_topond_tlap() to use this.')
+            sys.exit(1)
+
+         # An ASE object is used as intermediate to generate different types of outputs
+        if cp_type == 'ALL':
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(self.tlap_df['type']),
+                    positions = list(self.tlap_df['coord']*0.529177), # factor for Bohr2Angs
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(self.tlap_df['type']),
+                    positions = list(self.tlap_df['coord']*0.529177)
+                )
+        elif cp_type == '-1':
+            cp_type = 'minus1'
+            df_bcp =  self.tlap_df[self.tlap_df['type']=='(3,-1)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_bcp['type']),
+                    positions = list(df_bcp['coord']*0.529177),
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_bcp['type']),
+                    positions = list(df_bcp['coord']*0.529177)
+                )
+        elif cp_type == '+1':
+            cp_type = 'plus1'
+            df_rcp =  self.tlap_df[self.tlap_df['type']=='(3,+1)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_rcp['type']),
+                    positions = list(df_rcp['coord']*0.529177),
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_rcp['type']),
+                    positions = list(df_rcp['coord']*0.529177)
+                )
+        elif cp_type == '+3':
+            cp_type = 'plus3'
+            df_ccp =  self.tlap_df[self.tlap_df['type']=='(3,+3)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_ccp['type']),
+                    positions = list(df_ccp['coord'] * 0.529177),
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_ccp['type']),
+                    positions = list(df_ccp['coord'] * 0.529177)
+                )
+        elif cp_type == '-3':
+            cp_type = 'minus3'
+            df_nna =  self.tlap_df[self.tlap_df['type']=='(3,-3)']
+            if hasattr(self,'unitcell_mat'):
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_nna['type']),
+                    positions = list(df_nna['coord'] * 0.529177), # factor for Bohr2Angs
+                    cell = self.unitcell_mat,
+                    pbc=[True,True,True]
+                )
+            else:
+                ase_obj = Atoms(
+                    symbols = ["X"] * len(df_nna['type']),
+                    positions = list(df_nna['coord'] * 0.529177)
+                )
+
+        if add_atoms:
+            for i in range(len(self.nuclei_df['z'])):
+                ase_obj.append(self.nuclei_df.loc[i + 1, 'z'])
+                ase_obj.positions[-1] = self.nuclei_df.loc[i + 1, 'coord']
+
+        ase_obj.write(self.tlap_filename + '_' + cp_type + '.' +file_type)
+        print(self.tlap_filename + '_' + cp_type + '.' + file_type + " generated.")
+
+        return ase_obj
 
 
 class Crystal_gui:
