@@ -185,6 +185,7 @@ def plot_vecfield2D_m(header, dens, quivscale, levels=150):
 
     return m
 
+
 def plot_vecfield2D_j(header, dens, quivscale, levels=150):
     """
     Plots the 2D vector field of the spin current.
@@ -286,6 +287,7 @@ def plot_vecfield2D_j(header, dens, quivscale, levels=150):
     j = plt.ylabel('$\AA$')
 
     return j
+
 
 def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, levels=150):
     """
@@ -767,7 +769,7 @@ def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down'
                           dos_prj=None, energy_range=None, dos_range=None,
                           color_band='blue', color_dos='blue', labels=None, linestl_band='-',
                           linestl_dos=None, linewidth=1, fermi='forestgreen',
-                          title=None, figsize=None):
+                          title=None, figsize=None, legend=False):
     """
     A wrapper of plot_cry_es for electron band structure + dos. For spin-polarized cases, beta state.
 
@@ -1261,7 +1263,7 @@ def plot_cry_density_profile(lapl_obj):
 # -------------------------------------SEEBACK---------------------------------#
 
 
-def plot_cry_seebeck_potential(seebeck_obj,direction,temperature):
+def plot_cry_seebeck_potential(seebeck_obj, direction, temperature):
     """
     Plot the Seebeck coefficient as a function of chemical potential.
 
@@ -1282,8 +1284,6 @@ def plot_cry_seebeck_potential(seebeck_obj,direction,temperature):
 
     import matplotlib.pyplot as plt
     import numpy as np
-
-    
 
     direction = direction.lower().replace('_', '')
 
@@ -1314,12 +1314,10 @@ def plot_cry_seebeck_potential(seebeck_obj,direction,temperature):
     else:
         sys.exit('please, choose a valid direction')
 
-    
     listtemp = []
 
-    for k in range(0,len(seebeck_obj.all_data)):
-       listtemp.append(seebeck_obj.temp[k])
-    
+    for k in range(0, len(seebeck_obj.all_data)):
+        listtemp.append(seebeck_obj.temp[k])
 
     if temperature != 'all' and temperature not in listtemp:
         sys.exit('Please, choose a valid temperature.')
@@ -1375,9 +1373,6 @@ def plot_cry_seebeck_potential(seebeck_obj,direction,temperature):
     endx = []
     endy = []
 
-    
-
-
     if temperature != 'all':
         k = listtemp.index(temperature)
         endx = [xposfin[k][-1], xnegfin[k][0]]
@@ -1385,7 +1380,7 @@ def plot_cry_seebeck_potential(seebeck_obj,direction,temperature):
         plt.figure()
         plt.plot(endx, endy, color=colours[k])
         plt.plot(xposfin[k], yposfin[k], color=colours[k],
-                    label=str(seebeck_obj.temp[k])+' K')
+                 label=str(seebeck_obj.temp[k])+' K')
         plt.plot(xnegfin[k], ynegfin[k], '--', color=colours[k])
         plt.xlabel('Chemical Potential (eV)', fontsize=12)
         plt.ylabel('Seebeck Coefficient ($\mu$V/K)', fontsize=12)
@@ -1393,8 +1388,8 @@ def plot_cry_seebeck_potential(seebeck_obj,direction,temperature):
         plt.title('Seebeck at ' + str(seebeck_obj.temp[k]) + ' K')
         plt.legend(loc='upper left', fontsize=12)
         fig = plt.gcf()
-            #plt.savefig('seebeck_potential_at_' + str(seebeck_obj.temp[k]) + 'K___' + time.strftime(
-                #"%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
+        # plt.savefig('seebeck_potential_at_' + str(seebeck_obj.temp[k]) + 'K___' + time.strftime(
+        # "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
         return fig
     else:
 
@@ -1405,18 +1400,18 @@ def plot_cry_seebeck_potential(seebeck_obj,direction,temperature):
             endy = [yposfin[k][-1], ynegfin[k][0]]
             plt.plot(endx, endy, color=colours[k])
             plt.plot(xposfin[k], yposfin[k], color=colours[k],
-                    label=str(seebeck_obj.temp[k])+' K')
+                     label=str(seebeck_obj.temp[k])+' K')
             plt.plot(xnegfin[k], ynegfin[k], '--', color=colours[k])
             plt.xlabel('Chemical Potential (eV)', fontsize=12)
             plt.axhline(0, color='k')
             plt.title('Seebeck at different T')
             fig = plt.gcf()
-        #plt.savefig('seebeck_potential_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
-                    #'.jpg', format='jpg', dpi=100, bbox_inches='tight')
+        # plt.savefig('seebeck_potential_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
+            # '.jpg', format='jpg', dpi=100, bbox_inches='tight')
         return fig
 
 
-def plot_cry_seebeck_carrier(seebeck_obj,direction,temperature):
+def plot_cry_seebeck_carrier(seebeck_obj, direction, temperature):
     """
     Plot the Seebeck coefficient as a function of charge carrier concentration.
 
@@ -1437,7 +1432,6 @@ def plot_cry_seebeck_carrier(seebeck_obj,direction,temperature):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    
     direction = direction.lower().replace('_', '')
 
     if direction.isalpha() == True:
@@ -1468,9 +1462,8 @@ def plot_cry_seebeck_carrier(seebeck_obj,direction,temperature):
 
     listtemp = []
 
-    for k in range(0,len(seebeck_obj.all_data)):
-       listtemp.append(seebeck_obj.temp[k])
-    
+    for k in range(0, len(seebeck_obj.all_data)):
+        listtemp.append(seebeck_obj.temp[k])
 
     if temperature != 'all' and temperature not in listtemp:
         sys.exit('Please, choose a valid temperature.')
@@ -1538,7 +1531,6 @@ def plot_cry_seebeck_carrier(seebeck_obj,direction,temperature):
         fig = plt.gcf()
         return fig
 
-
     else:
 
         from matplotlib.pyplot import figure
@@ -1549,22 +1541,23 @@ def plot_cry_seebeck_carrier(seebeck_obj,direction,temperature):
             endy = [yposfin[k][-1], ynegfin[k][0]]
             plt.plot(endx, endy, color=colours[k])
             plt.plot(xposfin[k], yposfin[k], color=colours[k],
-                    label=str(seebeck_obj.temp[k])+' K')
-            plt.plot(abs(np.array(xnegfin[k])), ynegfin[k], '--', color=colours[k])
+                     label=str(seebeck_obj.temp[k])+' K')
+            plt.plot(abs(np.array(xnegfin[k])),
+                     ynegfin[k], '--', color=colours[k])
             plt.xlabel('Charge Carrier Concentration (cm$^{-3}$)', fontsize=12)
             plt.ylabel('Seebeck Coefficient ($\mu$V/K)', fontsize=12)
             plt.axhline(0, color='k')
             plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
             plt.xscale('log')
             plt.title('Seebeck at different T')
-        #plt.savefig('seebeck_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
+        # plt.savefig('seebeck_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
          #           '.jpg', format='jpg', dpi=100, bbox_inches='tight')
         plt.show()
         fig = plt.gcf()
         return fig
 
 
-def plot_cry_multiseebeck(direction,temperature,minpot,maxpot,*seebeck):
+def plot_cry_multiseebeck(direction, temperature, minpot, maxpot, *seebeck):
     """
     Plot the seebeck coefficient from different files.
 
@@ -1589,14 +1582,12 @@ def plot_cry_multiseebeck(direction,temperature,minpot,maxpot,*seebeck):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    #k = int(input(
-     #   'Insert the index of temperature you want to plot \n(i.e. if your temperature are [T1, T2, T3] indexes are [0, 1, 2])'))
-    #minpot = float(
-     #   input('Insert the lower value of chemical potential you want to plot in eV'))
-    #maxpot = float(
-     #   input('Inser the higher value of chemical potential you want to plot in eV'))
-
-    
+    # k = int(input(
+    #   'Insert the index of temperature you want to plot \n(i.e. if your temperature are [T1, T2, T3] indexes are [0, 1, 2])'))
+    # minpot = float(
+    #   input('Insert the lower value of chemical potential you want to plot in eV'))
+    # maxpot = float(
+    #   input('Inser the higher value of chemical potential you want to plot in eV'))
 
     direction = direction.lower().replace('_', '')
 
@@ -1627,8 +1618,6 @@ def plot_cry_multiseebeck(direction,temperature,minpot,maxpot,*seebeck):
     else:
         sys.exit('please, choose a valid direction')
 
-    
-
     print('To differentiate transport coefficients due to n-type or p-type conduction (electrons or holes as majority carriers) dashed and solid lines are used, respectively.')
 
     i = 0
@@ -1636,7 +1625,7 @@ def plot_cry_multiseebeck(direction,temperature,minpot,maxpot,*seebeck):
         vol = n.volume
 
         listtemp = []
-        for k in range(0,len(n.all_data)):
+        for k in range(0, len(n.all_data)):
             listtemp.append(n.temp[k])
         if temperature != 'all' and temperature not in listtemp:
             sys.exit('Please, choose a valid temperature.')
@@ -1701,8 +1690,8 @@ def plot_cry_multiseebeck(direction,temperature,minpot,maxpot,*seebeck):
         plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
         i = 1+i
     plt.title('MultiSeebeck ' + str(n.temp[k]) + ' K')
-    #plt.savefig('multiseebeck' + time.strftime("%Y-%m-%d_%H%M%S") +
-               # '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+    # plt.savefig('multiseebeck' + time.strftime("%Y-%m-%d_%H%M%S") +
+    # '.jpg', format='jpg', dpi=100, bbox_inches='tight')
     plt.show()
     fig = plt.gcf()
     return fig
@@ -1710,7 +1699,7 @@ def plot_cry_multiseebeck(direction,temperature,minpot,maxpot,*seebeck):
 
 # -------------------------------------SIGMA-----------------------------------#
 
-def plot_cry_sigma_potential(sigma_obj,direction,temperature):
+def plot_cry_sigma_potential(sigma_obj, direction, temperature):
     """
     Plot the electrical conductivity as a function of chemical potential.
 
@@ -1732,8 +1721,6 @@ def plot_cry_sigma_potential(sigma_obj,direction,temperature):
 
     import matplotlib.pyplot as plt
     import numpy as np
-
-    
 
     direction = direction.lower().replace('_', '')
 
@@ -1759,9 +1746,8 @@ def plot_cry_sigma_potential(sigma_obj,direction,temperature):
 
     listtemp = []
 
-    for k in range(0,len(sigma_obj.all_data)):
-       listtemp.append(sigma_obj.temp[k])
-    
+    for k in range(0, len(sigma_obj.all_data)):
+        listtemp.append(sigma_obj.temp[k])
 
     if temperature != 'all' and temperature not in listtemp:
         sys.exit('Please, choose a valid temperature.')
@@ -1830,12 +1816,12 @@ def plot_cry_sigma_potential(sigma_obj,direction,temperature):
         plt.axhline(0, color='k')
         plt.title('Sigma at '+str(sigma_obj.temp[k]) + 'K')
         plt.legend(loc='upper left', fontsize=12)
-        #plt.savefig('sigma_potential_at_' + str(sigma_obj.temp[k]) + 'K___' + time.strftime(
-         #   "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
+        # plt.savefig('sigma_potential_at_' + str(sigma_obj.temp[k]) + 'K___' + time.strftime(
+        #   "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
         plt.show()
         fig = plt.gcf()
         return fig
-    
+
     else:
         from matplotlib.pyplot import figure
 
@@ -1846,22 +1832,21 @@ def plot_cry_sigma_potential(sigma_obj,direction,temperature):
             endy = [yposfin[i][-1], ynegfin[i][0]]
             plt.plot(endx, endy, color=colours[i])
             plt.plot(xposfin[i], yposfin[i], color=colours[i],
-                    label=str(sigma_obj.temp[i])+' K')
+                     label=str(sigma_obj.temp[i])+' K')
             plt.plot(xnegfin[i], ynegfin[i], '--', color=colours[i])
             plt.xlabel('Chemical Potential (eV)', fontsize=12)
             plt.ylabel('Electrical Conductivity (S/m)', fontsize=12)
             plt.title('Sigma at different T')
             plt.axhline(0, color='k')
             plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
-        #plt.savefig('sigma_potential_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
+        # plt.savefig('sigma_potential_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
          #           '.jpg', format='jpg', dpi=100, bbox_inches='tight')
         plt.show()
         fig = plt.gcf()
         return fig
 
 
-
-def plot_cry_sigma_carrier(sigma_obj,direction,temperature):
+def plot_cry_sigma_carrier(sigma_obj, direction, temperature):
     """
     Plot the electrical conductivity as a function of charge carrier concentration.
 
@@ -1883,8 +1868,6 @@ def plot_cry_sigma_carrier(sigma_obj,direction,temperature):
 
     import matplotlib.pyplot as plt
     import numpy as np
-
-    
 
     direction = direction.lower().replace('_', '')
 
@@ -1908,12 +1891,10 @@ def plot_cry_sigma_carrier(sigma_obj,direction,temperature):
     else:
         sys.exit('please, choose a valid chioce')
 
-
     listtemp = []
 
-    for k in range(0,len(sigma_obj.all_data)):
-       listtemp.append(sigma_obj.temp[k])
-    
+    for k in range(0, len(sigma_obj.all_data)):
+        listtemp.append(sigma_obj.temp[k])
 
     if temperature != 'all' and temperature not in listtemp:
         sys.exit('Please, choose a valid temperature.')
@@ -1980,7 +1961,7 @@ def plot_cry_sigma_carrier(sigma_obj,direction,temperature):
         plt.savefig('sigma_carrier_at_' + str(sigma_obj.temp[k]) + 'K___' + time.strftime(
             "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
         plt.show()
-        fig=plt.gcf()
+        fig = plt.gcf()
         return fig
     else:
 
@@ -1989,21 +1970,23 @@ def plot_cry_sigma_carrier(sigma_obj,direction,temperature):
             endy = [yposfin[i][-1], ynegfin[i][0]]
             plt.plot(endx, endy, color=colours[k])
             plt.plot(xposfin[i], yposfin[i], color=colours[i],
-                    label=str(sigma_obj.temp[i])+' K')
-            plt.plot(abs(np.array(xnegfin[i])), ynegfin[i], '--', color=colours[i])
+                     label=str(sigma_obj.temp[i])+' K')
+            plt.plot(abs(np.array(xnegfin[i])),
+                     ynegfin[i], '--', color=colours[i])
             plt.xlabel('Charge Carrier Concentration (cm$^{-3}$)', fontsize=12)
             plt.ylabel('Electrical Conductivity (S/m)', fontsize=12)
             plt.title('Sigma at different T')
             plt.axhline(0, color='k')
             plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
             plt.xscale('log')
-        #plt.savefig('sigma_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
+        # plt.savefig('sigma_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
         #           '.jpg', format='jpg', dpi=100, bbox_inches='tight')
         plt.show()
-        fig=plt.gcf()
+        fig = plt.gcf()
         return fig
 
-def plot_cry_multisigma(direction,temperature,minpot,maxpot,*sigma):
+
+def plot_cry_multisigma(direction, temperature, minpot, maxpot, *sigma):
     """
     Plot the electron cinductivity from different files.
 
@@ -2027,7 +2010,6 @@ def plot_cry_multisigma(direction,temperature,minpot,maxpot,*sigma):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    
     direction = direction.lower().replace('_', '')
 
     if direction.isalpha() == True:
@@ -2056,7 +2038,7 @@ def plot_cry_multisigma(direction,temperature,minpot,maxpot,*sigma):
     for n in sigma:
         vol = n.volume
         listtemp = []
-        for k in range(0,len(n.all_data)):
+        for k in range(0, len(n.all_data)):
             listtemp.append(n.temp[k])
         if temperature != 'all' and temperature not in listtemp:
             sys.exit('Please, choose a valid temperature.')
@@ -2122,7 +2104,7 @@ def plot_cry_multisigma(direction,temperature,minpot,maxpot,*sigma):
         i = 1+i
     plt.title('MultiSigma ' + str(sigma[0].temp[k]) + ' K')
    # plt.savefig('multisigma' + time.strftime("%Y-%m-%d_%H%M%S") +
-               # '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+    # '.jpg', format='jpg', dpi=100, bbox_inches='tight')
     plt.show()
     fig = plt.gcf()
     return fig
@@ -2130,7 +2112,7 @@ def plot_cry_multisigma(direction,temperature,minpot,maxpot,*sigma):
 
 # --------------------------------POWERFACTOR----------------------------------#
 
-def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj,direction,temperature):
+def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj, direction, temperature):
     """
     Plot the power factor for different potentials.
 
@@ -2152,8 +2134,6 @@ def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj,direction,temperature)
 
     import matplotlib.pyplot as plt
     import numpy as np
-
-    
 
     direction = direction.lower().replace('_', '')
 
@@ -2205,15 +2185,15 @@ def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj,direction,temperature)
         sys.exit('please, choose a valid direction')
 
     listtemp = []
-    for k in range(0,len(seebeck_obj.all_data)):
+    for k in range(0, len(seebeck_obj.all_data)):
         listtemp.append(seebeck_obj.temp[k])
     if temperature != 'all' and temperature not in listtemp:
         sys.exit('Please, choose a valid temperature.')
     listtemps = []
-    for k in range(0,len(sigma_obj.all_data)):
+    for k in range(0, len(sigma_obj.all_data)):
         listtemps.append(sigma_obj.temp[k])
     if temperature != 'all' and temperature not in listtemps:
-            sys.exit('Please, choose a valid temperature.')
+        sys.exit('Please, choose a valid temperature.')
 
     x = []
     for k in range(0, len(seebeck_obj.all_data)):
@@ -2328,9 +2308,9 @@ def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj,direction,temperature)
         plt.title('Power Factor at ' + str(seebeck_obj.temp[k]) + ' K')
         plt.legend(loc='upper left', fontsize=12)
         plt.show()
-        fig =plt.gcf
+        fig = plt.gcf
         return fig
-    
+
     else:
 
         from matplotlib.pyplot import figure
@@ -2341,23 +2321,23 @@ def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj,direction,temperature)
             endy = [pf_pos[k][-1], pf_neg[k][0]]
             plt.plot(endx, endy, color=colours[k])
             plt.plot(xsiposfin[k], pf_pos[k], color=colours[k],
-                    label=str(seebeck_obj.temp[k])+' K')
+                     label=str(seebeck_obj.temp[k])+' K')
             plt.plot(xsinegfin[k], pf_neg[k], '--', color=colours[k])
             plt.xlabel('Chemical Potential (eV)', fontsize=12)
-            plt.ylabel('Power Factor (10$^{-12}$WK$^{-2}$m$^{-1}$)', fontsize=12)
+            plt.ylabel(
+                'Power Factor (10$^{-12}$WK$^{-2}$m$^{-1}$)', fontsize=12)
             plt.axhline(0, color='k')
             plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
             plt.title('Power Factor at different T')
 
-        #plt.savefig('powerfactor_potential_different_T_' + time.strftime(
+        # plt.savefig('powerfactor_potential_different_T_' + time.strftime(
          #   "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=100, bbox_inches='tight')
         plt.show()
-        fig=plt.gcf
+        fig = plt.gcf
         return fig
-        
 
 
-def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj,direction,temperature):
+def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj, direction, temperature):
     """
     Plot the power factor for different charge carrier concentrations.
 
@@ -2380,7 +2360,6 @@ def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj,direction,temperature):
     import matplotlib.pyplot as plt
     import numpy as np
 
-    
     direction = direction.lower().replace('_', '')
 
     if direction.isalpha() == True:
@@ -2433,15 +2412,15 @@ def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj,direction,temperature):
     vol = sigma_obj.volume
 
     listtemp = []
-    for k in range(0,len(seebeck_obj.all_data)):
+    for k in range(0, len(seebeck_obj.all_data)):
         listtemp.append(seebeck_obj.temp[k])
     if temperature != 'all' and temperature not in listtemp:
         sys.exit('Please, choose a valid temperature.')
     listtemps = []
-    for k in range(0,len(sigma_obj.all_data)):
+    for k in range(0, len(sigma_obj.all_data)):
         listtemps.append(sigma_obj.temp[k])
     if temperature != 'all' and temperature not in listtemps:
-            sys.exit('Please, choose a valid temperature.')
+        sys.exit('Please, choose a valid temperature.')
 
     x = []
     for k in range(0, len(sigma_obj.all_data)):
@@ -2557,10 +2536,10 @@ def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj,direction,temperature):
         plt.title('Power Factor at ' + str(seebeck_obj.temp[k]) + ' K')
         plt.legend(loc='upper left', fontsize=12)
         plt.xscale('log')
-        #plt.savefig('powerfactor_carrier_at_' + str(seebeck_obj.temp[k]) + 'K___' + time.strftime(
-         #   "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
+        # plt.savefig('powerfactor_carrier_at_' + str(seebeck_obj.temp[k]) + 'K___' + time.strftime(
+        #   "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
         plt.show()
-        fig=plt.gcf
+        fig = plt.gcf
         return fig
     else:
 
@@ -2571,25 +2550,26 @@ def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj,direction,temperature):
             endy = [pf_pos[k][-1], pf_neg[k][0]]
             plt.plot(endx, endy, color=colours[k])
             plt.plot(xsiposfin[k], pf_pos[k], color=colours[k],
-                    label=str(seebeck_obj.temp[k])+' K')
+                     label=str(seebeck_obj.temp[k])+' K')
             plt.plot(abs(xsinegfin[k]), pf_neg[k], '--', color=colours[k])
             plt.xlabel('Charge Carrier Concentration (cm$^{-3}$)', fontsize=12)
-            plt.ylabel('Power Factor (10$^{-12}$WK$^{-2}$m$^{-1}$)', fontsize=12)
+            plt.ylabel(
+                'Power Factor (10$^{-12}$WK$^{-2}$m$^{-1}$)', fontsize=12)
             plt.title('Power Factor at different T')
             plt.axhline(0, color='k')
             plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
             plt.xscale('log')
-        #plt.savefig('powerfactor_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
+        # plt.savefig('powerfactor_carrier_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
          #           '.jpg', format='jpg', dpi=100, bbox_inches='tight')
         plt.show()
-        fig=plt.gcf
+        fig = plt.gcf
         return fig
 
 
 # -------------------------------------ZT--------------------------------------#
 
 
-def plot_cry_zt(seebeck_obj, sigma_obj,direction,temperature,ktot):
+def plot_cry_zt(seebeck_obj, sigma_obj, direction, temperature, ktot):
     """
     Plot the ZT value for different temperatures.
 
@@ -2612,8 +2592,6 @@ def plot_cry_zt(seebeck_obj, sigma_obj,direction,temperature,ktot):
 
     import matplotlib.pyplot as plt
     import numpy as np
-
-    
 
     direction = direction.lower().replace('_', '')
 
@@ -2665,15 +2643,15 @@ def plot_cry_zt(seebeck_obj, sigma_obj,direction,temperature,ktot):
         sys.exit('please, choose a valid direction')
 
     listtemp = []
-    for k in range(0,len(seebeck_obj.all_data)):
+    for k in range(0, len(seebeck_obj.all_data)):
         listtemp.append(seebeck_obj.temp[k])
     if temperature != 'all' and temperature not in listtemp:
         sys.exit('Please, choose a valid temperature.')
     listtemps = []
-    for k in range(0,len(sigma_obj.all_data)):
+    for k in range(0, len(sigma_obj.all_data)):
         listtemps.append(sigma_obj.temp[k])
     if temperature != 'all' and temperature not in listtemps:
-            sys.exit('Please, choose a valid temperature.')
+        sys.exit('Please, choose a valid temperature.')
 
     x = []
     for k in range(0, len(seebeck_obj.all_data)):
@@ -2711,10 +2689,10 @@ def plot_cry_zt(seebeck_obj, sigma_obj,direction,temperature,ktot):
         plt.axhline(0, color='k')
         plt.title('ZT at ' + str(seebeck_obj.temp[k]) + ' K')
         plt.legend(loc='upper left', fontsize=12)
-        #plt.savefig('zt_at_' + str(seebeck_obj.temp[k]) + 'K___' + time.strftime(
-         #   "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
+        # plt.savefig('zt_at_' + str(seebeck_obj.temp[k]) + 'K___' + time.strftime(
+        #   "%Y-%m-%d_%H%M%S") + '.jpg', format='jpg', dpi=600, bbox_inches='tight')
         plt.show()
-        fig=plt.gcf
+        fig = plt.gcf
         return fig
     else:
         for k in range(0, len(seebeck_obj.all_data)):
@@ -2724,10 +2702,10 @@ def plot_cry_zt(seebeck_obj, sigma_obj,direction,temperature,ktot):
             plt.title('ZT at different T')
             plt.axhline(0, color='k')
             plt.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=12)
-        #plt.savefig('zt_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
-                   # '.jpg', format='jpg', dpi=100, bbox_inches='tight')
+        # plt.savefig('zt_different_T_' + time.strftime("%Y-%m-%d_%H%M%S") +
+            # '.jpg', format='jpg', dpi=100, bbox_inches='tight')
         plt.show()
-        fig=plt.gcf
+        fig = plt.gcf
         return fig
 
 
@@ -3564,11 +3542,11 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
 
 # -----------------------------------ANHARMONIC--------------------------------#
 
-def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5, 
-                  stdev=3, eta=0.5, fmin=None, fmax=None, ylim=None, 
-                  exp_spec=None, sep=";", export_csv=False, label=None, 
-                  xlabel='Wavenumber [cm$^{-1}$]', ylabel='Intensity [arb. u.]', 
-                  linewidth=2.0, padd=100, style=None, compstyle=None, 
+def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
+                  stdev=3, eta=0.5, fmin=None, fmax=None, ylim=None,
+                  exp_spec=None, sep=";", export_csv=False, label=None,
+                  xlabel='Wavenumber [cm$^{-1}$]', ylabel='Intensity [arb. u.]',
+                  linewidth=2.0, padd=100, style=None, compstyle=None,
                   figsize=(16, 6), fig=None, ax=None, offset=0):
     """
     This function enables the simulation of vibrational spectra based on a 2D 
@@ -3611,10 +3589,10 @@ def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
     import numpy as np
     from numpy import genfromtxt
 
-    if(ax is None): 
+    if (ax is None):
         fig, ax = plt.subplots(figsize=figsize)
 
-    if(ylim is not None):
+    if (ylim is not None):
         ax.set_ylim(0, ylim)
 
     ax.set_xlabel(xlabel)
@@ -3665,7 +3643,7 @@ def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
                 sbuff[j, 1] = lorentz
             L.append(deepcopy(sbuff))
             iL = iL + 1
-        if(not components):
+        if (not components):
             for i in range(len(L)):
                 spec_data[:, 1] = spec_data[:, 1] + L[i][:, 1]
         else:
@@ -3685,7 +3663,7 @@ def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
                              (2*stdev**2))*transitions[i, 1]
                 sbuff[j, 1] = gauss
             G.append(deepcopy(sbuff))
-        if(not components):
+        if (not components):
             for i in range(len(G)):
                 spec_data[:, 1] = spec_data[:, 1] + G[i][:, 1]
         else:
@@ -3707,20 +3685,20 @@ def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
                     ((f-transitions[i, 0])**2+bwidth**2)*transitions[i, 1]
                 sbuff[j, 1] = eta*lorentz + (1-eta)*gauss
             V.append(deepcopy(sbuff))
-        if(not components):
+        if (not components):
             for i in range(len(V)):
                 spec_data[:, 1] = spec_data[:, 1] + V[i][:, 1]
         else:
             for i in range(len(V)):
                 if (compstyle is not None):
                     ax.plot(spec_data[:, 0], V[i][:, 1], compstyle[i],
-                             linewidth=linewidth)
+                            linewidth=linewidth)
                 else:
                     ax.plot(spec_data[:, 0], V[i][:, 1], linewidth=linewidth)
             for i in range(len(V)):
                 spec_data[:, 1] = spec_data[:, 1] + V[i][:, 1]
 
-    if(exp_spec is not None):
+    if (exp_spec is not None):
         exp_data = genfromtxt(exp_spec, delimiter=sep)
         area_spec_data = np.trapz(spec_data[:, 1], spec_data[:, 0])
         area_exp_data = np.trapz(exp_data[:, 1], exp_data[:, 0])
@@ -3729,28 +3707,29 @@ def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
         exp_data[:, 1] = exp_data[:, 1] * norm_fac - baseline  # * 0.5
         ax.plot(exp_data[:, 0], exp_data[:, 1], 'r-', linewidth=linewidth)
 
-    if((label is not None) and (style is None)):
+    if ((label is not None) and (style is None)):
         ax.plot(spec_data[:, 0], spec_data[:, 1] + offset, linewidth=linewidth,
-                 label=label)
-    elif((label is None) and (style is not None)):
-        ax.plot(spec_data[:, 0], spec_data[:, 1] + offset, style, linewidth=linewidth)
-    elif((label is not None) and (style is not None)):
+                label=label)
+    elif ((label is None) and (style is not None)):
+        ax.plot(spec_data[:, 0], spec_data[:, 1] +
+                offset, style, linewidth=linewidth)
+    elif ((label is not None) and (style is not None)):
         ax.plot(spec_data[:, 0], spec_data[:, 1] + offset, style, linewidth=linewidth,
-                 label=label)
+                label=label)
     else:
         ax.plot(spec_data[:, 0], spec_data[:, 1] + offset, linewidth=linewidth)
 
-    if(export_csv):
+    if (export_csv):
         np.savetxt(typeS + time.strftime("%Y-%m-%d_%H%M%S.") + 'csv',
                    spec_data, delimiter=';')
     return fig, ax
 
 
-def plot_cry_spec_multi(files, typeS="lorentz", components=False, bwidth=5, 
-                        stdev=3, eta=0.5, fmin=None, fmax=None, ylim=None, 
+def plot_cry_spec_multi(files, typeS="lorentz", components=False, bwidth=5,
+                        stdev=3, eta=0.5, fmin=None, fmax=None, ylim=None,
                         label=None, xlabel='Wavenumber [cm$^{-1}$]',
                         ylabel='Intensity [arb. u.]', linewidth=2.0, padd=100,
-                        style=None, figsize=(16, 6), exp_spec=None, norm_fac=1, 
+                        style=None, figsize=(16, 6), exp_spec=None, norm_fac=1,
                         sep=';', offset=0):
     """
     This function is a wrapper for `plot_spec` function, enablng the simulation 
@@ -3787,7 +3766,7 @@ def plot_cry_spec_multi(files, typeS="lorentz", components=False, bwidth=5,
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
 
-    if(exp_spec is not None):
+    if (exp_spec is not None):
         exp_data = genfromtxt(exp_spec, delimiter=sep)
         # area_spec_data = np.trapz(spec_data[:, 1], spec_data[:, 0])
         # area_exp_data = np.trapz(exp_data[:, 1], exp_data[:, 0])
@@ -3797,35 +3776,35 @@ def plot_cry_spec_multi(files, typeS="lorentz", components=False, bwidth=5,
         ax.plot(exp_data[:, 0], exp_data[:, 1], 'r-', linewidth=linewidth)
 
     compstyle = []
-    if(style is not None):
+    if (style is not None):
         for i in range(len(style)):
             compstyle.append([style[i]] * 100)
 
     for i, transitions in enumerate(files):
         if ((label is not None) and (style is None)):
             plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
-                          fmin, fmax, ylim, label=label[i], linewidth=linewidth, 
+                          fmin, fmax, ylim, label=label[i], linewidth=linewidth,
                           padd=padd, xlabel=xlabel, ylabel=ylabel, fig=fig,
                           ax=ax, offset=offset*i)
         elif ((style is not None) and (label is None)):
             plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
-                          fmin, fmax, ylim, linewidth=linewidth, padd=padd, 
-                          style=style[i], xlabel=xlabel, ylabel=ylabel, 
+                          fmin, fmax, ylim, linewidth=linewidth, padd=padd,
+                          style=style[i], xlabel=xlabel, ylabel=ylabel,
                           compstyle=compstyle[i], fig=fig, ax=ax,
                           offset=offset*i)
         elif ((style is not None) and (label is not None)):
             plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
-                          fmin, fmax, ylim, linewidth=linewidth, padd=padd, 
-                          style=style[i], label=label[i], xlabel=xlabel, 
+                          fmin, fmax, ylim, linewidth=linewidth, padd=padd,
+                          style=style[i], label=label[i], xlabel=xlabel,
                           ylabel=ylabel, compstyle=compstyle[i], fig=fig,
                           ax=ax, offset=offset*i)
         else:
             plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta, fmin,
-                          fmax, ylim, linewidth=linewidth, padd=padd, 
+                          fmax, ylim, linewidth=linewidth, padd=padd,
                           xlabel=xlabel, ylabel=ylabel, fig=fig, ax=ax,
                           offset=offset*i)
 
-    if(label is not None):
+    if (label is not None):
         ax.legend(loc='upper left')
 
     return fig, ax
@@ -3966,3 +3945,202 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     plt.ylim([harm_freq, abs(harm_freq)*5])
 
     return plt
+
+# --------------------------------------EOS-----------------------------------#
+
+
+def plot_cry_EOS(eos, formula_unit=None, plot='VvsE', color='tab:blue', figsize=(5, 5), dpi=72, marker='o', fontsize=12, legend=None):
+    """
+    This function provides a tool to plot quantities extracted from the EOS module
+
+    Args:
+        eos[obj/list]: CRYSTAL object or list of two CRYSTAL objects containing quantities extracted 
+                       from the EOS module generated by the get_EOS() function
+        formula_unit[list]: List containing the formula unit associated with each CRYSTAL object,
+                            the order should be the same as in the eos list (default:None)
+        plot[str]: String identifing the Equation of State/Computed data the user wants to plot (default:VvsE)
+        color[str/list]: String or list of defining the colors of the plotted series of data requested (default:'tab:blue')
+        figsize[tuple]: Tuple of floats defining the size of the figure (default:(5,5))
+        dpi[int]: Integer defining the resolution of the figure (default:72)
+        fontsize[int]: Integer defining the fontsize of the text (default:12)
+        legend[list]: List of strings that will be used as legend in the plot (default:None)
+
+    Returns:
+        Matplotlib object
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    plot_type = ['VvsE', 'Murnaghan',
+                 'Birch-Murnaghan', 'Poirier-Tarantola', 'Vinet']
+
+    plt.rcParams.update({'font.size': fontsize})
+
+    # Check the type of plot required by the user -->
+    if type(eos) is list:
+        phase_transition = True
+        if type(color) is not list:
+            color = ['tab:blue', 'tab:orange']
+        if type(marker) is not list:
+            marker = ['o', 'o']
+        if legend == None:
+            legend = ['Phase 1', 'Phase 2']
+        if formula_unit is None:
+            formula_unit = [1, 1]
+    else:
+        phase_transition = False
+    # <--
+
+    # Plotting -->
+    if phase_transition:
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+
+        # Plot of the Volumes against the Energy -->
+        if plot == plot_type[0]:
+            for index, phase in enumerate(eos):
+                ax.plot(phase.VvsE[:, 0]/formula_unit[index], phase.VvsE[:, 1]/formula_unit[index],
+                        color=color[index], marker=marker[index], label=legend[index])
+
+            plt.xlabel('V/Z ($\AA$)')
+            plt.ylabel('E/Z (a.u)')
+        # <--
+
+        # Murnaghan EOS plot of delta of Gibbs free energy between the two phases-->
+        if plot == plot_type[1]:
+            maxp = []
+            minp = []
+            for _, phase in enumerate(eos):
+                maxp.append(max(phase.murnaghan[:, 1]))
+                minp.append(min(phase.murnaghan[:, 1]))
+
+            maxp = max(maxp)
+            minp = min(minp)
+
+            referencex = np.linspace(minp-10, maxp+10, 2)
+            referencey = np.zeros(2)
+
+            ax.plot(referencex, referencey, color='black', label=legend[0])
+
+            deltag = eos[1].murnaghan[:, 3]/formula_unit[1] - \
+                eos[0].murnaghan[:, 3]/formula_unit[0]
+
+            ax.plot(eos[1].murnaghan[:, 1], deltag,
+                    color=color[1], label=legend[1])
+        # <--
+
+        # Birch-Murnaghan EOS plot of delta of Gibbs free energy between the two phases-->
+        if plot == plot_type[2]:
+            maxp = []
+            minp = []
+            for _, phase in enumerate(eos):
+                maxp.append(max(phase.bmurnaghan[:, 1]))
+                minp.append(min(phase.bmurnaghan[:, 1]))
+
+            maxp = max(maxp)
+            minp = min(minp)
+
+            referencex = np.linspace(minp-10, maxp+10, 2)
+            referencey = np.zeros(2)
+
+            ax.plot(referencex, referencey, color='black', label=legend[0])
+
+            deltag = eos[1].bmurnaghan[:, 3]/formula_unit[1] - \
+                eos[0].bmurnaghan[:, 3]/formula_unit[0]
+
+            ax.plot(eos[1].bmurnaghan[:, 1], deltag,
+                    color=color[1], label=legend[1])
+        # <--
+
+        # Poirier-Tarantola EOS plot of delta of Gibbs free energy between the two phases-->
+        if plot == plot_type[3]:
+            maxp = []
+            minp = []
+            for _, phase in enumerate(eos):
+                maxp.append(max(phase.pt[:, 1]))
+                minp.append(min(phase.pt[:, 1]))
+
+            maxp = max(maxp)
+            minp = min(minp)
+
+            referencex = np.linspace(minp-10, maxp+10, 2)
+            referencey = np.zeros(2)
+
+            ax.plot(referencex, referencey, color='black', label=legend[0])
+
+            deltag = eos[1].pt[:, 3]/formula_unit[1] - \
+                eos[0].pt[:, 3]/formula_unit[0]
+
+            ax.plot(eos[1].pt[:, 1], deltag,
+                    color=color[1], label=legend[1])
+        # <--
+
+        # Vinet EOS plot of delta of Gibbs free energy between the two phases-->
+        if plot == plot_type[4]:
+            maxp = []
+            minp = []
+            for _, phase in enumerate(eos):
+                maxp.append(max(phase.vinet[:, 1]))
+                minp.append(min(phase.vinet[:, 1]))
+
+            maxp = max(maxp)
+            minp = min(minp)
+
+            referencex = np.linspace(minp-10, maxp+10, 2)
+            referencey = np.zeros(2)
+
+            ax.plot(referencex, referencey, color='black', label=legend[0])
+
+            deltag = eos[1].vinet[:, 3]/formula_unit[1] - \
+                eos[0].vinet[:, 3]/formula_unit[0]
+
+            ax.plot(eos[1].vinet[:, 1], deltag,
+                    color=color[1], label=legend[1])
+        # <--
+        if plot != plot_type[0]:
+            plt.xlabel('P (GPa)')
+            plt.ylabel('$\Delta$H/Z (a.u)')
+
+        if legend != ['Phase 1', 'Phase 2']:
+            plt.legend()
+
+    else:
+        fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
+
+        # Plot of the Volume against the Energy -->
+        if plot == plot_type[0]:
+            ax.plot(eos.VvsE[:, 0], eos.VvsE[:, 1],
+                    color=color, marker=marker)
+            plt.xlabel('V/Z ($\AA$)')
+            plt.ylabel('E/Z (a.u)')
+        # <--
+
+        # Murnaghan Pressure vs Gibbs Free Energy -->
+        elif plot == plot_type[1]:
+            ax.plot(eos.murnaghan[:, 1], eos.murnaghan[:, 3],
+                    color=color, marker=marker)
+        # <--
+
+        # Birch-Murnaghan Pressure vs Gibbs Free Energy -->
+        elif plot == plot_type[2]:
+            ax.plot(eos.bmurnaghan[:, 1], eos.bmurnaghan[:, 3],
+                    color=color, marker=marker)
+        # <--
+
+        # Poirier-Tarantola Pressure vs Gibbs Free Energy -->
+        elif plot == plot_type[3]:
+            ax.plot(eos.pt[:, 1], eos.pt[:, 3], color=color, marker=marker)
+        # <--
+
+        # Vinet Pressure vs Gibbs Free Energy -->
+        elif plot == plot_type[4]:
+            ax.plot(eos.vinet[:, 1], eos.vinet[:, 3],
+                    color=color, marker=marker)
+        # <--
+
+        if ploi != plot_type[0]:
+            plt.xlabel('P (GPa)')
+            plt.ylabel('H (a. u.)')
+
+    # <--
+
+    return fig, ax
