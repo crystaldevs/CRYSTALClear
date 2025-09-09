@@ -3018,40 +3018,44 @@ def plot_cry_poisson(theta_1D, phi_1D, S, ndeg, poisson_choice):
 
 # ----------------------------------ELASTIC------------------------------------#
 
-def plot_cry_ela(choose, ndeg,  *args, twoD=False):
+def plot_cry_ela(co, choose, ndeg=200):
     """
     Plot crystal elastic properties on the basis of the elastic tensor. A
     variable number of elastic tensors can be provided in order to get
     multiple plots in one shot, establishing a fixed color scale among them.
 
     Args:
+        co (list): A `CRYSTALClear` object or a list thereof, with the `elatensor` attribute set by `CRYSTALClear.crystal_io.Crystal_output.get_elatensor`.
         choose (str): Property to plot. Options: "young", "comp", "shear avg", "shear min", "shear max", "poisson avg", "poisson min", "poisson max".
-        ndeg (int): Number of degrees for discretization.
-        *args: Variable number of elastic tensors.
+        ndeg (int): Angular resolution (default is 200).
 
     Returns:
-        Tuple of lists:
-        - fig_list : list of matplotlib.figure.Figure
+        fig_list: list of matplotlib.figure.Figure
             A list containing matplotlib Figure objects for each plot.
-        - ax_list : list of matplotlib.axes._axes.Axes
+        ax_list: list of matplotlib.axes._axes.Axes
             A list containing the Axes objects associated with each plot.
-        - plt_list : list of matplotlib.pyplot
+        plt_list: list of matplotlib.pyplot
             A list of the pyplot objects for each plot, representing the actual plot.
     """
-    import math
 
     import matplotlib.pyplot as plt
     import numpy as np
     from matplotlib import animation, cm, colors
     from mpl_toolkits.mplot3d import Axes3D, axes3d
 
+    if not (isinstance(co, list) or isinstance(co, tuple)):
+        co = [co]
+
     i = 0
-    R = [None] * len(args)
+    R = [None] * len(co)
     tmin = []
     tmax = []
 
     # Compute elastic properties for each tensor -->
-    for C in args:
+    for element in co:
+
+        # Unpack crystal object
+        C = element.elatensor
 
         # Inverse of the matrix C in GPa (Compliance)
         S = np.linalg.inv(C)
@@ -3103,29 +3107,6 @@ def plot_cry_ela(choose, ndeg,  *args, twoD=False):
 
         norm = colors.Normalize(vmin=vmin, vmax=vmax, clip=False)
 
-        # if twoD == True:
-        #     fig, ax = plt.subplots()
-        #     ax.plot(X, Y)
-        #     ax.set_xlabel("X")
-        #     ax.set_ylabel("Y")
-        #     fig_list.append(fig)
-        #     ax_list.append(ax)
-        #     plt_list.append(plt)
-        #     fig, ax = plt.subplots()
-        #     ax.plot(X, Z)
-        #     ax.set_xlabel("X")
-        #     ax.set_ylabel("Z")
-        #     fig_list.append(fig)
-        #     ax_list.append(ax)
-        #     plt_list.append(plt)
-        #     fig, ax = plt.subplots()
-        #     ax.plot(Y, Z)
-        #     ax.set_xlabel("Y")
-        #     ax.set_ylabel("Z")
-        #     fig_list.append(fig)
-        #     ax_list.append(ax)
-        #     plt_list.append(plt)
-
         fig, ax = plt.subplots(subplot_kw=dict(projection="3d"))
 
         ax.plot_surface(
@@ -3147,10 +3128,7 @@ def plot_cry_ela(choose, ndeg,  *args, twoD=False):
         ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
         ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
         ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
-        # Make the grid lines transparent
-        #  ax.xaxis._axinfo["grid"]['color'] =  (1,1,1,0)
-        #  ax.yaxis._axinfo["grid"]['color'] =  (1,1,1,0)
-        #  ax.zaxis._axinfo["grid"]['color'] =  (1,1,1,0)
+
         # Fixing limits
         ax.set_xlim(-1 * np.max(R), np.max(R))
         ax.set_ylim(-1 * np.max(R), np.max(R))
@@ -3169,8 +3147,6 @@ def plot_cry_ela(choose, ndeg,  *args, twoD=False):
     return fig_list, ax_list, plt_list
 
     # <--
-
-
 ##############################################################################
 #                                                                            #
 #                             VIBRATIONAL PROPERTIES                         #
@@ -3178,6 +3154,7 @@ def plot_cry_ela(choose, ndeg,  *args, twoD=False):
 ##############################################################################
 
 # ------------------------------------HARMONIC---------------------------------#
+
 
 def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle='-',
                     linewidth=1.5, color='tab:blue', freq_range=None, int_range=None,
