@@ -477,7 +477,7 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
         molecule = Molecule(structure.species,
                             [i.coords for i in structure.sites],
                             structure.charge,
-                            [i.properties for i in struc.sites])
+                            [i.properties for i in structure.sites])
         is_molecule = True  # 0D object called as molecule
     elif dimensionality > 0 and 'Molecule' in str(type(structure)):
         warnings.warn(
