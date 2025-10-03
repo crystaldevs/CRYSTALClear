@@ -487,6 +487,11 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
 
     gui.dimensionality = dimensionality
 
+    if dimensionality != 0:
+        latt_mx = copy.deepcopy(structure.lattice.matrix)
+    else:
+        latt_mx = np.eye(3) * 500.
+
     if is_molecule == True:  # 0D
         lattice_vectors = np.identity(3)*500.
         gui.lattice = lattice_vectors
@@ -597,6 +602,8 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
 
                 sg = SpacegroupAnalyzer(structure)
                 ops = sg.get_symmetry_operations(cartesian=True)
+                n_symmops = 0
+                gui.symmops = []
                 for op in ops:
                     if np.all(op.translation_vector == 0.):
                         n_symmops += 1
@@ -609,7 +616,7 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
                 warnings.warn(
                     'Check the polymer is correctly centered in the cell and that the correct symmops are used.')
             gui.n_atoms = len(structure.atomic_numbers)
-            if gui.lattice != structure.lattice.matrix:
+            if not np.array_equal(gui.lattice, structure.lattice.matrix):
                 warnings.warn(
                     'New unit cell after usage of SpacegroupAnalyzer. Consider this in further procedures.')
             gui.lattice = structure.lattice.matrix
