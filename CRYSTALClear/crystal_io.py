@@ -1539,10 +1539,8 @@ class Crystal_output:
                     countline += 1
                     continue
                 countline += 2
-                #countline, eigvt, eigvt_atoms = PhononBASE.readmode_eigenvector(self.data[:self.eoo], countline)
                 countline, eigvt = PhononBASE.readmode_eigenvector(self.data[:self.eoo], countline)
                 self.eigenvector.append(eigvt + 0.j)
-                #self.eigenvector_atoms.append(eigvt_atoms + 0.j)
             # Dispersion: complex numbers
             elif re.match(r'^\s+MODES IN PHASE', line):
                 if read_eigvt == False:
@@ -1550,23 +1548,18 @@ class Crystal_output:
                     continue
                 if found_anti == False:  # Real k point
                     self.eigenvector.append(tmp_eigvt)
-                    #self.eigenvector_atoms.append(tmp_eigvt_atoms)
                 countline += 2
                 found_anti = False
-                #countline, tmp_eigvt, tmp_eigvt_atoms = PhononBASE.readmode_eigenvector(self.data[:self.eoo], countline)
                 countline, tmp_eigvt = PhononBASE.readmode_eigenvector(self.data[:self.eoo], countline)
                 tmp_eigvt = tmp_eigvt + 0.j
-                #tmp_eigvt_atoms = tmp_eigvt_atoms + 0.j
             elif re.match(r'^\s+MODES IN ANTI\-PHASE', line):
                 if read_eigvt == False:
                     countline += 1
                     continue
                 countline += 2
                 found_anti = True
-                #countline, eigvt_anti, eigvt_anti_atoms = PhononBASE.readmode_eigenvector(self.data[:self.eoo], countline)
                 countline, eigvt_anti = PhononBASE.readmode_eigenvector(self.data[:self.eoo], countline)
                 self.eigenvector.append(tmp_eigvt + eigvt_anti * 1.j)
-                #self.eigenvector_atoms.append(tmp_eigvt_atoms + eigvt_anti_atoms * 0.j)
             # Other data
             else:
                 countline += 1
@@ -1592,7 +1585,6 @@ class Crystal_output:
         self.edft = H_to_kjmol(np.array(self.edft))
 
         # dm-fix
-        #self.frequency = np.array(self.frequency)
         self.frequency = np.array(self.frequency[1:])
         # dm-fix
         self.nmode = np.array([len(i) for i in self.frequency], dtype=int)
