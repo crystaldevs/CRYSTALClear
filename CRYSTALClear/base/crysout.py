@@ -504,7 +504,7 @@ class PhononBASE():
 
         Returns:
             countline (int): Line number of output file.
-            eigvt (array[float]): nmode\*natom\*3 array.
+            eigvt (np.array): 3D array containing normal modes for each Q point (Q point; normal mode; components).
         """
         import re
 
@@ -541,12 +541,15 @@ class PhononBASE():
 
         eigvt = np.hstack([i for i in total_data])  # (3*natom) * nmode
         eigvt = np.array(eigvt, dtype=float)
+
         # 1st dimension, nmode
         eigvt = np.transpose(eigvt)  # nmode * (3*natom)
-        # 2nd dimension, natom
-        natom = int(nmode / 3)
-        eigvt = np.reshape(eigvt, [nmode, natom, 3], order='C')
 
+        # 2nd dimension, natom
+        #unatom = int(nmode / 3)
+        #eigvt_atoms = np.reshape(eigvt, [nmode, natom, 3], order='C')
+
+        #return countline, eigvt, eigvt_atoms
         return countline, eigvt
 
     @classmethod
