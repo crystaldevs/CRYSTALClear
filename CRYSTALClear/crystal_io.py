@@ -1476,7 +1476,6 @@ class Crystal_output:
         self.IR = []
         self.Raman = []
         self.eigenvector = []
-        self.eigenvector_atoms = []
 
         countline = 0
 
