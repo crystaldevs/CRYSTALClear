@@ -539,6 +539,7 @@ class PhononBASE():
             else:
                 break
 
+
         eigvt = np.hstack([i for i in total_data])  # (3*natom) * nmode
         eigvt = np.array(eigvt, dtype=float)
         eigvt = np.transpose(eigvt)  # nmode * (3*natom)
