@@ -1523,6 +1523,7 @@ class Crystal_output:
             elif re.match(r'^\s+MODES\s+EIGV\s+FREQUENCIES\s+IRREP', line) and is_gamma:
 
                 countline += 2
+                self.nqpoint += 1
                 # Read phonons
                 phonon = PhononBASE.readmode_basic(
                     self.data[:self.eoo], countline)
