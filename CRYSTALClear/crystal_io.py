@@ -1408,7 +1408,7 @@ class Crystal_output:
 
     #### Lattice Dynamics ####
 
-    def get_phonon(self, read_eigvt=False, rm_imaginary=True, rm_overlap=True,
+    def get_phonon(self, read_eigvt=True, rm_imaginary=True, rm_overlap=True,
                    imaginary_tol=-1e-4, q_overlap_tol=1e-4, eigvt_amplitude=1.):
         """
         Read phonon-related properties from output file.
@@ -1432,30 +1432,29 @@ class Crystal_output:
 
         .. note::
 
-            In QHA calculations, the "q point" dimension refer to harmonic
+            In QHA calculations, the "Q point" dimension refer to harmonic
             phonons computed. In other cases it refers to points in reciprocal
             space.
 
         Returns:
             self (Crystal_output): New attributes listed below
-            self.edft (array[float]): :math:`E_{0}` Energy with empirical
+            self.edft (np.array): :math:`E_{0}` Energy with empirical
                 correction. Unit: kJ/mol.
-            self.nqpoint (int): Number of q points
+            self.nqpoint (int): Number of Q points.
             self.qpoint (list[list[array[float], float]]): A nqpoint\*1 list of
                 2\*1 list whose first element is a 3\*1 array of fractional
                 coordinates and the second is its weight.
-            self.nmode (array[int]): Number of modes at q point. nqpoint\*1
-                array.
-            self.frequency (array[float]): nqpoint\*nmode array ofvibrational
-                frequency. Unit: THz
-            self.intens (array[float]): nqpoint\*nmode array of harmonic
-                intensiy. Unit: km/mol
-            self.IR (array[bool]): nqpoint\*nmode array of boolean values
-                specifying whether the mode is IR active
-            self.Raman (array[bool]): nqpoint\*nmode array of boolean values
-                specifying whether the mode is Raman active
-            self.eigenvector (array[complex]): Valid if ``read_eigvt = True``.
-                nqpoint\*nmode\*natom\*3 array of eigenvectors. Normalized to 1.
+            self.nmodes (int): Number of vibrational modes. 
+            self.frequency (np.array): nqpoint\*nmode array of harmonic vibrational
+                frequency. Unit: THz.
+            self.intens (np.array): Harmonic intensity. Unit: km/mol.
+            self.IR (np.array): Boolean values specifying whether the mode is 
+                IR active.
+            self.Raman (np.array): Boolean values specifying whether the mode is 
+                Raman active.
+            self.eigenvector (np.array): Valid if ``read_eigvt = True``. 3D 
+                array containing normal modes for each Q point (Q point; normal 
+                mode; components). Normalized to 1.
         """
 
         import re
@@ -1465,11 +1464,11 @@ class Crystal_output:
         from CRYSTALClear.units import H_to_kjmol
 
         is_freq = False
+        is_gamma = True
         found_anti = True
         self.edft = []
         self.nqpoint = 0
         self.qpoint = []
-        self.nmode = []
         self.frequency = []
         self.intens = []
         self.IR = []
@@ -1477,28 +1476,38 @@ class Crystal_output:
         self.eigenvector = []
 
         countline = 0
+
         while countline < self.eoo:
             line = self.data[countline]
+
             # Whether is a frequency file
             if re.match(r'^\s*\+\+\+\sSYMMETRY\sADAPTION\sOF\sVIBRATIONAL\sMODES\s\+\+\+', line):
                 is_freq = True
                 countline += 1
                 continue
+
+            if re.search(r'\*.*WITH SHRINKING FACTORS:', line):
+                shrink = int(line.strip().split()[6])
+                countline += 1
+                continue
+
             # E_0 with empirical corrections
-            # fix
             elif (re.match(r'^\s+CENTRAL POINT', line) and
-                  re.match(r'^\sATOM', self.data[countline-1])):
-                # fix
+                  re.match(r'^\s+ATOM', self.data[countline-1])):
                 self.edft.append(float(line.strip().split()[2]))
                 countline += 1
                 continue
+
             # Q point info + frequency
             # Dispersion
             elif re.match(r'^.+EXPRESSED IN UNITS\s+OF DENOMINATOR', line):
                 shrink = int(line.strip().split()[-1])
                 countline += 1
                 continue
-            elif re.match(r'\s+DISPERSION K POINT NUMBER', line):
+
+            elif (re.match(r'\s+DISPERSION K POINT NUMBER', line) and
+                  (self.data[countline].split()[7:10] != ['0', '0', '0'])):
+
                 coord = np.array(line.strip().split()[7:10], dtype=float)
                 weight = float(line.strip().split()[-1])
                 self.qpoint.append([coord / shrink, weight])
@@ -1509,20 +1518,22 @@ class Crystal_output:
                     self.data[:self.eoo], countline)
                 countline = phonon[0]
                 self.frequency.append(phonon[1])
-                self.intens.append(phonon[2])
-                self.IR.append(phonon[3])
-                self.Raman.append(phonon[4])
+
             # Gamma point
-            elif re.match(r'^\s+MODES\s+EIGV\s+FREQUENCIES\s+IRREP', line) and self.nqpoint == 0:
+            elif re.match(r'^\s+MODES\s+EIGV\s+FREQUENCIES\s+IRREP', line) and is_gamma:
+
                 countline += 2
+                self.nqpoint += 1
                 # Read phonons
                 phonon = PhononBASE.readmode_basic(
                     self.data[:self.eoo], countline)
                 countline = phonon[0]
                 self.frequency.append(phonon[1])
-                self.intens.append(phonon[2])
-                self.IR.append(phonon[3])
-                self.Raman.append(phonon[4])
+                self.intens = np.array(phonon[2])
+                self.IR = phonon[3]
+                self.Raman = phonon[4]
+                is_gamma = False
+
             # Phonon eigenvector
             # Gamma point: real numbers. Imaginary = 0
             elif re.match(r'^\s+NORMAL MODES NORMALIZED', line):
@@ -1530,10 +1541,9 @@ class Crystal_output:
                     countline += 1
                     continue
                 countline += 2
-                eigvt = PhononBASE.readmode_eigenvector(
-                    self.data[:self.eoo], countline)
-                countline = eigvt[0]
-                self.eigenvector.append(eigvt[1] + 0.j)
+                countline, eigvt = PhononBASE.readmode_eigenvector(self.data[:self.eoo], countline)
+                self.eigenvector.append(eigvt + 0.j)
+
             # Dispersion: complex numbers
             elif re.match(r'^\s+MODES IN PHASE', line):
                 if read_eigvt == False:
@@ -1543,20 +1553,18 @@ class Crystal_output:
                     self.eigenvector.append(tmp_eigvt)
                 countline += 2
                 found_anti = False
-                eigvt = PhononBASE.readmode_eigenvector(
-                    self.data[:self.eoo], countline)
-                countline = eigvt[0]
-                tmp_eigvt = eigvt[1] + 0.j
+                countline, tmp_eigvt = PhononBASE.readmode_eigenvector(self.data[:self.eoo], countline)
+                tmp_eigvt = tmp_eigvt + 0.j
+
             elif re.match(r'^\s+MODES IN ANTI\-PHASE', line):
                 if read_eigvt == False:
                     countline += 1
                     continue
                 countline += 2
                 found_anti = True
-                eigvt_anti = PhononBASE.readmode_eigenvector(
-                    self.data[:self.eoo], countline)
-                countline = eigvt_anti[0]
-                self.eigenvector.append(tmp_eigvt + eigvt_anti[1] * 1.j)
+                countline, eigvt_anti = PhononBASE.readmode_eigenvector(self.data[:self.eoo], countline)
+                self.eigenvector.append(tmp_eigvt + eigvt_anti * 1.j)
+
             # Other data
             else:
                 countline += 1
@@ -1564,6 +1572,7 @@ class Crystal_output:
 
         if is_freq == False:
             raise Exception('Not a frequency calculation.')
+
         if found_anti == False and read_eigvt == True:  # The last real k point
             self.eigenvector.append(tmp_eigvt)
 
@@ -1582,30 +1591,23 @@ class Crystal_output:
         self.edft = H_to_kjmol(np.array(self.edft))
 
         self.frequency = np.array(self.frequency)
-        self.nmode = np.array([len(i) for i in self.frequency], dtype=int)
-        if self.intens[0] == []:
-            self.intens = []
-            self.IR = []
-            self.Raman = []
+        self.nmodes = len(self.frequency[0])
+        self.eigenvector = np.array(self.eigenvector)
+
+        # already normalised to classical amplitude
+        if str(eigvt_amplitude).lower() == 'classical':
+            pass
+        # remove classical amplitude
+        elif str(eigvt_amplitude).lower() == 'classical-rev':
+            struc = self.get_geometry(initial=False, write_gui=False)
+
+        # To a specific value
         else:
-            self.intens = np.array(self.intens)
-
-        if self.eigenvector != []:
-            self.eigenvector = np.array(self.eigenvector)
-            # already normalised to classical amplitude
-            if str(eigvt_amplitude).lower() == 'classical':
-                pass
-            # remove classical amplitude
-            elif str(eigvt_amplitude).lower() == 'classical-rev':
-                struc = self.get_geometry(initial=False, write_gui=False)
-
-            # To a specific value
-            else:
-                for idx_q in range(self.nqpoint):
-                    self.eigenvector[idx_q] = PhononBASE.normalize_eigenvector(
-                        self.eigenvector[idx_q],
-                        amplitude=float(eigvt_amplitude),
-                    )
+            for idx_q in range(self.nqpoint):
+                self.eigenvector[idx_q] = PhononBASE.normalize_eigenvector(
+                    self.eigenvector[idx_q],
+                    amplitude=float(eigvt_amplitude),
+                )
 
         if rm_imaginary == True:
             self = PhononBASE.clean_imaginary(self, threshold=imaginary_tol)
@@ -1649,8 +1651,7 @@ class Crystal_output:
         from CRYSTALClear.units import thz_to_cm
 
         self.get_phonon()
-
-        self.IR_HO_0K = np.stack([thz_to_cm(self.frequency), self.intens], axis=2).reshape(-1, 2)
+        self.IR_HO_0K = np.vstack([thz_to_cm(self.frequency), self.intens]).T
 
         return self
 
