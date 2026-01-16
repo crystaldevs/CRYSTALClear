@@ -4087,8 +4087,14 @@ def plot_cry_EOS(eos, formula_unit=[1], plot='VvsE', color='tab:blue', figsize=(
         if plot == plot_type[0]:
             ax.plot(eos.VvsE[:, 0]/formula_unit[0], eos.VvsE[:, 1]/formula_unit[0],
                     color=color, marker=marker)
-            plt.xlabel('V/Z ($\AA$)')
-            plt.ylabel('E/Z (a.u)')
+            
+            if formula_unit[0] == 1: 
+                plt.xlabel('V ($\AA$)')
+                plt.ylabel('E (a.u)')
+
+            else: 
+                plt.xlabel('V/Z ($\AA$)')
+                plt.ylabel('E/Z (a.u)')
         # <--
 
         # Murnaghan Pressure vs Gibbs Free Energy -->
@@ -4116,8 +4122,14 @@ def plot_cry_EOS(eos, formula_unit=[1], plot='VvsE', color='tab:blue', figsize=(
 
         # labels for Equation of State
         if plot != plot_type[0]:
-            plt.xlabel('P (GPa)')
-            plt.ylabel('H (a. u.)')
+            if formula_unit[0] == 1: 
+                plt.xlabel('P (GPa)')
+                plt.ylabel('H (a. u.)')
+
+            else: 
+                plt.xlabel('P (GPa)')
+                plt.ylabel('H/Z (a. u.)')
+
 
     # <--
 
