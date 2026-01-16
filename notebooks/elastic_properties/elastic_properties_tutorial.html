@@ -1,0 +1,769 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Elastic Properties: A Quick Overview &#8212; Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9fd5c01c"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/elastic_properties/elastic_properties_tutorial';</script>
+    <link rel="canonical" href="https://crystaldevs.github.io/CRYSTALClear/notebooks/elastic_properties/elastic_properties_tutorial.html" />
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Transport properties plot" href="../electron_transport_properties/tutorial_electron_transport_properties.html" />
+    <link rel="prev" title="Equation of State and Phase Transition" href="../Equation_Of_State/EOS.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/CRYSTAL_logo.png" class="logo__image only-light" alt="Documentation - Home"/>
+    <script>document.write(`<img src="../../_static/CRYSTAL_logo.png" class="logo__image only-dark" alt="Documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Welcome to the CRYSTALClear Documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Example Notebooks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Electronic_Structure/Electronic_Structure_CRYSTALClear.html">Electronic Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Equation_Of_State/EOS.html">Equation of State and Phase Transition</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Elastic Properties: A Quick Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../electron_transport_properties/tutorial_electron_transport_properties.html">Transport properties plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vibrational_spectra/vibrational_spectra_tutorial.html">Simulating Vibrational Spectra</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite.html">How to Cite CRYSTALClear</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../convert.html">CRYSTALClear.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../crystal_io.html">CRYSTALClear.crystal_io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execute.html">CRYSTALClear.execute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plot.html">CRYSTALClear.plot</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/crystaldevs/CRYSTALClear" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/elastic_properties/elastic_properties_tutorial.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Elastic Properties: A Quick Overview</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Young-Modulus">Young Modulus</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Linear-Compressibility">Linear Compressibility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Shear-Modulus">Shear Modulus</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Poisson-Ratio">Poisson Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparison-Between-Plots">Comparison Between Plots</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Elastic-Properties:-A-Quick-Overview">
+<h1>Elastic Properties: A Quick Overview<a class="headerlink" href="#Elastic-Properties:-A-Quick-Overview" title="Link to this heading">#</a></h1>
+<p><p>In crystals, the mechanical properties such as stiffness, strength, and ductility depend on the crystallographic direction in which the material is deformed. This directional dependence is due to the crystal’s internal structure and symmetry, which leads to anisotropy in mechanical properties. In this context, the elastic response of any material is fully described by its fourth-rank elastic tensor.</p>
+<p>CRYSTALClear contains functions to read the computed elastic tensor from an elastic CRYSTAL calculation and to compute and plot several directional mechanical properties (Young modulus, linear compressibility, shear modulus and Poisson ratio). Please, note that the first essential step consists in running an elastic calculation with CRYSTAL by using the keyword ELASTCON (see the <a class="reference external" href="https://www.crystal.unito.it/include/manuals/crystal23.pdf">User’s Manual</a> for details). Below, we will provide
+examples on how to exploit such functionalities referring to a prototypical calculation on coesite mineral.</p>
+</p><div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.crystal_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Crystal_output</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">CRYSTALClear.plot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">CCplt</span>
+</pre></div>
+</div>
+</div>
+<p>Now we need to create a new <code class="docutils literal notranslate"><span class="pre">Crystal_output</span></code> (CO):</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CO</span> <span class="o">=</span> <span class="n">Crystal_output</span><span class="p">(</span><span class="s2">&quot;coesite_ela.out&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The elastic tensor can be extracted by acting on such CO with the <code class="docutils literal notranslate"><span class="pre">get_elatensor</span></code> method:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CO</span><span class="o">.</span><span class="n">get_elatensor</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;CRYSTALClear.crystal_io.Crystal_output at 0x110ab6d90&gt;
+</pre></div></div>
+</div>
+<p><p>Upon inspection, the the new attribute is a 6x6 NumPy array, precisely as expected.</p>
+</p><div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CO</span><span class="o">.</span><span class="n">elatensor</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[136.888,  54.741,  68.835,   0.   ,  31.823,   0.   ],
+       [ 54.741, 205.003,  39.186,   0.   , -11.896,   0.   ],
+       [ 68.835,  39.186, 197.021,   0.   ,  29.908,   0.   ],
+       [  0.   ,   0.   ,   0.   ,  43.406,   0.   , -10.035],
+       [ 31.823, -11.896,  29.908,   0.   ,  65.37 ,   0.   ],
+       [  0.   ,   0.   ,   0.   , -10.035,   0.   ,  57.046]])
+</pre></div></div>
+</div>
+<p><p>Before we proceed further, it would be useful to introduce some graphical representations of key geometrical parameters that will be referenced later. As we will see, some quantities depend on a single direction <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> (and thus on two angles <span class="math notranslate nohighlight">\(\vartheta\)</span> and <span class="math notranslate nohighlight">\(\varphi\)</span> in spherical coordinates), while others depend on two directions <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> (if orthogonal, the two directions can be defined in terms of three angles <span class="math notranslate nohighlight">\(\vartheta\)</span>,
+<span class="math notranslate nohighlight">\(\varphi\)</span>, and <span class="math notranslate nohighlight">\(\chi\)</span> in spherical coordinates).</p>
+</p><p><img alt="104e2f96002e4ee9b81e75a266ac5185" class="no-scaled-link" src="../../_images/elavectors.png" style="width: 100%;" /></p>
+<section id="Young-Modulus">
+<h2>Young Modulus<a class="headerlink" href="#Young-Modulus" title="Link to this heading">#</a></h2>
+<p><p>The Young modulus is a property that describes the stiffness or elasticity of a material, which is defined as the ratio of stress (force per unit area) to strain (change in length per unit length) under an applied load. For each direction (i.e., for each pair of <span class="math notranslate nohighlight">\(\vartheta\)</span> and <span class="math notranslate nohighlight">\(\varphi\)</span> angles), the value of Young modulus can be computed as:</p>
+</p><p><span class="math">\begin{equation}
+E(\vartheta, \varphi) = \frac{1} {u_i u_j u_k u_l S_{ijkl}}
+\end{equation}</span></p>
+<p>where <span class="math notranslate nohighlight">\(S_{ijkl}\)</span> is an element of the inverse of the elastic tensor and the Einstein summation convention on repeated indices has been adopted. In order to get a three-dimensional representation of the Young modulus, we can simply use the <code class="docutils literal notranslate"><span class="pre">plot_cry_ela</span></code> function as shown below:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_ela</span><span class="p">(</span><span class="n">CO</span><span class="p">,</span> <span class="s2">&quot;young&quot;</span><span class="p">,</span> <span class="n">ndeg</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+([&lt;Figure size 640x480 with 2 Axes&gt;],
+ [&lt;Axes3DSubplot: xlabel=&#39;X&#39;, ylabel=&#39;Y&#39;, zlabel=&#39;Z&#39;&gt;],
+ [&lt;module &#39;matplotlib.pyplot&#39; from &#39;/Users/davidemitoli/miniconda3/envs/develop/lib/python3.9/site-packages/matplotlib/pyplot.py&#39;&gt;])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_15_1.png" src="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_15_1.png" />
+</div>
+</div>
+<p>In this case, the function requires three arguments: 1. A <code class="docutils literal notranslate"><span class="pre">Crystal_output</span></code> (CO) object that included the <code class="docutils literal notranslate"><span class="pre">elatensor</span></code> attribute 2. A string specifying the type of quantity to be plotted (i.e., “young” for Young modulus) 3. (Optional) The angular resolution <code class="docutils literal notranslate"><span class="pre">ndeg</span></code> of the plot (higher values result in greater detail but also increase rendering time)</p>
+</section>
+<section id="Linear-Compressibility">
+<h2>Linear Compressibility<a class="headerlink" href="#Linear-Compressibility" title="Link to this heading">#</a></h2>
+<p><p>The linear compressibility describes the linear strain under the application of an external hydrostatic stress. For each direction (i.e., for each pair of <span class="math notranslate nohighlight">\(\vartheta\)</span> and <span class="math notranslate nohighlight">\(\varphi\)</span> angles), the value of linear compressibility can be computed as:</p>
+</p><p><span class="math">\begin{equation}
+\beta(\vartheta, \varphi) = S_{ijkl} u_i u_j
+\end{equation}</span></p>
+<p><p>Also in this case, in order to get the desired plot, we can use a syntax similar to the one presented above:</p>
+</p><div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_ela</span><span class="p">(</span><span class="n">CO</span><span class="p">,</span> <span class="s2">&quot;comp&quot;</span><span class="p">,</span> <span class="n">ndeg</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+([&lt;Figure size 640x480 with 2 Axes&gt;],
+ [&lt;Axes3DSubplot: xlabel=&#39;X&#39;, ylabel=&#39;Y&#39;, zlabel=&#39;Z&#39;&gt;],
+ [&lt;module &#39;matplotlib.pyplot&#39; from &#39;/Users/davidemitoli/miniconda3/envs/develop/lib/python3.9/site-packages/matplotlib/pyplot.py&#39;&gt;])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_21_1.png" src="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_21_1.png" />
+</div>
+</div>
+</section>
+<section id="Shear-Modulus">
+<h2>Shear Modulus<a class="headerlink" href="#Shear-Modulus" title="Link to this heading">#</a></h2>
+<p>Shear modulus is a measure of the elastic shear stiffness, which describes the strain response to a shear stress. Its value depends on two different directions (described by <span class="math notranslate nohighlight">\(\vartheta\)</span>, <span class="math notranslate nohighlight">\(\varphi\)</span> and <span class="math notranslate nohighlight">\(\chi\)</span> angles) and can be evaluated as:</p>
+<p><span class="math">\begin{equation}
+G(\vartheta, \varphi, \chi) = \frac{1} {u_i v_j u_k v_l S_{ijkl}}
+\end{equation}</span></p>
+<p><p>A three-dimensional representation of a quantity that depends on three variables is not trivial. A popular strategy involves computing the shear modulus for all values of the angle <span class="math notranslate nohighlight">\(\chi\)</span> along each direction (i.e., for each pair of <span class="math notranslate nohighlight">\(\vartheta\)</span> and <span class="math notranslate nohighlight">\(\varphi\)</span> angles), and then storing the maximum (max), minimum (min) and average (avg) values. Suppose we are interested in the computation of the minimum values of shear modulus, thus the following syntax must be adopted:</p>
+</p><div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_ela</span><span class="p">(</span><span class="n">CO</span><span class="p">,</span> <span class="s2">&quot;shear min&quot;</span><span class="p">,</span> <span class="n">ndeg</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+([&lt;Figure size 640x480 with 2 Axes&gt;],
+ [&lt;Axes3DSubplot: xlabel=&#39;X&#39;, ylabel=&#39;Y&#39;, zlabel=&#39;Z&#39;&gt;],
+ [&lt;module &#39;matplotlib.pyplot&#39; from &#39;/Users/davidemitoli/miniconda3/envs/develop/lib/python3.9/site-packages/matplotlib/pyplot.py&#39;&gt;])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_26_1.png" src="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_26_1.png" />
+</div>
+</div>
+</section>
+<section id="Poisson-Ratio">
+<h2>Poisson Ratio<a class="headerlink" href="#Poisson-Ratio" title="Link to this heading">#</a></h2>
+<p>The last subject of this tutorial is the directional Poisson ratio, a quantity defined as the ratio of the transverse strain (i.e., the change in width or thickness) to the axial strain (i.e., the change in length) when a force is applied in a specific direction. In other words, if a material is stretched in one direction, the directional Poisson ratio tells us how much it will contract in the perpendicular direction. Just like for the shear modulus, its value depends on two directions and can
+be computed as:</p>
+<p><span class="math">\begin{equation}
+\nu (\vartheta, \varphi, \chi) = \frac {u_i u_j v_k v_l S_{ijkl}} {u_i u_j u_k u_l S_{ijkl}}
+\end{equation}</span></p>
+<p>A plotting strategy analogous to the one described above has been implemented. Thus, if we want to plot the average Poisson ratio of coesite, we use the following syntax:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_ela</span><span class="p">(</span><span class="n">CO</span><span class="p">,</span> <span class="s2">&quot;poisson avg&quot;</span><span class="p">,</span> <span class="n">ndeg</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+([&lt;Figure size 640x480 with 2 Axes&gt;],
+ [&lt;Axes3DSubplot: xlabel=&#39;X&#39;, ylabel=&#39;Y&#39;, zlabel=&#39;Z&#39;&gt;],
+ [&lt;module &#39;matplotlib.pyplot&#39; from &#39;/Users/davidemitoli/miniconda3/envs/develop/lib/python3.9/site-packages/matplotlib/pyplot.py&#39;&gt;])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_31_1.png" src="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_31_1.png" />
+</div>
+</div>
+</section>
+<section id="Comparison-Between-Plots">
+<h2>Comparison Between Plots<a class="headerlink" href="#Comparison-Between-Plots" title="Link to this heading">#</a></h2>
+<p>By providing multiple COs, it becomes possible to establish a fixed color scale that can be used consistently throughout various plots. This means that instead of having varying color scales for each plot, which can lead to confusion and misinterpretation of data, a single reference color scale can be used as a benchmark for all plots. For instance, one can be interested in evaluating the effect of pressure on the Young modulus of a certain material. Let us suppose we have previously run several
+elastic calculations on ZIF-8 with CRYSTAL at different values of pressure in range 0-0.4 GPa.</p>
+<p>Let’s create a list of <code class="docutils literal notranslate"><span class="pre">Crystal_output</span></code> objects:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ZIF8_P0.out&quot;</span><span class="p">,</span> <span class="s2">&quot;ZIF8_P01.out&quot;</span><span class="p">,</span> <span class="s2">&quot;ZIF8_P02.out&quot;</span><span class="p">,</span> <span class="s2">&quot;ZIF8_P03.out&quot;</span><span class="p">,</span> <span class="s2">&quot;ZIF8_P04.out&quot;</span><span class="p">]</span>
+<span class="n">COs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
+    <span class="n">COs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Crystal_output</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p><p>Then, we can easily extract our elastic tensors and store them into a list:</p>
+</p><div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">file_list</span><span class="p">)):</span>
+    <span class="n">COs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_elatensor</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p><p>We are now ready to plot them through this simple syntax!</p>
+<p><div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_ela</span><span class="p">([</span><span class="n">COs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">COs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">COs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">COs</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">COs</span><span class="p">[</span><span class="mi">4</span><span class="p">]],</span> <span class="s2">&quot;young&quot;</span><span class="p">,</span> <span class="n">ndeg</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+([&lt;Figure size 640x480 with 2 Axes&gt;,
+  &lt;Figure size 640x480 with 2 Axes&gt;,
+  &lt;Figure size 640x480 with 2 Axes&gt;,
+  &lt;Figure size 640x480 with 2 Axes&gt;,
+  &lt;Figure size 640x480 with 2 Axes&gt;],
+ [&lt;Axes3DSubplot: xlabel=&#39;X&#39;, ylabel=&#39;Y&#39;, zlabel=&#39;Z&#39;&gt;,
+  &lt;Axes3DSubplot: xlabel=&#39;X&#39;, ylabel=&#39;Y&#39;, zlabel=&#39;Z&#39;&gt;,
+  &lt;Axes3DSubplot: xlabel=&#39;X&#39;, ylabel=&#39;Y&#39;, zlabel=&#39;Z&#39;&gt;,
+  &lt;Axes3DSubplot: xlabel=&#39;X&#39;, ylabel=&#39;Y&#39;, zlabel=&#39;Z&#39;&gt;,
+  &lt;Axes3DSubplot: xlabel=&#39;X&#39;, ylabel=&#39;Y&#39;, zlabel=&#39;Z&#39;&gt;],
+ [&lt;module &#39;matplotlib.pyplot&#39; from &#39;/Users/davidemitoli/miniconda3/envs/develop/lib/python3.9/site-packages/matplotlib/pyplot.py&#39;&gt;,
+  &lt;module &#39;matplotlib.pyplot&#39; from &#39;/Users/davidemitoli/miniconda3/envs/develop/lib/python3.9/site-packages/matplotlib/pyplot.py&#39;&gt;,
+  &lt;module &#39;matplotlib.pyplot&#39; from &#39;/Users/davidemitoli/miniconda3/envs/develop/lib/python3.9/site-packages/matplotlib/pyplot.py&#39;&gt;,
+  &lt;module &#39;matplotlib.pyplot&#39; from &#39;/Users/davidemitoli/miniconda3/envs/develop/lib/python3.9/site-packages/matplotlib/pyplot.py&#39;&gt;,
+  &lt;module &#39;matplotlib.pyplot&#39; from &#39;/Users/davidemitoli/miniconda3/envs/develop/lib/python3.9/site-packages/matplotlib/pyplot.py&#39;&gt;])
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_38_1.png" src="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_38_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_38_2.png" src="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_38_2.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_38_3.png" src="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_38_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_38_4.png" src="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_38_4.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_38_5.png" src="../../_images/notebooks_elastic_properties_elastic_properties_tutorial_38_5.png" />
+</div>
+</div>
+<p>Although the <code class="docutils literal notranslate"><span class="pre">plot_cry_ela</span></code> function can handle any number of <code class="docutils literal notranslate"><span class="pre">Crystal_output</span></code> objects provided as a list, the computation of properties that depend on two directions (e.g., shear modulus and Poisson ratio) is computationally intensive — so feel free to take a cup of tea and enjoy the wait.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../Equation_Of_State/EOS.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Equation of State and Phase Transition</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../electron_transport_properties/tutorial_electron_transport_properties.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Transport properties plot</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Young-Modulus">Young Modulus</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Linear-Compressibility">Linear Compressibility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Shear-Modulus">Shear Modulus</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Poisson-Ratio">Poisson Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Comparison-Between-Plots">Comparison Between Plots</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CRYSTALClear Development Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, CRYSTALClear Development Team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

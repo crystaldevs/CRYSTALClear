@@ -1,0 +1,860 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Transport properties plot &#8212; Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9fd5c01c"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/electron_transport_properties/tutorial_electron_transport_properties';</script>
+    <link rel="canonical" href="https://crystaldevs.github.io/CRYSTALClear/notebooks/electron_transport_properties/tutorial_electron_transport_properties.html" />
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Simulating Vibrational Spectra" href="../vibrational_spectra/vibrational_spectra_tutorial.html" />
+    <link rel="prev" title="Elastic Properties: A Quick Overview" href="../elastic_properties/elastic_properties_tutorial.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/CRYSTAL_logo.png" class="logo__image only-light" alt="Documentation - Home"/>
+    <script>document.write(`<img src="../../_static/CRYSTAL_logo.png" class="logo__image only-dark" alt="Documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Welcome to the CRYSTALClear Documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Example Notebooks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Electronic_Structure/Electronic_Structure_CRYSTALClear.html">Electronic Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Equation_Of_State/EOS.html">Equation of State and Phase Transition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../elastic_properties/elastic_properties_tutorial.html">Elastic Properties: A Quick Overview</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Transport properties plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vibrational_spectra/vibrational_spectra_tutorial.html">Simulating Vibrational Spectra</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite.html">How to Cite CRYSTALClear</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../convert.html">CRYSTALClear.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../crystal_io.html">CRYSTALClear.crystal_io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execute.html">CRYSTALClear.execute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plot.html">CRYSTALClear.plot</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/crystaldevs/CRYSTALClear" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/electron_transport_properties/tutorial_electron_transport_properties.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Transport properties plot</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Transport-properties-plot">
+<h1>Transport properties plot<a class="headerlink" href="#Transport-properties-plot" title="Link to this heading">#</a></h1>
+<p>CRYSTALClear contains functions to read the computed Seebeck Coefficient (<span class="math notranslate nohighlight">\(S\)</span>) and Electrical Conductivity (<span class="math notranslate nohighlight">\(\sigma\)</span>) from a PROPERTIES calculation and to compute and plot the thermoelectrical Power Factor <span class="math notranslate nohighlight">\((PF=S^2*\sigma)\)</span> and the Figure of Merit (<span class="math notranslate nohighlight">\(ZT=(PF*T)/K_{tot}\)</span>, where <span class="math notranslate nohighlight">\(K_{tot}\)</span> is the total thermal conductivity). Please, note that the first essential step consists in running a properties calculation with CRYSTAL by using the keyword BOLTZTRA (see the <a class="reference external" href="https://www.crystal.unito.it/include/manuals/crystal23.pdf">User’s
+Manual</a> for details). Below, we will show how to exploit such functionalities referring to calculations on the ZrNiSn Half Heusler alloy.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.crystal_io</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">CRYSTALClear.plot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">CCplt</span>
+</pre></div>
+</div>
+</div>
+<p>At first we will create two seebeck objects, seebeck and seebeck1, reading two SEEBECK.DAT files.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seebeck</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_seebeck</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_SEEBECK.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seebeck1</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_seebeck</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_antisito_SEEBECK.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We can plot them as a function of the chemical potential or of the charge carrier concentration, using the plot_cry_seebeck_potential and the plot_cry_seebeck_carrier funcitons. To acquire information on the structure of the function we can write ?function name and run the cell. The plotting functions generate matplotlib figure objects.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">?</span>CCplt.plot_cry_seebeck_potential
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-intense-fg ansi-bold">Signature:</span> CCplt<span class="ansi-yellow-intense-fg ansi-bold">.</span>plot_cry_seebeck_potential<span class="ansi-yellow-intense-fg ansi-bold">(</span>seebeck_obj<span class="ansi-yellow-intense-fg ansi-bold">,</span> direction<span class="ansi-yellow-intense-fg ansi-bold">,</span> temperature<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-red-intense-fg ansi-bold">Docstring:</span>
+Plot the Seebeck coefficient as a function of chemical potential.
+
+Args:
+    seebeck_obj (object): Seebeck object containing the data for the Seebeck coefficient.
+    direction (str): choose the direction to plot among &#39;S_xx&#39;, &#39;S_xy&#39;, &#39;S_xz&#39;, &#39;S_yx&#39;, &#39;S_yy&#39;, &#39;S_yz&#39;, &#39;S_yz&#39;, &#39;S_zx&#39;, &#39;S_zy&#39;, &#39;S_zz&#39;.
+    temperature (value/str): choose the temperature to be considered or &#39;all&#39; to consider them all together
+
+Returns:
+    Figure object
+
+Notes:
+    - Plots the Seebeck coefficient as a function of chemical potential for each temperature.
+    - Distinguishes between n-type and p-type conduction with dashed and solid lines, respectively.
+<span class="ansi-red-intense-fg ansi-bold">File:</span>      c:\users\ascri\onedrive\desktop\dottorato_secondo_anno\tutorial_2022\electron_transport_properties\plot.py
+<span class="ansi-red-intense-fg ansi-bold">Type:</span>      function
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_seebeck</span> <span class="o">=</span> <span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_seebeck_carrier</span><span class="p">(</span><span class="n">seebeck</span><span class="p">,</span><span class="s1">&#39;s_xx&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+To differentiate transport coefficients due to n-type or p-type conduction (electrons or holes as majority carriers) dashed and solid lines are used, respectively.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_8_1.png" src="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_8_1.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 640x480 with 0 Axes&gt;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_seebeck</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;seebeck_potential&#39;</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Plot seebeck versus the charge carrier concentration</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_seebeck_carrier</span><span class="p">(</span><span class="n">seebeck</span><span class="p">,</span><span class="s1">&#39;s_xx&#39;</span><span class="p">,</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+To differentiate transport coefficients due to n-type or p-type conduction (electrons or holes as majority carriers) dashed and solid lines are used, respectively.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_11_1.png" src="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_11_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 640x480 with 0 Axes&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 640x480 with 0 Axes&gt;
+</pre></div></div>
+</div>
+<p>Now we will create two sigma objects, sigma and sigma1, reading two SIGMA.DAT files.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sigma</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_sigma</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_SIGMA.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sigma1</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_cry_sigma</span><span class="p">(</span><span class="s1">&#39;transport_zrnisn_antisito_SIGMA.DAT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We can plot the electrical conductivity as a function of the chemical potential or of the charge carrier concentration, using the plot_cry_sigma_potential or plot_cry_sigma_carrier functions.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_sigma_potential</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="s1">&#39;s_xx&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+To differentiate transport coefficients due to n-type or p-type conduction (electrons or holes as majority carriers) dashed and solid lines are used, respectively.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_16_1.png" src="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_16_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 640x480 with 0 Axes&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 640x480 with 0 Axes&gt;
+</pre></div></div>
+</div>
+<p>If we want to compare on the same plot Seebeck coefficients or electrical conductivities coming from different file, we can use the plot_cry_multiseebeck and plot_cry_multisigma functions.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">?</span>CCplt.plot_cry_multiseebeck
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-intense-fg ansi-bold">Signature:</span>
+CCplt<span class="ansi-yellow-intense-fg ansi-bold">.</span>plot_cry_multiseebeck<span class="ansi-yellow-intense-fg ansi-bold">(</span><span class="ansi-yellow-intense-fg ansi-bold">
+</span>    direction<span class="ansi-yellow-intense-fg ansi-bold">,</span><span class="ansi-yellow-intense-fg ansi-bold">
+</span>    temperature<span class="ansi-yellow-intense-fg ansi-bold">,</span><span class="ansi-yellow-intense-fg ansi-bold">
+</span>    minpot<span class="ansi-yellow-intense-fg ansi-bold">,</span><span class="ansi-yellow-intense-fg ansi-bold">
+</span>    maxpot<span class="ansi-yellow-intense-fg ansi-bold">,</span><span class="ansi-yellow-intense-fg ansi-bold">
+</span>    <span class="ansi-yellow-intense-fg ansi-bold">*</span>seebeck<span class="ansi-yellow-intense-fg ansi-bold">,</span><span class="ansi-yellow-intense-fg ansi-bold">
+</span><span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-red-intense-fg ansi-bold">Docstring:</span>
+Plot the seebeck coefficient from different files.
+
+Args:
+    direction (str): choose the direction to plot among &#39;S_xx&#39;, &#39;S_xy&#39;, &#39;S_xz&#39;, &#39;S_yx&#39;, &#39;S_yy&#39;, &#39;S_yz&#39;, &#39;S_yz&#39;, &#39;S_zx&#39;, &#39;S_zy&#39;, &#39;S_zz&#39;.
+    temperature (value): choose the temperature to be considered
+    minpot (value): lower value of chemical potential you want to plot in eV
+    maxpot (value): higher value of chemical potential you want to plot in eV
+    *seebeck (obj): Variable number of seebeck objects containing the data for the Seebeck coefficient.
+
+Returns:
+    Figure object
+
+Notes:
+
+    - Plots the seebeck coefficient for each seebeck object.
+    - Differentiates transport coefficients due to n-type or p-type conduction using dashed and solid lines.
+<span class="ansi-red-intense-fg ansi-bold">File:</span>      c:\users\ascri\onedrive\desktop\dottorato_secondo_anno\tutorial_2022\electron_transport_properties\plot.py
+<span class="ansi-red-intense-fg ansi-bold">Type:</span>      function
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_multiseebeck</span><span class="p">(</span><span class="s1">&#39;s_xx&#39;</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">seebeck</span><span class="p">,</span> <span class="n">seebeck1</span><span class="p">,)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+To differentiate transport coefficients due to n-type or p-type conduction (electrons or holes as majority carriers) dashed and solid lines are used, respectively.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_19_1.png" src="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_19_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 640x480 with 0 Axes&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 640x480 with 0 Axes&gt;
+</pre></div></div>
+</div>
+<p>Plot multisigma</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_multisigma</span><span class="p">(</span><span class="s1">&#39;s_xx&#39;</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">sigma</span><span class="p">,</span> <span class="n">sigma1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+To differentiate transport coefficients due to n-type or p-type conduction (electrons or holes as majority carriers) dashed and solid lines are used, respectively.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_21_1.png" src="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_21_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 640x480 with 0 Axes&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;Figure size 640x480 with 0 Axes&gt;
+</pre></div></div>
+</div>
+<p>To compute and plot the Power Factor and ZT we can use the plot_cry_powerfactor and plot_cry_zt functions.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_powerfactor_carrier</span><span class="p">(</span><span class="n">seebeck</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span><span class="s1">&#39;pf_xx&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+To differentiate transport coefficients due to n-type or p-type conduction (electrons or holes as majority carriers) dashed and solid lines are used, respectively.
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_23_1.png" src="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_23_1.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;function matplotlib.pyplot.gcf() -&gt; &#39;Figure&#39;&gt;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">?</span>CCplt.plot_cry_zt
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-intense-fg ansi-bold">Signature:</span> CCplt<span class="ansi-yellow-intense-fg ansi-bold">.</span>plot_cry_zt<span class="ansi-yellow-intense-fg ansi-bold">(</span>seebeck_obj<span class="ansi-yellow-intense-fg ansi-bold">,</span> sigma_obj<span class="ansi-yellow-intense-fg ansi-bold">,</span> direction<span class="ansi-yellow-intense-fg ansi-bold">,</span> temperature<span class="ansi-yellow-intense-fg ansi-bold">,</span> ktot<span class="ansi-yellow-intense-fg ansi-bold">)</span>
+<span class="ansi-red-intense-fg ansi-bold">Docstring:</span>
+Plot the ZT value for different temperatures.
+
+Args:
+    seebeck_obj (obj): Seebeck object containing the data for the Seebeck coefficient.
+    sigma_obj (obj): Sigma object containing the data for the electrical conductivity.
+    direction (str): choose the direction to plot among &#39;ZT_xx&#39;, &#39;ZT_xy&#39;, &#39;ZT_xz&#39;, &#39;ZT_yx&#39;, &#39;ZT_yy&#39;, &#39;ZT_yz&#39;, &#39;ZT_yz&#39;, &#39;ZT_zx&#39;, &#39;ZT_zy&#39;, &#39;ZT_zz&#39;.
+    temperature (value/str): choose the temperature to be considered or &#39;all&#39; to consider them all together
+    ktot (value): alue of the total thermal conductivity (ktot) in W-1K-1m-1
+
+Returns:
+    Figure object
+
+Notes:
+    - Calculates the ZT value using the Seebeck coefficient and electrical conductivity data.
+    - Plots the ZT value for each temperature as a function of the chemical potential.
+<span class="ansi-red-intense-fg ansi-bold">File:</span>      c:\users\ascri\onedrive\desktop\dottorato_secondo_anno\tutorial_2022\electron_transport_properties\plot.py
+<span class="ansi-red-intense-fg ansi-bold">Type:</span>      function
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_zt</span><span class="p">(</span><span class="n">seebeck</span><span class="p">,</span><span class="n">sigma</span><span class="p">,</span><span class="s1">&#39;zt_xx&#39;</span><span class="p">,</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_25_0.png" src="../../_images/notebooks_electron_transport_properties_tutorial_electron_transport_properties_25_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;function matplotlib.pyplot.gcf() -&gt; &#39;Figure&#39;&gt;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../elastic_properties/elastic_properties_tutorial.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Elastic Properties: A Quick Overview</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../vibrational_spectra/vibrational_spectra_tutorial.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Simulating Vibrational Spectra</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CRYSTALClear Development Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, CRYSTALClear Development Team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

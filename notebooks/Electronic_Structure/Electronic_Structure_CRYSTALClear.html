@@ -1,0 +1,615 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Electronic Structure &#8212; Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9fd5c01c"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/Electronic_Structure/Electronic_Structure_CRYSTALClear';</script>
+    <link rel="canonical" href="https://crystaldevs.github.io/CRYSTALClear/notebooks/Electronic_Structure/Electronic_Structure_CRYSTALClear.html" />
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Equation of State and Phase Transition" href="../Equation_Of_State/EOS.html" />
+    <link rel="prev" title="Example Notebooks" href="../index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/CRYSTAL_logo.png" class="logo__image only-light" alt="Documentation - Home"/>
+    <script>document.write(`<img src="../../_static/CRYSTAL_logo.png" class="logo__image only-dark" alt="Documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Welcome to the CRYSTALClear Documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Example Notebooks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Electronic Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Equation_Of_State/EOS.html">Equation of State and Phase Transition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../elastic_properties/elastic_properties_tutorial.html">Elastic Properties: A Quick Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../electron_transport_properties/tutorial_electron_transport_properties.html">Transport properties plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vibrational_spectra/vibrational_spectra_tutorial.html">Simulating Vibrational Spectra</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite.html">How to Cite CRYSTALClear</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../convert.html">CRYSTALClear.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../crystal_io.html">CRYSTALClear.crystal_io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execute.html">CRYSTALClear.execute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plot.html">CRYSTALClear.plot</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/crystaldevs/CRYSTALClear" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/Electronic_Structure/Electronic_Structure_CRYSTALClear.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Electronic Structure</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#3.-Electronic-Structure">3. Electronic Structure</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Electronic-Structure">
+<h1>Electronic Structure<a class="headerlink" href="#Electronic-Structure" title="Link to this heading">#</a></h1>
+<p>The computation of electronic properties is a key tool to characterize crystalline materials to describe those properties dependent on the behavior of electrons within the crystalline structure. In Crystal plenty of tools are available to evaluate and describe <a class="reference external" href="https://tutorials.crystalsolutions.eu/tutorial.html?td=properties&amp;tf=properties_tut">one electron properties</a>.</p>
+<p>In this tutorial we will introduce some of the tools available in CRYSTALClear to plot and study the electronic structure of materials:</p>
+<ul class="simple">
+<li><p><strong>Band Structure</strong></p></li>
+<li><p><strong>Density of States</strong></p></li>
+</ul>
+<p>First, though, a few preliminary steps are required.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.crystal_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Properties_output</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">CRYSTALClear.plot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">CCplt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+<p>### 1. Band Structure</p>
+<p>In CRYSTALClear it is possible to plot the band structure computed through a Properties calculations starting from the <strong>BAND.DAT</strong> or the <strong>.f25</strong> generated as computation output. To do so we first need to generate the crystal object containing the necessary informations for the plot. For the purpose of this tutorial we will start from a BAND.DAT file, all of the following instruction, though, remain valid also for the .f25 file.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Definition of the BAND.DAT file</span>
+<span class="n">band</span> <span class="o">=</span> <span class="s1">&#39;mgo_band.BAND&#39;</span>
+
+<span class="c1"># Creation of the Crystal Object</span>
+<span class="n">band</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_electron_band</span><span class="p">(</span><span class="n">band</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>To generate the band structure plot the only required argument is the Crystal Object generated above, some additional argument, though, might help with the plot readability or customize it to your taste:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">energy_range</span></code>: Will limit the range of energy displayed in the band structure plot</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">linewidth</span></code>: Will specify the thickness of the band structure lines</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">figsize</span></code>: Will allow you to specify the dimensions and the aspect ratio of the plot</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">k_labels</span></code>: Will specify the tick labels associated with the high symmetry point explored in the band structure calculation</p></li>
+</ul>
+<p>Given this premises we can proceed plotting the MgO band structure.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot generation</span>
+<span class="n">CCplt</span><span class="o">.</span><span class="n">plot_electron_band</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">energy_range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">k_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Gamma&#39;</span><span class="p">,</span><span class="s1">&#39;X&#39;</span><span class="p">,</span><span class="s1">&#39;W&#39;</span><span class="p">,</span><span class="s1">&#39;L&#39;</span><span class="p">,</span><span class="s1">&#39;Gamma&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_Electronic_Structure_Electronic_Structure_CRYSTALClear_7_0.png" src="../../_images/notebooks_Electronic_Structure_Electronic_Structure_CRYSTALClear_7_0.png" />
+</div>
+</div>
+<p>From time to time it might come in handy to plot two or more different band structures of the same material to see how it changes under given conditions or how its band structure is affected bythe functional. This is possible in CRYSTALClear under the only caviat that <strong>the two calculations must have the same space group and identical path</strong>. To generate such plot we will need to first generate the Crystal Objects associated with each of the the band structure we intend to plot.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Definition of the BAND.DAT files to plot</span>
+<span class="n">bands</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mgo_band.BAND&#39;</span><span class="p">,</span> <span class="s1">&#39;mgo_band_b3lyp.BAND&#39;</span><span class="p">]</span>
+
+<span class="c1"># Generation of the Crystal Objects associated with each file</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bands</span><span class="p">):</span>
+    <span class="n">bands</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_electron_band</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Once we have generated the list of Crystal Objects we can generate the plot using the same function used for the single band structure. The plotting function will internally scale the different band structure to match the high symmetry point location and the path end point.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot Generation</span>
+<span class="n">CCplt</span><span class="o">.</span><span class="n">plot_electron_band</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="n">energy_range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">k_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Gamma&#39;</span><span class="p">,</span><span class="s1">&#39;X&#39;</span><span class="p">,</span><span class="s1">&#39;W&#39;</span><span class="p">,</span><span class="s1">&#39;L&#39;</span><span class="p">,</span><span class="s1">&#39;Gamma&#39;</span><span class="p">],</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PBE&#39;</span><span class="p">,</span><span class="s1">&#39;B3LYP&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_Electronic_Structure_Electronic_Structure_CRYSTALClear_11_0.png" src="../../_images/notebooks_Electronic_Structure_Electronic_Structure_CRYSTALClear_11_0.png" />
+</div>
+</div>
+<p>### 2. Density of States (DOSS)</p>
+<p>Similarly to the band structure it is possible to plot the density of state of a given material starting from the <strong>DOSS.DAT</strong> or <strong>.f25</strong> generated by a corresponding Properties calculation. Again we will show here the proceadure for the DOSS.DAT file, which is identincal to the one for the .f25.</p>
+<p>The first step is, once more, to generate the Crystal Object containing the information necessary for the plot:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># DOSS.DAT path declaration</span>
+<span class="n">doss</span> <span class="o">=</span> <span class="s1">&#39;mgo_doss_partialao.DOSS&#39;</span>
+
+<span class="c1"># Crystal Object generation</span>
+<span class="n">doss</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_electron_dos</span><span class="p">(</span><span class="n">doss</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Once the Crystal Object is generated we can create the plot using the <code class="docutils literal notranslate"><span class="pre">CCplt</span></code> module in CRYSTALClear. Like before the only required argument for the <code class="docutils literal notranslate"><span class="pre">plot_electron_dos()</span></code> function is the Crystal Object itself, but a few additional arguments might help making the plot more readable or customize to your taste:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">overlap=True</span></code>: Will allow you to plot all of the projections contained in the DOSS.DAT file in a single plot</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">color</span></code>: Will assign a color to each of the projection plotted</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">labels</span></code>: Will assign a label to each of the projection plotted</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dos_range</span></code>: Will define the DOS range displayed on the <em>y axe</em> of the plot</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot generation</span>
+<span class="n">CCplt</span><span class="o">.</span><span class="n">plot_electron_dos</span><span class="p">(</span><span class="n">doss</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;indigo&#39;</span><span class="p">,</span> <span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;mediumvioletred&#39;</span><span class="p">,</span> <span class="s1">&#39;crimson&#39;</span><span class="p">,</span> <span class="s1">&#39;maroon&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;chocolate&#39;</span><span class="p">,</span> <span class="s1">&#39;dimgray&#39;</span><span class="p">],</span>
+                        <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Mg $s$&#39;</span><span class="p">,</span> <span class="s1">&#39;Mg $p_x$&#39;</span><span class="p">,</span><span class="s1">&#39;Mg $p_y$&#39;</span><span class="p">,</span><span class="s1">&#39;Mg $p_z$&#39;</span><span class="p">,</span><span class="s1">&#39;O $s$&#39;</span><span class="p">,</span> <span class="s1">&#39;O $p_x$&#39;</span><span class="p">,</span><span class="s1">&#39;O $p_y$&#39;</span><span class="p">,</span><span class="s1">&#39;O $p_z$&#39;</span><span class="p">,</span> <span class="s1">&#39;Total&#39;</span><span class="p">],</span> <span class="n">dos_range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_Electronic_Structure_Electronic_Structure_CRYSTALClear_16_0.png" src="../../_images/notebooks_Electronic_Structure_Electronic_Structure_CRYSTALClear_16_0.png" />
+</div>
+</div>
+<section id="3.-Electronic-Structure">
+<h2>3. Electronic Structure<a class="headerlink" href="#3.-Electronic-Structure" title="Link to this heading">#</a></h2>
+<p>Often time it is useful to plot the band structure and the density of states side by side, this is possible in CRYSTALClear starting from the Crystal Object previously created (<code class="docutils literal notranslate"><span class="pre">`band</span></code> &lt;#band&gt;`__ and <code class="docutils literal notranslate"><span class="pre">`doss</span></code> &lt;#doss&gt;`__). Also in this case the only required arguments for the plot to be generated are the two objects, but we can further customize the plot through some additional arguments consistent with the one described in the previous sections.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot Generation</span>
+<span class="n">CCplt</span><span class="o">.</span><span class="n">plot_electron_banddos</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">doss</span><span class="p">,</span> <span class="n">k_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Gamma&#39;</span><span class="p">,</span><span class="s1">&#39;X&#39;</span><span class="p">,</span><span class="s1">&#39;W&#39;</span><span class="p">,</span><span class="s1">&#39;L&#39;</span><span class="p">,</span><span class="s1">&#39;Gamma&#39;</span><span class="p">],</span> <span class="n">energy_range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">],</span>
+                            <span class="n">color_dos</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;indigo&#39;</span><span class="p">,</span> <span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;mediumvioletred&#39;</span><span class="p">,</span> <span class="s1">&#39;crimson&#39;</span><span class="p">,</span> <span class="s1">&#39;maroon&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;chocolate&#39;</span><span class="p">,</span> <span class="s1">&#39;dimgray&#39;</span><span class="p">],</span>
+                            <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Mg $s$&#39;</span><span class="p">,</span> <span class="s1">&#39;Mg $p_x$&#39;</span><span class="p">,</span><span class="s1">&#39;Mg $p_y$&#39;</span><span class="p">,</span><span class="s1">&#39;Mg $p_z$&#39;</span><span class="p">,</span><span class="s1">&#39;O $s$&#39;</span><span class="p">,</span> <span class="s1">&#39;O $p_x$&#39;</span><span class="p">,</span><span class="s1">&#39;O $p_y$&#39;</span><span class="p">,</span><span class="s1">&#39;O $p_z$&#39;</span><span class="p">,</span> <span class="s1">&#39;Total&#39;</span><span class="p">],</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_Electronic_Structure_Electronic_Structure_CRYSTALClear_19_0.png" src="../../_images/notebooks_Electronic_Structure_Electronic_Structure_CRYSTALClear_19_0.png" />
+</div>
+</div>
+<p>If you are looking for further customization options or more advanced feature for any of these plots please refer to the <a class="reference external" href="https://crystaldevs.github.io/CRYSTALClear/CRYSTALClear.html#module-CRYSTALClear.plot">CRYSTALClear documentation</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Example Notebooks</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../Equation_Of_State/EOS.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Equation of State and Phase Transition</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#3.-Electronic-Structure">3. Electronic Structure</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CRYSTALClear Development Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, CRYSTALClear Development Team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

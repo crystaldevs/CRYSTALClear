@@ -1,0 +1,653 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simulating Vibrational Spectra &#8212; Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9fd5c01c"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/vibrational_spectra/vibrational_spectra_tutorial';</script>
+    <link rel="canonical" href="https://crystaldevs.github.io/CRYSTALClear/notebooks/vibrational_spectra/vibrational_spectra_tutorial.html" />
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="How to Cite CRYSTALClear" href="../../cite.html" />
+    <link rel="prev" title="Transport properties plot" href="../electron_transport_properties/tutorial_electron_transport_properties.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/CRYSTAL_logo.png" class="logo__image only-light" alt="Documentation - Home"/>
+    <script>document.write(`<img src="../../_static/CRYSTAL_logo.png" class="logo__image only-dark" alt="Documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Welcome to the CRYSTALClear Documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Example Notebooks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../Electronic_Structure/Electronic_Structure_CRYSTALClear.html">Electronic Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Equation_Of_State/EOS.html">Equation of State and Phase Transition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../elastic_properties/elastic_properties_tutorial.html">Elastic Properties: A Quick Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../electron_transport_properties/tutorial_electron_transport_properties.html">Transport properties plot</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Simulating Vibrational Spectra</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cite.html">How to Cite CRYSTALClear</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../convert.html">CRYSTALClear.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../crystal_io.html">CRYSTALClear.crystal_io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execute.html">CRYSTALClear.execute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plot.html">CRYSTALClear.plot</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/crystaldevs/CRYSTALClear" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/notebooks/vibrational_spectra/vibrational_spectra_tutorial.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Simulating Vibrational Spectra</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Infrared-Spectrum">Infrared Spectrum</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Raman-Spectrum">Raman Spectrum</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Combined-Spectra">Combined Spectra</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Simulating-Vibrational-Spectra">
+<h1>Simulating Vibrational Spectra<a class="headerlink" href="#Simulating-Vibrational-Spectra" title="Link to this heading">#</a></h1>
+<p><p>In this notebook, we’ll use CRYSTALClear to turn raw vibrational data from CRYSTAL simulations into clear, easy-to-read spectra — no tedious manual parsing required.</p>
+</p><section id="Infrared-Spectrum">
+<h2>Infrared Spectrum<a class="headerlink" href="#Infrared-Spectrum" title="Link to this heading">#</a></h2>
+<div class="line-block">
+<div class="line">CRYSTALClear comes with a handy plotting function called <code class="docutils literal notranslate"><span class="pre">plot_cry_spec</span></code> (in the <code class="docutils literal notranslate"><span class="pre">plot</span></code> module).</div>
+<div class="line">It’s designed to take vibrational data you’ve already extracted from a CRYSTAL output and turn it into a polished spectrum — in just one line.</div>
+</div>
+<p>Here’s the basic idea:</p>
+<ol class="arabic simple">
+<li><p><strong>Load</strong> your CRYSTAL output into a <code class="docutils literal notranslate"><span class="pre">Crystal_output</span></code> object.</p></li>
+<li><p><strong>Extract IR data</strong> by running the <code class="docutils literal notranslate"><span class="pre">.get_IR</span></code> method on that object.
+This step create the <code class="docutils literal notranslate"><span class="pre">.IR_HO_0K</span></code> attribute containing harmonic frequencies and IR intensities (numpy 2D array).</p></li>
+<li><p><strong>Plot</strong> the IR spectrum by passing this attribute to <code class="docutils literal notranslate"><span class="pre">plot_cry_spec</span></code>.</p></li>
+</ol>
+<p>Let’s create a <code class="docutils literal notranslate"><span class="pre">Crystal_output</span></code> object (CO):</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.crystal_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Crystal_output</span>
+<span class="n">CO</span> <span class="o">=</span> <span class="n">Crystal_output</span><span class="p">(</span><span class="s2">&quot;thiourea_pbed3_Ahlrichs-pVTZ_freqcalc.out&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Then, we can extract IR data with this one-liner:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CO</span><span class="o">.</span><span class="n">get_IR</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;CRYSTALClear.crystal_io.Crystal_output at 0x107b7ffd0&gt;
+</pre></div></div>
+</div>
+<p>We can finally create a plot by making use of the <code class="docutils literal notranslate"><span class="pre">plot_cry_spec</span></code> function:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">CRYSTALClear.plot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">CCplt</span>
+<span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_spec</span><span class="p">(</span><span class="n">CO</span><span class="o">.</span><span class="n">IR_HO_0K</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&lt;Figure size 1600x600 with 1 Axes&gt;,
+ &lt;AxesSubplot: xlabel=&#39;Wavenumber [cm$^{-1}$]&#39;, ylabel=&#39;Intensity [arb. u.]&#39;&gt;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_vibrational_spectra_vibrational_spectra_tutorial_9_1.png" src="../../_images/notebooks_vibrational_spectra_vibrational_spectra_tutorial_9_1.png" />
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">plot_cry_spec</span></code> supports several optional arguments that allow you to control how the spectrum is displayed.</p>
+<p>A key argument is <code class="docutils literal notranslate"><span class="pre">typeS</span></code>, which defines the line shape:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;bars&quot;</span></code> → Dirac delta lines (stick spectrum)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;lorentz&quot;</span></code> → Lorentzian peaks (default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;gauss&quot;</span></code> → Gaussian peaks</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;pvoigt&quot;</span></code> → Pseudo-Voigt peaks (mixture of Lorentzian and Gaussian)</p></li>
+</ul>
+<p>When you choose a peak shape with <code class="docutils literal notranslate"><span class="pre">typeS</span></code>, a few additional parameters control exactly how the peaks are drawn:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bwidth</span></code> → <em>Half-width at half-maximum</em> (HWHM) for a <strong>Lorentzian</strong> profile.</p>
+<ul>
+<li><p>Larger <code class="docutils literal notranslate"><span class="pre">bwidth</span></code> → broader peaks with slower decay in the tails.</p></li>
+<li><p>Smaller <code class="docutils literal notranslate"><span class="pre">bwidth</span></code> → sharper, narrower peaks.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stdev</span></code> → <em>Standard deviation</em> for a <strong>Gaussian</strong> profile.</p>
+<ul>
+<li><p>Larger <code class="docutils literal notranslate"><span class="pre">stdev</span></code> → wider, more “blurred” peaks.</p></li>
+<li><p>Smaller <code class="docutils literal notranslate"><span class="pre">stdev</span></code> → peaks become sharper and more defined.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">eta</span></code> → <em>Fraction of Lorentzian character</em> in a <strong>pseudo-Voigt</strong> profile.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">0</span></code> → pure Gaussian</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">eta</span> <span class="pre">=</span> <span class="pre">1</span></code> → pure Lorentzian</p></li>
+<li><p>Values in between blend the two shapes for a balanced peak form.</p></li>
+</ul>
+</li>
+</ul>
+<p>Other optional arguments include style, labels, line width, frequency range, etc. For a full list of arguments, you can have a look at the <a class="reference external" href="https://crystaldevs.github.io/CRYSTALClear/plot.html#CRYSTALClear.plot.plot_cry_spec">documentation</a>. Since the function returns <code class="docutils literal notranslate"><span class="pre">fig</span></code> and <code class="docutils literal notranslate"><span class="pre">ax</span></code>, you can still use all Matplotlib features to further customize the plot.</p>
+</section>
+<section id="Raman-Spectrum">
+<h2>Raman Spectrum<a class="headerlink" href="#Raman-Spectrum" title="Link to this heading">#</a></h2>
+<p>The process is analogous to IR. After computing Raman intensities, pass the result to <code class="docutils literal notranslate"><span class="pre">plot_cry_spec</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CO</span><span class="o">.</span><span class="n">get_Raman</span><span class="p">()</span>
+<span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_spec</span><span class="p">(</span><span class="n">CO</span><span class="o">.</span><span class="n">Ram_HO_0K_tot</span><span class="p">,</span> <span class="n">typeS</span><span class="o">=</span><span class="s2">&quot;gauss&quot;</span><span class="p">,</span> <span class="n">stdev</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">fmin</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;m--&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&lt;Figure size 600x600 with 1 Axes&gt;,
+ &lt;AxesSubplot: xlabel=&#39;Wavenumber [cm$^{-1}$]&#39;, ylabel=&#39;Intensity [arb. u.]&#39;&gt;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_vibrational_spectra_vibrational_spectra_tutorial_13_1.png" src="../../_images/notebooks_vibrational_spectra_vibrational_spectra_tutorial_13_1.png" />
+</div>
+</div>
+</section>
+<section id="Combined-Spectra">
+<h2>Combined Spectra<a class="headerlink" href="#Combined-Spectra" title="Link to this heading">#</a></h2>
+<p>Sometimes you want to see how the spectrum changes under different conditions — for example, the Raman spectrum of a compound at various temperatures or using different laser wavelengths.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">plot_cry_spec_multi</span></code> function is perfect for this. It accepts a list of spectra and plots them on the same axes. Optional arguments like <code class="docutils literal notranslate"><span class="pre">style</span></code> and <code class="docutils literal notranslate"><span class="pre">label</span></code> now <strong>require lists of the same length</strong> as the number of spectra. Each list entry corresponds to a spectrum in the same order.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Raman spectra of the same material (alpha quartz) at three temperatures</span>
+<span class="n">qua10K</span> <span class="o">=</span> <span class="n">Crystal_output</span><span class="p">(</span><span class="s1">&#39;qua_hf_2d_f-raman_10K_550nm.out&#39;</span><span class="p">)</span>
+<span class="n">qua295K</span> <span class="o">=</span> <span class="n">Crystal_output</span><span class="p">(</span><span class="s1">&#39;qua_hf_2d_f-raman_295K_488nm.out&#39;</span><span class="p">)</span>
+<span class="n">qua400K</span> <span class="o">=</span> <span class="n">Crystal_output</span><span class="p">(</span><span class="s1">&#39;qua_hf_2d_f-raman_400K_550nm.out&#39;</span><span class="p">)</span>
+
+<span class="n">qua10K</span><span class="o">.</span><span class="n">get_Raman</span><span class="p">()</span>
+<span class="n">qua295K</span><span class="o">.</span><span class="n">get_Raman</span><span class="p">()</span>
+<span class="n">qua400K</span><span class="o">.</span><span class="n">get_Raman</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;CRYSTALClear.crystal_io.Crystal_output at 0x117f04c10&gt;
+</pre></div></div>
+</div>
+<p>Let’s plot these spectra all together!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_spec_multi</span><span class="p">([</span><span class="n">qua10K</span><span class="o">.</span><span class="n">Ram_HO_0K_tot</span><span class="p">,</span> <span class="n">qua295K</span><span class="o">.</span><span class="n">Ram_HO_0K_tot</span><span class="p">,</span> <span class="n">qua400K</span><span class="o">.</span><span class="n">Ram_HO_0K_tot</span><span class="p">],</span> <span class="n">typeS</span><span class="o">=</span><span class="s2">&quot;pvoigt&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;10 K&#39;</span><span class="p">,</span> <span class="s1">&#39;295 K&#39;</span><span class="p">,</span> <span class="s1">&#39;400 K&#39;</span><span class="p">],</span> <span class="n">fmin</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span>  <span class="n">offset</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&lt;Figure size 1600x600 with 1 Axes&gt;,
+ &lt;AxesSubplot: xlabel=&#39;Wavenumber [cm$^{-1}$]&#39;, ylabel=&#39;Intensity [arb. u.]&#39;&gt;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_vibrational_spectra_vibrational_spectra_tutorial_18_1.png" src="../../_images/notebooks_vibrational_spectra_vibrational_spectra_tutorial_18_1.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../electron_transport_properties/tutorial_electron_transport_properties.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Transport properties plot</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../cite.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">How to Cite CRYSTALClear</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Infrared-Spectrum">Infrared Spectrum</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Raman-Spectrum">Raman Spectrum</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Combined-Spectra">Combined Spectra</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CRYSTALClear Development Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, CRYSTALClear Development Team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
