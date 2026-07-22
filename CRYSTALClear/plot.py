@@ -3018,6 +3018,9 @@ def plot_cry_poisson(theta_1D, phi_1D, S, ndeg, poisson_choice):
 
 # ----------------------------------ELASTIC------------------------------------#
 
+ 
+
+
 def plot_cry_ela(co, choose, ndeg=200):
     """
     Plot crystal elastic properties on the basis of the elastic tensor. A
@@ -3147,6 +3150,256 @@ def plot_cry_ela(co, choose, ndeg=200):
     return fig_list, ax_list, plt_list
 
     # <--
+
+# --------------------------- 2D ELASTIC PROPERTIES ---------------------------#
+
+def _ela_plane_angles(plane, alpha):
+    """Map a plane label + sweep angle alpha (1D array over [0, 2pi]) onto the
+    (theta, phi) spherical angles used by the elastic kernels.
+
+    Args:
+        plane (str): One of "xy", "xz", "yz".
+        alpha (numpy.ndarray): 1D array of sweep angles.
+
+    Returns:
+        tuple(numpy.ndarray, numpy.ndarray): (theta_1D, phi_1D) of same shape.
+    """
+    import numpy as np
+
+    if plane == "xy":
+        theta = np.full_like(alpha, np.pi / 2)
+        phi = alpha
+    elif plane == "xz":
+        theta = alpha
+        phi = np.zeros_like(alpha)
+    elif plane == "yz":
+        theta = alpha
+        phi = np.full_like(alpha, np.pi / 2)
+    else:
+        raise ValueError("plane must be one of 'xy', 'xz', 'yz'")
+    return theta, phi
+
+
+def plot_cry_shear_2D(theta_1D, phi_1D, S, ndeg, shear_choice):
+    """2D counterpart of plot_cry_shear: for each in-plane direction
+    (theta, phi) the shear modulus is evaluated over the perpendicular angle
+    chi, and the avg/min/max value is returned. Returns a 1D array (one value
+    per in-plane direction) instead of the 2D grid used by the 3D routine.
+
+    Args:
+        theta_1D (numpy.ndarray): In-plane theta values (1D).
+        phi_1D (numpy.ndarray): In-plane phi values (1D).
+        S (numpy.ndarray): Compliance matrix (6x6, Voigt).
+        ndeg (int): Number of chi samples for the perpendicular sweep.
+        shear_choice (str): "avg", "min" or "max".
+
+    Returns:
+        numpy.ndarray: Shear property, one value per in-plane direction.
+    """
+    import numpy as np
+
+    C2V = np.array([[0, 5, 4], [5, 1, 3], [4, 3, 2]])
+    npt = len(theta_1D)
+    shear_chi = np.zeros(ndeg)
+    out = np.zeros(npt)
+    chi_1D = np.linspace(0, 2 * np.pi, ndeg)
+
+    for idx in range(npt):
+        theta = theta_1D[idx]
+        phi = phi_1D[idx]
+        for chi_idx in range(ndeg):
+            chi = chi_1D[chi_idx]
+            a = np.array([
+                np.sin(theta) * np.cos(phi),
+                np.sin(theta) * np.sin(phi),
+                np.cos(theta),
+            ])
+            b = np.array([
+                np.cos(theta) * np.cos(phi) * np.cos(chi) - np.sin(phi) * np.sin(chi),
+                np.cos(theta) * np.sin(phi) * np.cos(chi) + np.cos(phi) * np.sin(chi),
+                -np.sin(theta) * np.cos(chi),
+            ])
+            shear_tmp = 0
+            for i in range(3):
+                for j in range(3):
+                    v = C2V[i, j]
+                    for k in range(3):
+                        for l in range(3):
+                            u = C2V[k, l]
+                            rf = 1
+                            if v >= 3 and u >= 3:
+                                rf = 4
+                            if v >= 3 and u < 3:
+                                rf = 2
+                            if u >= 3 and v < 3:
+                                rf = 2
+                            shear_tmp += a[i] * b[j] * a[k] * b[l] * (S[v, u] / rf)
+            shear_chi[chi_idx] = 1 / (4 * shear_tmp)
+
+        if shear_choice == "avg":
+            out[idx] = np.mean(shear_chi)
+        elif shear_choice == "min":
+            out[idx] = np.amin(shear_chi)
+        elif shear_choice == "max":
+            out[idx] = np.amax(shear_chi)
+    return out
+
+
+def plot_cry_poisson_2D(theta_1D, phi_1D, S, ndeg, poisson_choice):
+    """2D counterpart of plot_cry_poisson. See plot_cry_shear_2D for the
+    convention. Returns a 1D array (one value per in-plane direction).
+
+    Args:
+        theta_1D (numpy.ndarray): In-plane theta values (1D).
+        phi_1D (numpy.ndarray): In-plane phi values (1D).
+        S (numpy.ndarray): Compliance matrix (6x6, Voigt).
+        ndeg (int): Number of chi samples for the perpendicular sweep.
+        poisson_choice (str): "avg", "min" or "max".
+
+    Returns:
+        numpy.ndarray: Poisson's ratio, one value per in-plane direction.
+    """
+    import numpy as np
+
+    C2V = np.array([[0, 5, 4], [5, 1, 3], [4, 3, 2]])
+    npt = len(theta_1D)
+    poisson_chi = np.zeros(ndeg)
+    out = np.zeros(npt)
+    chi_1D = np.linspace(0, 2 * np.pi, ndeg)
+
+    for idx in range(npt):
+        theta = theta_1D[idx]
+        phi = phi_1D[idx]
+        for chi_idx in range(ndeg):
+            chi = chi_1D[chi_idx]
+            a = np.array([
+                np.sin(theta) * np.cos(phi),
+                np.sin(theta) * np.sin(phi),
+                np.cos(theta),
+            ])
+            b = np.array([
+                np.cos(theta) * np.cos(phi) * np.cos(chi) - np.sin(phi) * np.sin(chi),
+                np.cos(theta) * np.sin(phi) * np.cos(chi) + np.cos(phi) * np.sin(chi),
+                -np.sin(theta) * np.cos(chi),
+            ])
+            poisson_num = 0
+            poisson_den = 0
+            for i in range(3):
+                for j in range(3):
+                    v = C2V[i, j]
+                    for k in range(3):
+                        for l in range(3):
+                            u = C2V[k, l]
+                            rf = 1
+                            if v >= 3 and u >= 3:
+                                rf = 4
+                            if v >= 3 and u < 3:
+                                rf = 2
+                            if u >= 3 and v < 3:
+                                rf = 2
+                            poisson_num += (a[i] * a[j] * b[k] * b[l] * S[v, u]) / rf
+                            poisson_den += (a[i] * a[j] * a[k] * a[l] * S[v, u]) / rf
+            poisson_chi[chi_idx] = -poisson_num / poisson_den
+
+        if poisson_choice == "avg":
+            out[idx] = np.mean(poisson_chi)
+        elif poisson_choice == "min":
+            out[idx] = np.amin(poisson_chi)
+        elif poisson_choice == "max":
+            out[idx] = np.amax(poisson_chi)
+    return out
+
+
+def plot_cry_ela_2D(co, choose, ndeg=200, planes=("xy", "xz", "yz")):
+    """Plot crystal elastic properties in 2D as polar sections through the
+    three principal planes, i.e. the 2D analogue of plot_cry_ela. One figure is
+    produced per elastic tensor, overlaying the requested planes on a single
+    polar axes with a fixed radial scale shared across all figures.
+
+    Args:
+        co: A CRYSTALClear object (or list thereof) with the ``elatensor``
+            attribute set by ``Crystal_output.get_elatensor``.
+        choose (str): Property to plot. One of "young", "comp",
+            "shear avg", "shear min", "shear max",
+            "poisson avg", "poisson min", "poisson max".
+        ndeg (int): Angular resolution (default 200).
+        planes (tuple[str]): Subset of ("xy", "xz", "yz") to draw.
+
+    Returns:
+        tuple(list, list): (fig_list, ax_list) of matplotlib Figure / polar Axes.
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    if not isinstance(co, (list, tuple)):
+        co = [co]
+
+    labels = {
+        "young": "Young's modulus (GPa)",
+        "comp": "Linear compressibility (TPa$^{-1}$)",
+        "shear avg": "Shear modulus, avg (GPa)",
+        "shear min": "Shear modulus, min (GPa)",
+        "shear max": "Shear modulus, max (GPa)",
+        "poisson avg": "Poisson's ratio, avg",
+        "poisson min": "Poisson's ratio, min",
+        "poisson max": "Poisson's ratio, max",
+    }
+    plane_colors = {"xy": "tab:green", "xz": "tab:blue", "yz": "tab:red"}
+
+    alpha = np.linspace(0, 2 * np.pi, ndeg)
+
+    # Compute every curve first so the radial scale can be shared -->
+    data = []          # list over tensors: dict plane -> R(alpha)
+    rmax = 0.0
+    for element in co:
+        C = element.elatensor
+        S = np.linalg.inv(C)
+        per_plane = {}
+        for plane in planes:
+            theta_1D, phi_1D = _ela_plane_angles(plane, alpha)
+            if choose == "young":
+                R = plot_cry_young(theta_1D, phi_1D, S)
+            elif choose == "comp":
+                R = plot_cry_comp(theta_1D, phi_1D, S)
+            elif choose.startswith("shear"):
+                R = plot_cry_shear_2D(theta_1D, phi_1D, S, ndeg, choose.split()[1])
+            elif choose.startswith("poisson"):
+                R = plot_cry_poisson_2D(theta_1D, phi_1D, S, ndeg, choose.split()[1])
+            else:
+                raise ValueError("Unknown 'choose' value: %s" % choose)
+            per_plane[plane] = np.asarray(R)
+            rmax = max(rmax, np.max(np.abs(per_plane[plane])))
+        data.append(per_plane)
+    # <--
+
+    # Draw one polar figure per tensor -->
+    fig_list = []
+    ax_list = []
+    for per_plane in data:
+        fig, ax = plt.subplots(subplot_kw={"projection": "polar"})
+        for plane in planes:
+            R = per_plane[plane]
+            # Negative values (possible for comp / poisson) are drawn on the
+            # opposite ray, dashed, matching the ELATE convention.
+            pos = np.where(R >= 0, R, np.nan)
+            neg = np.where(R < 0, -R, np.nan)
+            ax.plot(alpha, pos, color=plane_colors[plane],
+                    lw=2, label=plane)
+            if np.any(R < 0):
+                ax.plot(alpha + np.pi, neg, color=plane_colors[plane],
+                        lw=2, ls="--")
+        ax.set_rlim(0, rmax * 1.05)
+        ax.set_title(labels.get(choose, choose), va="bottom")
+        ax.legend(loc="upper right", bbox_to_anchor=(1.15, 1.1))
+        fig_list.append(fig)
+        ax_list.append(ax)
+    # <--
+
+    return fig_list, ax_list
+# <-- Claude
+
+
+
 ##############################################################################
 #                                                                            #
 #                             VIBRATIONAL PROPERTIES                         #
@@ -3519,6 +3772,405 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
 
 # -----------------------------------ANHARMONIC--------------------------------#
 
+def plot_cry_vci3(co, list_mode, figsize=[8, 6], xlim=None, ylim=None,
+                  minval=None, maxval=None, cmap='bone_r'):
+    """
+    Heatmap representatin of the VCI coefficients $A_{n,s}$ as a function of 
+    the energy and the configuration functions $\Phi^\mathbf{n}$. Wrapper of
+    matplotlib.pyplot.imshow.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object.
+        figsize (tuple, optional): Image dimensions correspondig to matplotlib figsize. Default is [8, 6].
+        xlim(list[float]): Range of frequencies. Default is None.
+        ylim(list[float]): Range of configuration functions. Default is None.
+        cmap (str): Matplotlib colormap name used to map scalar data to colors. 
+        maxval (float):
+        minval (float):
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
+    """
+
+    from CRYSTALClear.units import thz_to_cm
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    # Unpack co
+    nconfs    = co.VCI_nconfs
+    nstates   = len(co.VCI_state)
+    ncontribs = len(co.VCI_state[0, 0])
+    energy    = co.VCI_energy.astype(np.int64)
+    list_conf = co.VCI_list_conf
+
+    # Compute harmonic energy for each conf -->
+    HA_energy = []
+    nmodes = len(list_conf[0])
+    for i in range(nconfs):
+        E0 = 0
+        for m in range(nmodes):
+            mode = list_mode[m] - 1
+            E0 = E0 + (0.5 + list_conf[i, m]) * thz_to_cm(co.frequency[0, mode]) 
+        HA_energy.append(E0)
+    HA_energy = np.array(HA_energy)
+    #<--
+
+    A = np.zeros((nconfs, nstates))
+
+    for i in range(nstates):
+        for k in range(ncontribs):
+            j = int(co.VCI_state[i, 0, k]) - 1 
+            A[j, i] = abs(co.VCI_state[i, 1, k])
+
+    # Sort confs according to harmonic energy -->
+    idx = np.argsort(HA_energy)
+    HA_energy = HA_energy[idx]
+    list_conf = list_conf[idx]
+    for i in range(nstates):
+        A[:, i] = A[[idx], i]
+    #<--
+
+    nbins = 100
+    step  = energy[nstates-1] / nbins
+
+    B = np.zeros((nconfs, nbins))
+    xbins = np.zeros(nbins)
+
+    for i in range(nbins):
+        Ebini = energy[0] + step * i
+        Ebinf = energy[0] + step * (i+1)
+        xbins[i] = int(Ebini + step/2)
+        for s in range(nstates):
+            if((energy[s] >= Ebini) and (energy[s] < Ebinf)):
+                B[:, i] = B[:, i] + A[:, s]
+
+    if(maxval is None):
+        maxval = np.max(B)
+    if(minval is None):
+        minval = np.min(B)
+
+    fig, ax = plt.subplots(figsize=figsize)
+
+    B = B / maxval # normalize for maxval
+
+    maxval = np.max(B)
+
+    im = ax.imshow(B, 
+                   cmap = cmap, 
+                   vmin = minval, 
+                   vmax = maxval, 
+                   extent = [0, xbins[nbins-1], 0, HA_energy[-1]], 
+                   origin = 'lower', 
+                   aspect = 'auto', 
+                   alpha = 1
+                   ) 
+
+    fig.colorbar(im, shrink=1, ticks=[minval, maxval])
+
+    # Take care of axis
+    if(xlim is not None):
+       ax.set_xlim(xlim) 
+
+    if(ylim is not None):
+       ax.set_ylim(ylim) 
+
+    ax.set_xticks([])
+
+    ax.set_ylabel("Configuration functions $\Phi^\mathbf{n}$")
+    ax.set_xlabel("Wavenumber [cm$^{-1}$]")
+
+    return fig, ax
+
+
+
+
+def plot_cry_vci2(co, list_mode):
+    """
+    """
+
+    from CRYSTALClear.units import thz_to_cm
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import MaxNLocator
+    import numpy as np
+
+    # Unpack co
+    nconfs    = co.VCI_nconfs
+    nstates   = len(co.VCI_state)
+    ncontribs = len(co.VCI_state[0, 0])
+    energy    = co.VCI_energy.astype(np.int64)
+    list_conf = co.VCI_list_conf
+    
+
+    # Compute harmonic energy for each conf -->
+    HA_energy = []
+    nmodes = len(list_conf[0])
+    for i in range(nconfs):
+        E0 = 0
+        for m in range(nmodes):
+            mode = list_mode[m] - 1
+            E0 = E0 + (0.5 + list_conf[i, m]) * thz_to_cm(co.frequency[0, mode]) 
+        HA_energy.append(E0)
+    HA_energy = np.array(HA_energy)
+
+    #print(HA_energy - HA_energy[0])
+    #<--
+
+    print("nconfs: ", nconfs)
+    print("nstates: ", nstates)
+    print("ncontribs: ", ncontribs)
+
+    A = np.zeros((nconfs, nstates))
+
+    for i in range(nstates):
+        #print("state:", i)
+        for k in range(ncontribs):
+            j = int(co.VCI_state[i, 0, k]) - 1 
+            #print("conf:", j)
+            A[j, i] = abs(co.VCI_state[i, 1, k])
+
+    #print("A0", A[0, :])
+    #print(list_conf[0])
+    #print(co.VCI_state[0, 0])
+    #print(list_conf[68])
+    #print(co.VCI_state[68, 0])
+    #print(nconfs)
+
+
+
+    # Sort confs according to harmonic energy -->
+    idx = np.argsort(HA_energy)
+    #print('prima', list_conf)
+    HA_energy = HA_energy[idx]
+    list_conf = list_conf[idx]
+    #print('dopo', list_conf)
+    #print('prima', A[:, 0])
+    #A[:, 0] = A[[idx], 0]
+    #print(A[[idx], 0])
+    #print('dopo', A[idx, 0])
+    for i in range(nstates):
+        A[:, i] = A[[idx], i]
+    #<--
+
+    nbins2 = 100
+    nxticks = 10
+    step  = energy[nstates-1] / nbins2
+
+    B = np.zeros((nconfs, nbins2))
+    xbins = np.zeros(nxticks)
+
+    k = nbins2 / nxticks
+    j = 0
+    for i in range(nbins2):
+        Ebini = energy[0] + step * i
+        Ebinf = energy[0] + step * (i+1)
+        if(i % k == 0):
+            xbins[nxticks-j-1] = int(Ebini + step/2)
+            j += 1
+
+        for s in range(nstates):
+            if((energy[s] >= Ebini) and (energy[s] < Ebinf)):
+                B[:, nbins2-i-1] = B[:, nbins2-i-1] + A[:, s]
+
+
+
+
+    print('xbins', xbins)
+    print('ultima ene', energy[nstates-1])
+
+
+
+    fig, ax = plt.subplots(figsize=[8, 8])
+    #im = ax.imshow(A[1:nstates+1,:], aspect='auto', cmap='RdBu')
+    im = ax.imshow(
+            #A[0:nstates+20,:], 
+            B[0:nconfs,:], 
+            cmap='Purples', 
+            vmin=0, 
+            vmax=2,
+            #extent = [0, energy[-1], 0, HA_energy[-1]],
+            #origin='lower',
+            aspect='auto',
+            alpha=1
+            ) 
+    fig.colorbar(im, shrink=0.80, ticks=[0, 2])
+
+
+    # Take care of xticks
+    N = 50 # number of ticks
+    ax.xaxis.set_major_locator(MaxNLocator(nbins=11))
+    #ticks = ax.get_xticks()
+    #ticks = ticks.astype(int)              # convert to array indices
+    #ticks = ticks[(ticks >= 0) & (ticks < len(energy))]
+    #ax.set_xticks(ticks)                 # keep same positions
+    ax.set_xticklabels(xbins[0:])       # change only text
+    ax.tick_params(axis='x', rotation=45)
+    ax.set_xlabel("VCI Energy [cm$^{-1}$]")
+
+    # Take care of yticks
+    HA_energy = (HA_energy - HA_energy[0]).astype(np.int64)
+    ax.yaxis.set_major_locator(MaxNLocator(N))
+    ticks = ax.get_yticks()
+    ticks = ticks.astype(int)              # convert to array indices
+    ticks = ticks[(ticks >= 0) & (ticks < len(HA_energy))]
+    ax.set_yticks(ticks)                 # keep same positions
+    #ax.set_yticklabels(HA_energy[ticks])       # change only text
+    ax.tick_params(axis='y', rotation=45)
+    #ax.set_ylabel("Harmonic Energy [cm$^{-1}$]")
+
+    #ax.set_xlim(5200, 0)
+    ax.set_ylim(0, 7000)
+
+    return fig, ax
+
+
+
+
+def plot_cry_vci(co, list_mode):
+    """
+    """
+
+    from CRYSTALClear.units import thz_to_cm
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import MaxNLocator
+    import numpy as np
+
+    # Unpack co
+    nconfs    = co.VCI_nconfs
+    nstates   = len(co.VCI_state)
+    ncontribs = len(co.VCI_state[0, 0])
+    energy    = co.VCI_energy.astype(np.int64)
+    list_conf = co.VCI_list_conf
+
+
+    
+
+    # Compute harmonic energy for each conf -->
+    HA_energy = []
+    nmodes = len(list_conf[0])
+    for i in range(nconfs):
+        E0 = 0
+        for m in range(nmodes):
+            mode = list_mode[m] - 1
+            E0 = E0 + (0.5 + list_conf[i, m]) * thz_to_cm(co.frequency[0, mode]) 
+        HA_energy.append(E0)
+    HA_energy = np.array(HA_energy)
+
+    #print(HA_energy - HA_energy[0])
+    #<--
+
+    print("nconfs: ", nconfs)
+    print("nstates: ", nstates)
+    print("ncontribs: ", ncontribs)
+
+    A = np.zeros((nconfs, nstates))
+
+    for i in range(nstates):
+        #print("state:", i)
+        for k in range(ncontribs):
+            j = int(co.VCI_state[i, 0, k]) - 1 
+            #print("conf:", j)
+            A[j, i] = abs(co.VCI_state[i, 1, k])
+
+    #print("A0", A[0, :])
+    #print(list_conf[0])
+    #print(co.VCI_state[0, 0])
+    #print(list_conf[68])
+    #print(co.VCI_state[68, 0])
+    #print(nconfs)
+
+
+
+    # Sort confs according to harmonic energy -->
+    idx = np.argsort(HA_energy)
+    #print('prima', list_conf)
+    HA_energy = HA_energy[idx]
+    list_conf = list_conf[idx]
+    #print('dopo', list_conf)
+    #print('prima', A[:, 0])
+    #A[:, 0] = A[[idx], 0]
+    #print(A[[idx], 0])
+    #print('dopo', A[idx, 0])
+    for i in range(nstates):
+        A[:, i] = A[[idx], i]
+    #<--
+
+    #launo = np.array(A[1, :])
+
+    #A[1, :] = A[2, :]
+    #A[2, :] = A[3, :]
+    #A[3, :] = A[4, :]
+    #A[4, :] = launo
+
+
+
+
+
+
+
+
+    # Sort states according to their energy -->
+    idx = np.argsort(co.VCI_energy)
+    for j in range(nconfs):
+        A[j, :] = A[j, [idx]]
+    energy = energy[idx]
+    #<--
+
+
+    #debug
+    print(A[:, 0], energy[0])
+    print(A[:, 1], energy[1])
+    #debug
+
+
+
+
+
+    fig, ax = plt.subplots(figsize=[8, 8])
+    #im = ax.imshow(A[1:nstates+1,:], aspect='auto', cmap='RdBu')
+    im = ax.imshow(
+            #A[0:nstates+20,:], 
+            A[0:nconfs,:], 
+            cmap='bone_r', 
+            vmin=np.min(A), 
+            vmax=1,
+            #extent = [0, energy[-1], 0, HA_energy[-1]],
+            #origin='lower',
+            #aspect='auto'
+            ) 
+    #fig.colorbar(im, shrink=0.80, ticks=[np.min(A), np.max(A)])
+    fig.colorbar(im, shrink=0.80, ticks=[np.min(A), 1])
+
+
+    # Take care of xticks
+    N = 2000 # number of ticks
+    ax.xaxis.set_major_locator(MaxNLocator(N))
+    ticks = ax.get_xticks()
+    ticks = ticks.astype(int)              # convert to array indices
+    ticks = ticks[(ticks >= 0) & (ticks < len(energy))]
+    ax.set_xticks(ticks)                 # keep same positions
+    ax.set_xticklabels(energy[ticks])       # change only text
+    ax.tick_params(axis='x', rotation=45)
+    ax.set_xlabel("VCI Energy [cm$^{-1}$]")
+
+    # Take care of yticks
+    #HA_energy = (HA_energy - HA_energy[0]).astype(np.int64)
+    #ax.yaxis.set_major_locator(MaxNLocator(N))
+    #ticks = ax.get_yticks()
+    #ticks = ticks.astype(int)              # convert to array indices
+    #ticks = ticks[(ticks >= 0) & (ticks < len(HA_energy))]
+    #ax.set_yticks(ticks)                 # keep same positions
+    #ax.set_yticklabels(HA_energy[ticks])       # change only text
+    #ax.tick_params(axis='y', rotation=45)
+    #ax.set_ylabel("Harmonic Energy [cm$^{-1}$]")
+
+    ax.set_xlim(0, 6)
+    ax.set_ylim(0, 6)
+
+    return fig, ax
+
+
+
 def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
                   stdev=3, eta=0.5, fmin=None, fmax=None, ylim=None,
                   exp_spec=None, sep=";", export_csv=False, label=None,
@@ -3565,6 +4217,11 @@ def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
     import matplotlib.pyplot as plt
     import numpy as np
     from numpy import genfromtxt
+
+    #debug
+    #compstyle=['r--', 'r--', 'r--', 'r--', 'r--', 'r--', 'r--', 'r--', 'r--']
+    #components=True
+    #debug
 
     if (ax is None):
         fig, ax = plt.subplots(figsize=figsize)
@@ -3620,12 +4277,16 @@ def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
                 sbuff[j, 1] = lorentz
             L.append(deepcopy(sbuff))
             iL = iL + 1
-        if (not components):
+        if(not components):
             for i in range(len(L)):
                 spec_data[:, 1] = spec_data[:, 1] + L[i][:, 1]
         else:
             for i in range(len(L)):
-                ax.plot(spec_data[:, 0], L[i][:, 1], linewidth=linewidth)
+                if(compstyle is not None):
+                    ax.plot(spec_data[:, 0], L[i][:, 1], compstyle[i], 
+                            linewidth=linewidth)
+                else:
+                    ax.plot(spec_data[:, 0], L[i][:, 1], linewidth=linewidth)
             for i in range(len(L)):
                 spec_data[:, 1] = spec_data[:, 1] + L[i][:, 1]
 
@@ -3640,12 +4301,16 @@ def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
                              (2*stdev**2))*transitions[i, 1]
                 sbuff[j, 1] = gauss
             G.append(deepcopy(sbuff))
-        if (not components):
+        if(not components):
             for i in range(len(G)):
                 spec_data[:, 1] = spec_data[:, 1] + G[i][:, 1]
         else:
             for i in range(len(G)):
-                ax.plot(spec_data[:, 0], G[i][:, 1], linewidth=linewidth)
+                if(compstyle is not None):
+                    ax.plot(spec_data[:, 0], G[i][:, 1], compstyle[i], 
+                            linewidth=linewidth)
+                else:
+                    ax.plot(spec_data[:, 0], G[i][:, 1], linewidth=linewidth)
             for i in range(len(G)):
                 spec_data[:, 1] = spec_data[:, 1] + G[i][:, 1]
 
@@ -3662,7 +4327,7 @@ def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
                     ((f-transitions[i, 0])**2+bwidth**2)*transitions[i, 1]
                 sbuff[j, 1] = eta*lorentz + (1-eta)*gauss
             V.append(deepcopy(sbuff))
-        if (not components):
+        if(not components):
             for i in range(len(V)):
                 spec_data[:, 1] = spec_data[:, 1] + V[i][:, 1]
         else:
@@ -3756,7 +4421,6 @@ def plot_cry_spec_multi(files, typeS="lorentz", components=False, bwidth=5,
     if (style is not None):
         for i in range(len(style)):
             compstyle.append([style[i]] * 100)
-
     for i, transitions in enumerate(files):
         if ((label is not None) and (style is None)):
             plot_cry_spec(transitions, typeS, components, bwidth, stdev, eta,
@@ -3834,7 +4498,7 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     npts = 10000
 
     # Matplotlib aspect ratio
-    plt.figure(figsize=figsize)
+    fig, ax = plt.subplots(figsize=figsize)
 
     # Define harmonic freq
     amu_me = 1822.88848
@@ -3851,9 +4515,9 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     xi = x * alpha
 
     # Plot levels
-    Nlevel = 10
+    Nlevel = len(energy)
     for i in range(Nlevel):
-        plt.hlines(y=energy[i], xmin=rangescan[0], xmax=rangescan[1],
+        ax.hlines(y=energy[i], xmin=rangescan[0], xmax=rangescan[1],
                    colors='k', linewidth=0.3)
 
     # Set number of basis functions and wf
@@ -3879,7 +4543,7 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     xi = x * lambda_AU**0.25
 
     # for s in range(N):
-    for s in range(Nlevel):
+    for s in range(9):
         for i in range(N):
             wfANH[:, s] = wfANH[:, s] + wf[i, s]*wfHO[:, i]
 
@@ -3889,7 +4553,7 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
         # Plot wf
         for i in range(Nwf):
             yp = wfANH[:, i]*scale_wf + energy[i]
-            plt.plot(xi, yp, "m-", linewidth=1)
+            ax.plot(xi, yp, "m-", linewidth=1)
     # <-- Wavefunctions
 
     # Probability density  -->
@@ -3897,31 +4561,31 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
         for s in range(Nlevel):
             prob = wfANH[:, s]**2*scale_prob**2 + energy[s]
             lower_bound = energy[s] + 0*xi
-            plt.fill_between(xi, lower_bound, prob, color='c', alpha=0.3)
+            ax.fill_between(xi, lower_bound, prob, color='c', alpha=0.3)
 
     # Plot anharmonic potential
     anhpot = 1/2 * force_const[2] * xi**2 \
-        + 1/6 * force_const[3] * xi**3 \
-        + 1/24 * force_const[4] * xi**4
-    plt.plot(xi, anhpot, 'b', linewidth=2)
+           + 1/6 * force_const[3] * xi**3 \
+           + 1/24 * force_const[4] * xi**4
+    ax.plot(xi, anhpot, 'b', linewidth=2)
 
     # Plot harmonic potential
     if (harmpot):
         HOpot = 1/2 * harm_freq * xi**2
-        plt.plot(xi, HOpot, 'r--', linewidth=2)
+        ax.plot(xi, HOpot, 'r--', linewidth=2)
 
     # Plot scan potential
     if (scanpot):
         # Define scaled_x
         scaled_x = np.linspace(rangescan[0], rangescan[1], len(scan_energy))
-        plt.plot(scaled_x, scan_energy, 'bo')
+        ax.plot(scaled_x, scan_energy, 'bo')
 
-    plt.ylabel('$\Delta E$ [cm$^{-1}$]')
-    plt.xlabel(r'$\xi$')
-    plt.xlim([rangescan[0], rangescan[1]])
-    plt.ylim([harm_freq, abs(harm_freq)*5])
+    ax.set_ylabel('$\Delta E$ [cm$^{-1}$]')
+    ax.set_xlabel(r'$\xi$')
+    ax.set_xlim([rangescan[0], rangescan[1]])
+    ax.set_ylim([-100, abs(harm_freq)*10])
 
-    return plt
+    return fig, ax
 
 # --------------------------------------EOS-----------------------------------#
 
@@ -4121,3 +4785,4 @@ def plot_cry_EOS(eos, formula_unit=None, plot='VvsE', color='tab:blue', figsize=
     # <--
 
     return fig, ax
+
