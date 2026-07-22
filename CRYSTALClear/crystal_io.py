@@ -1453,6 +1453,7 @@ class Crystal_output:
         """
 
         import re
+
         import numpy as np
 
         from CRYSTALClear.base.crysout import PhononBASE
@@ -1641,6 +1642,7 @@ class Crystal_output:
         """
 
         import numpy as np
+
         from CRYSTALClear.units import thz_to_cm
 
         self.get_phonon()
@@ -1664,6 +1666,7 @@ class Crystal_output:
         """
 
         import re
+
         import numpy as np
 
         savePC = False
@@ -1750,6 +1753,7 @@ class Crystal_output:
         """
 
         import re
+
         import numpy as np
 
         save = False
@@ -1954,6 +1958,7 @@ class Crystal_output:
         """
 
         import re
+
         import numpy as np
 
         # Initialize some logical variables
@@ -2758,6 +2763,7 @@ class Crystal_output:
         """
 
         import re
+
         import numpy as np
 
         # Definition of the delimiters regex -->
@@ -2858,6 +2864,59 @@ class Crystal_output:
         # <--
 
         return self
+    
+    def get_masses(self):
+        import re 
+        
+        check_freq = ' \* +F+\s+R+ +E+ +Q+(\s+(U\s+)+)E+(\s+(N\s+)+)C+(\s+(Y\s+)+)\*'
+        amu_start = ' ATOMS ISOTOPIC MASS \(AMU\)'
+        amu_end = ' \*+'
+        freq = False
+        find_end = False
+        for index,line in enumerate(self.data):
+            if re.match(check_freq, line):
+                freq = True
+
+            if freq:
+                if re.match(amu_start, line):
+                    amu_start_index = index + 2
+                    find_end = True
+
+                if find_end:
+                    if re.match(amu_end, line):
+                        amu_end_index = index
+                        break
+
+        amu = self.data[amu_start_index:amu_end_index]
+
+        self.symbols = []
+        self.masses = []
+        self.isotope_indexes = []
+        at_mass = []
+        for line in amu:
+            splitline = line.split()
+            at_mass += [splitline[x: x + 3] for x in range(0, len(splitline), 3)]
+
+        for ls in at_mass:
+            if (ls[1] not in self.symbols) and (float(ls[2]) not in self.masses):
+                self.symbols.append(ls[1])
+                self.masses.append(float(ls[2]))
+
+            elif (ls[1] in self.symbols) and (float(ls[2]) not in self.masses): 
+                ls[0] = int(ls[0])
+                self.isotope_indexes.append(ls[:1])
+                self.masses.append(float(ls[2]))
+
+
+        self.masses_dict = dict(zip(self.symbols, self.masses))
+
+        return self
+
+                
+
+                    
+
+
 
 
 class Properties_input:
@@ -2935,6 +2994,7 @@ class Properties_input:
         """
 
         import sys
+
         import numpy as np
 
         bands_block = []
@@ -4264,6 +4324,7 @@ class Properties_output:
              ase_obj: ASE object.
         """
         import sys
+
         from ase import Atoms
 
         if not hasattr(self,'topo_df'):
@@ -4584,6 +4645,7 @@ class Properties_output:
              ase_obj: The generated ASE object.
         """
         import sys
+
         from ase import Atoms
 
         if not hasattr(self,'tlap_df'):
