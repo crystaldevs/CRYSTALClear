@@ -1408,8 +1408,8 @@ class Crystal_output:
 
     #### Lattice Dynamics ####
 
-    def get_phonon(self, read_eigvt=True, rm_imaginary=True, rm_overlap=True,
-                   imaginary_tol=-1e-4, q_overlap_tol=1e-4, eigvt_amplitude=1.):
+    def get_phonon(self, read_eigvt=True, rm_imaginary=True, 
+                   imaginary_tol=-1e-4, eigvt_amplitude=1.):
         """
         Read phonon-related properties from output file.
 
@@ -1418,13 +1418,8 @@ class Crystal_output:
                 normalize it to 1.
             rm_imaginary (bool): Remove the modes with negative frequencies and
                 set all the related properties to NaN.
-            rm_overlap (bool): *For dispersion calculations* Remove repeated q
-                points and recalculate their weights.
             imaginary_tol (float): Valid only if ``rm_imaginary = True``.  The threshold
                 of negative frequencies.
-            q_overlap_tol (float): Valid only if ``rm_overlap = True``.  The threshold of
-                overlapping points, defined as the 2nd norm of the difference
-                of fractional q vectors
             eigvt_amplitude (float | str): Valid if ``read_eigvt = True``.
                 Amplitude of normalization, or "classical", "classical-rev",
                 classical amplitude and revmove classical amplitude.
@@ -1613,8 +1608,6 @@ class Crystal_output:
         if rm_imaginary == True:
             self = PhononBASE.clean_imaginary(self, threshold=imaginary_tol)
 
-        if rm_overlap == True and self.nqpoint > 1:
-            self = PhononBASE.clean_q_overlap(self, threshold=q_overlap_tol)
 
         return self
 
@@ -1818,6 +1811,104 @@ class Crystal_output:
         return self
 
 
+    def get_vci(self):
+        """
+        Extract VCI states (in development).
+
+        Returns:
+            self (Crystal_output): New attributes listed below.
+            self.VCI_label(np.array)
+            self.VCI_state(np.array)
+            self.VCI_energy(np.array)
+            self.VCI_nconfs(int)
+            self.VCI_list_conf(np.array)
+        """
+
+        import re
+        import numpy as np
+
+        save   = False
+        nstate = 0
+        label  = []
+        energy = []
+        state1 = []
+        state2 = []
+        ONVs = []
+
+        # Get harmonic freqs -->
+        self.get_phonon()
+        #<--
+
+        # Big loop over lines of CRYSTAL output file -->
+        for i, line in enumerate(self.data):
+
+            if re.match(r'^\s*\*\s*VIBRATIONAL\s+CONFIGURATION\s+INTERACTION\s+\(VCI\)\s*\*$', line):
+                save = True
+
+            if re.match(r'\s* VCI PERFORMED', line):
+                save = False
+
+            if (re.match(r'^\s*\d', line) and save):
+                #ONVs.append(line.split()[2:])  # only for taglia e cuci
+                ONVs.append(line.split()[3:]) # this is the correct one
+
+            #################################
+            # Remember to update VCI print in CRYSTAL !!!!!!
+            #################################
+
+            if re.match(r'\s*TOTAL NUMBER OF CONFIGURATIONS', line):
+                self.VCI_nconfs = (int(line.split()[4]))
+
+            if re.match(r'\s* VCI STATE \(', line): 
+                nstate += 1
+                label.append(int(line.split()[3].replace(")", "")))
+                energy.append((float(line.split()[7])))
+                p = 3
+                loop = True
+                confs_tmp = []
+                coeffs_tmp = []
+                while loop:
+                    confs_tmp = confs_tmp + self.data[i+p].split()[1:]
+                    coeffs_tmp = coeffs_tmp + self.data[i+p+1].split()[1:]
+                    if (re.match(r'\s*CONFs', self.data[i+p+2])):
+                        loop = True
+                        p += 2
+                    else:
+                        loop = False
+                        break
+
+                confs = [int(x) for x in confs_tmp]
+                coeffs = [float(x) for x in coeffs_tmp]
+
+                state1.append(confs)
+                state2.append(coeffs)
+        #<--
+
+
+        # Parsing of ONVs -->
+        nmodes = len(ONVs[0])
+        for i in range(self.VCI_nconfs):
+            for m in range(nmodes):
+                ONVs[i][m] = int(ONVs[i][m].replace(')', '').replace(',', ''))
+                pass
+        self.VCI_list_conf = np.array(ONVs)
+        #<--
+
+
+        A = np.zeros((nstate, 2, len(confs)), dtype=float)
+
+        for i in range(nstate):
+            A[i, 0] = np.array(state1[i])
+            A[i, 1] = np.array(state2[i])
+
+
+        self.VCI_label  = np.array(label)
+        self.VCI_energy = np.array(energy)
+        self.VCI_state  = A
+
+        return self
+
+
     def get_anh_spectra(self):
         """
         Extract anharmonic (VSCF and VCI) IR and Raman spectra (in development).
@@ -1842,6 +1933,11 @@ class Crystal_output:
             self.Ram_VSCF_0K_par (np.array): 2D array containing VSCF Raman frequency and intensities (parallel component) computed at 0 K.
             self.Ram_VSCF_T_tot (np.array): 2D array containing VSCF Raman frequency and intensities (total) computed at temperature T. self.Ram_VSCF_T_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at temperature T.
             self.Ram_VSCF_T_par (np.array): 2D array containing VSCF Raman frequency and intensities (parallel component) computed at temperature T.
+
+            self.Ram_VPT2_0K_tot (np.array): 2D array containing VPT2 Raman frequency and intensities (total) computed at 0 K. self.Ram_VPT2_0K_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at 0 K.
+            self.Ram_VPT2_0K_par (np.array): 2D array containing VPT2 Raman frequency and intensities (parallel component) computed at 0 K.
+            self.Ram_VPT2_T_tot (np.array): 2D array containing VPT2 Raman frequency and intensities (total) computed at temperature T. self.Ram_VPT2_T_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at temperature T.
+            self.Ram_VPT2_T_par (np.array): 2D array containing VPT2 Raman frequency and intensities (parallel component) computed at temperature T.
 
             self.Ram_VCI_0K_tot (np.array): 2D array containing VCI Raman frequency and intensities (total) computed at 0 K.
             self.Ram_VCI_0K_per (np.array): 2D array containing VCI Raman frequency and intensities (perpendicular component) computed at 0 K.
@@ -1872,16 +1968,25 @@ class Crystal_output:
         HO_Ram_T_tot = False
         HO_Ram_0K_comp = False
         HO_Ram_T_comp = False
+
         VSCF_IR = False
         VSCF_Ram_0K_tot = False
         VSCF_Ram_0K_comp = False
         VSCF_Ram_T_tot = False
         VSCF_Ram_T_comp = False
+
+        VPT2_IR = False
+        VPT2_Ram_0K_tot = False
+        VPT2_Ram_0K_comp = False
+        VPT2_Ram_T_tot = False
+        VPT2_Ram_T_comp = False
+
         VCI_IR = False
         VCI_Ram_0K_tot = False
         VCI_Ram_0K_comp = False
         VCI_Ram_T_tot = False
         VCI_Ram_T_comp = False
+
         # anscan
         imode_IR = []
         imode_Ram = []
@@ -1895,15 +2000,24 @@ class Crystal_output:
         # Initialize some member variables
         IR_HO = []
         IR_VSCF = []
+        IR_VPT2 = []
         IR_VCI = []
+
         Ram_HO_0K_tot = []
         Ram_HO_T_tot = []
         Ram_HO_0K_comp = []
         Ram_HO_T_comp = []
+
         Ram_VSCF_0K_tot = []
         Ram_VSCF_T_tot = []
         Ram_VSCF_0K_comp = []
         Ram_VSCF_T_comp = []
+
+        Ram_VPT2_0K_tot = []
+        Ram_VPT2_T_tot = []
+        Ram_VPT2_0K_comp = []
+        Ram_VPT2_T_comp = []
+
         Ram_VCI_0K_tot = []
         Ram_VCI_T_tot = []
         Ram_VCI_0K_comp = []
@@ -1918,16 +2032,25 @@ class Crystal_output:
         bufferHO_Ram_T_tot = []
         bufferHO_Ram_0K_comp = []
         bufferHO_Ram_T_comp = []
+
         bufferVSCF_IR = []
         bufferVSCF_Ram_0K_tot = []
         bufferVSCF_Ram_T_tot = []
         bufferVSCF_Ram_0K_comp = []
         bufferVSCF_Ram_T_comp = []
+
+        bufferVPT2_IR = []
+        bufferVPT2_Ram_0K_tot = []
+        bufferVPT2_Ram_T_tot = []
+        bufferVPT2_Ram_0K_comp = []
+        bufferVPT2_Ram_T_comp = []
+
         bufferVCI_IR = []
         bufferVCI_Ram_0K_tot = []
         bufferVCI_Ram_T_tot = []
         bufferVCI_Ram_0K_comp = []
         bufferVCI_Ram_T_comp = []
+
         # anscan
         bufferanscan_IR = []
         bufferanscan_Ram_0K_tot = []
@@ -1946,6 +2069,8 @@ class Crystal_output:
             if re.match(r'\s*ANHARMONIC IR SPECTRUM', line):
                 if re.match(r'\s*VSCF', self.data[i-1]):
                     VSCF_IR = True
+                elif re.match(r'\s*VPT2*', self.data[i-1]):
+                    VPT2_IR = True
                 elif re.match(r'\s*VCI*', self.data[i-1]):
                     VCI_IR = True
                 # anscan
@@ -1981,6 +2106,17 @@ class Crystal_output:
                         else:
                             VSCF_Ram_T_comp = True
                 save = True
+                if re.match(r'\s*VPT2*', self.data[i-1]):
+                    if re.match(r'\s*\[ 0 K \]', self.data[i+1]):
+                        if re.match(r'\s*I_TOT', self.data[i+4]):
+                            VPT2_Ram_0K_tot = True
+                        else:
+                            VPT2_Ram_0K_comp = True
+                    else:
+                        if re.match(r'\s*I_TOT', self.data[i+4]):
+                            VPT2_Ram_T_tot = True
+                        else:
+                            VPT2_Ram_T_comp = True
                 if re.match(r'\s*VCI*', self.data[i-1]):
                     if re.match(r'\s*\[ 0 K \]', self.data[i+1]):
                         if re.match(r'\s*I_TOT', self.data[i+4]):
@@ -2016,11 +2152,19 @@ class Crystal_output:
                 HO_Ram_T_tot = False
                 HO_Ram_0K_comp = False
                 HO_Ram_T_comp = False
+
                 VSCF_IR = False
                 VSCF_Ram_0K_tot = False
                 VSCF_Ram_0K_comp = False
                 VSCF_Ram_T_tot = False
                 VSCF_Ram_T_comp = False
+
+                VPT2_IR = False
+                VPT2_Ram_0K_tot = False
+                VPT2_Ram_0K_comp = False
+                VPT2_Ram_T_tot = False
+                VPT2_Ram_T_comp = False
+
                 VCI_IR = False
                 VCI_Ram_0K_tot = False
                 VCI_Ram_0K_comp = False
@@ -2055,6 +2199,16 @@ class Crystal_output:
                     bufferVSCF_Ram_0K_comp.append(line)
                 if VSCF_Ram_T_comp:
                     bufferVSCF_Ram_T_comp.append(line)
+                if VPT2_IR:
+                    bufferVPT2_IR.append(line)
+                if VPT2_Ram_0K_tot:
+                    bufferVPT2_Ram_0K_tot.append(line)
+                if VPT2_Ram_T_tot:
+                    bufferVPT2_Ram_T_tot.append(line)
+                if VPT2_Ram_0K_comp:
+                    bufferVPT2_Ram_0K_comp.append(line)
+                if VPT2_Ram_T_comp:
+                    bufferVPT2_Ram_T_comp.append(line)
                 if VCI_IR:
                     bufferVCI_IR.append(line)
                 if VCI_Ram_0K_tot:
@@ -2107,6 +2261,17 @@ class Crystal_output:
             IR_VSCF = np.array(IR_VSCF)
             self.IR_VSCF_T = IR_VSCF[:, 0:3:2]
             self.IR_VSCF_0K = IR_VSCF[:, 0:2]
+
+        # Save and parse VPT2 data for IR spectrum
+        n_VPT2_ir = len(bufferVPT2_IR)
+        if n_VPT2_ir > 0:
+            for i, line in enumerate(bufferVPT2_IR[5:n_VPT2_ir-1]):
+                IR_VPT2.append(line.split()[3:6])
+                for j in range(3):
+                    IR_VPT2[i][j] = float(IR_VPT2[i][j])
+            IR_VPT2 = np.array(IR_VPT2)
+            self.IR_VPT2_T = IR_VPT2[:, 0:3:2]
+            self.IR_VPT2_0K = IR_VPT2[:, 0:2]
 
         # Save and parse VCI data for IR spectrum
         n_VCI_ir = len(bufferVCI_IR)
@@ -2254,6 +2419,60 @@ class Crystal_output:
             self.Ram_VSCF_T_comp_yy = Ram_VSCF_T_comp[:, 0:5:4]
             self.Ram_VSCF_T_comp_yz = Ram_VSCF_T_comp[:, 0:6:5]
             self.Ram_VSCF_T_comp_zz = Ram_VSCF_T_comp[:, 0:7:6]
+
+       # Save and parse VPT2 data for Raman spectrum (0K, tot)
+        n_VPT2_Ram_0K_tot = len(bufferVPT2_Ram_0K_tot)
+        if n_VPT2_Ram_0K_tot > 0:
+            for i, line in enumerate(bufferVPT2_Ram_0K_tot[6:n_VPT2_Ram_0K_tot-1]):
+                Ram_VPT2_0K_tot.append(line.split()[3:7])
+                for j in range(4):
+                    Ram_VPT2_0K_tot[i][j] = float(Ram_VPT2_0K_tot[i][j])
+            Ram_VPT2_0K_tot = np.array(Ram_VPT2_0K_tot)
+            self.Ram_VPT2_0K_tot = Ram_VPT2_0K_tot[:, 0:2]
+            self.Ram_VPT2_0K_per = Ram_VPT2_0K_tot[:, 0:3:2]
+            self.Ram_VPT2_0K_par = Ram_VPT2_0K_tot[:, 0:4:3]
+
+       # Save and parse VPT2 data for Raman spectrum (T, tot)
+        n_VPT2_Ram_T_tot = len(bufferVPT2_Ram_T_tot)
+        if n_VPT2_Ram_T_tot > 0:
+            for i, line in enumerate(bufferVPT2_Ram_T_tot[6:n_VPT2_Ram_T_tot-1]):
+                Ram_VPT2_T_tot.append(line.split()[3:7])
+                for j in range(4):
+                    Ram_VPT2_T_tot[i][j] = float(Ram_VPT2_T_tot[i][j])
+            Ram_VPT2_T_tot = np.array(Ram_VPT2_T_tot)
+            self.Ram_VPT2_T_tot = Ram_VPT2_T_tot[:, 0:2]
+            self.Ram_VPT2_T_per = Ram_VPT2_T_tot[:, 0:3:2]
+            self.Ram_VPT2_T_par = Ram_VPT2_T_tot[:, 0:4:3]
+
+       # Save and parse VPT2 data for Raman spectrum (0K, comp)
+        n_VPT2_Ram_0K_comp = len(bufferVPT2_Ram_0K_comp)
+        if n_VPT2_Ram_0K_comp > 0:
+            for i, line in enumerate(bufferVPT2_Ram_0K_comp[6:n_VPT2_Ram_0K_comp-1]):
+                Ram_VPT2_0K_comp.append(line.split()[3:10])
+                for j in range(7):
+                    Ram_VPT2_0K_comp[i][j] = float(Ram_VPT2_0K_comp[i][j])
+            Ram_VPT2_0K_comp = np.array(Ram_VPT2_0K_comp)
+            self.Ram_VPT2_0K_comp_xx = Ram_VPT2_0K_comp[:, 0:2]
+            self.Ram_VPT2_0K_comp_xy = Ram_VPT2_0K_comp[:, 0:3:2]
+            self.Ram_VPT2_0K_comp_xz = Ram_VPT2_0K_comp[:, 0:4:3]
+            self.Ram_VPT2_0K_comp_yy = Ram_VPT2_0K_comp[:, 0:5:4]
+            self.Ram_VPT2_0K_comp_yz = Ram_VPT2_0K_comp[:, 0:6:5]
+            self.Ram_VPT2_0K_comp_zz = Ram_VPT2_0K_comp[:, 0:7:6]
+
+       # Save and parse VPT2 data for Raman spectrum (T, comp)
+        n_VPT2_Ram_T_comp = len(bufferVPT2_Ram_T_comp)
+        if n_VPT2_Ram_T_comp > 0:
+            for i, line in enumerate(bufferVPT2_Ram_T_comp[6:n_VPT2_Ram_T_comp-1]):
+                Ram_VPT2_T_comp.append(line.split()[3:10])
+                for j in range(7):
+                    Ram_VPT2_T_comp[i][j] = float(Ram_VPT2_T_comp[i][j])
+            Ram_VPT2_T_comp = np.array(Ram_VPT2_T_comp)
+            self.Ram_VPT2_T_comp_xx = Ram_VPT2_T_comp[:, 0:2]
+            self.Ram_VPT2_T_comp_xy = Ram_VPT2_T_comp[:, 0:3:2]
+            self.Ram_VPT2_T_comp_xz = Ram_VPT2_T_comp[:, 0:4:3]
+            self.Ram_VPT2_T_comp_yy = Ram_VPT2_T_comp[:, 0:5:4]
+            self.Ram_VPT2_T_comp_yz = Ram_VPT2_T_comp[:, 0:6:5]
+            self.Ram_VPT2_T_comp_zz = Ram_VPT2_T_comp[:, 0:7:6]
 
        # Save and parse VCI data for Raman spectrum (0K, tot)
         n_VCI_Ram_0K_tot = len(bufferVCI_Ram_0K_tot)
