@@ -2069,6 +2069,142 @@ class Crystal_output:
         return self
 
 
+    def get_ADP(self):
+        """
+        Extract the atomic displacement parameters (ADP) from a FREQCALC run.
+
+        Reads every block CRYSTAL prints under the ``ADP`` keyword: one per
+        temperature requested by ``TEMPERAT``, each holding the ADP tensor, the
+        principal values of the displacement ellipsoid and the rotation tensor
+        carrying the cartesian axes onto the principal ones, for every atom in
+        the cell.
+
+        The tensors are in the cartesian frame. Converting them to the
+        crystallographic basis a CIF wants is a separate step, and needs the
+        cell.
+
+        Returns:
+            self (Crystal_output): New attributes listed below. All empty
+            arrays when the output has no ADP section.
+            self.adp_temperature (np.array): ntemp temperatures. Unit: K.
+            self.adp_active_modes (np.array): ntemp counts of the modes
+                included at each temperature.
+            self.adp (np.array): ntemp\\*natom\\*3\\*3 ADP tensors, cartesian.
+                Unit: Angstrom^2.
+            self.adp_principal (np.array): ntemp\\*natom\\*3 principal values of
+                each displacement ellipsoid. Unit: Angstrom^2.
+            self.adp_axes (np.array): ntemp\\*natom\\*3\\*3 rotation tensors,
+                whose rows are the ellipsoid's principal axes in cartesian
+                coordinates.
+        """
+        import re
+
+        import numpy as np
+
+        from CRYSTALClear.units import au_to_angstrom
+
+        banner = re.compile(r'^\s*ATOMIC DISPLACEMENT PARAMETERS \(ADP\)')
+        temperature = re.compile(r'^\s*TEMPERATURE\s*=\s*(-?\d+\.?\d*)\s*K')
+        active = re.compile(r'^\s*NUMBER OF ACTIVE MODES\s*=\s*(\d+)')
+        tensor = re.compile(r'^\s*ADP TENSOR')
+        principal = re.compile(r'^\s*PRINCIPAL AXES OF THE ELLIPSOID')
+        rotation = re.compile(r'^\s*ROTATION TENSOR')
+        separator = re.compile(r'^\s*\*{10,}\s*$')
+
+        # Each tensor row is "<3 floats in a.u.^2> <3 integers in 10^-4 ang^2>":
+        # the same numbers twice over, so only the leading three are read.
+        def read_rows(start, count):
+            """The first 3 numbers of the next `count` non-blank lines."""
+            rows = []
+            index = start + 1
+            while len(rows) < count and index < len(self.data):
+                if self.data[index].strip():
+                    try:
+                        rows.append([float(v)
+                                     for v in self.data[index].split()[:3]])
+                    except ValueError:  # ran past the block into prose
+                        return None
+                index += 1
+            return rows if len(rows) == count else None
+
+        bohr_squared = au_to_angstrom(1.) ** 2
+
+        temperatures = []
+        active_modes = []
+        tensors = []
+        principals = []
+        axes = []
+
+        index = 0
+        while index < len(self.data):
+            if not banner.match(self.data[index]):
+                index += 1
+                continue
+
+            block_t = None
+            block_modes = 0
+            block_tensors = []
+            block_principals = []
+            block_axes = []
+
+            index += 1
+            while index < len(self.data):
+                line = self.data[index]
+                # The thermodynamic section that follows closes the block.
+                if separator.match(line) or banner.match(line):
+                    break
+
+                match = temperature.match(line)
+                if match:
+                    block_t = float(match.group(1))
+                match = active.match(line)
+                if match:
+                    block_modes = int(match.group(1))
+
+                if tensor.match(line):
+                    rows = read_rows(index, 3)
+                    if rows is not None:
+                        block_tensors.append(rows)
+                elif principal.match(line):
+                    rows = read_rows(index, 1)
+                    if rows is not None:
+                        block_principals.append(rows[0])
+                elif rotation.match(line):
+                    rows = read_rows(index, 3)
+                    if rows is not None:
+                        block_axes.append(rows)
+                index += 1
+
+            # An interrupted run can leave an atom with only part of its data:
+            # keep the atoms that are complete rather than dropping the block.
+            natom = min(len(block_tensors), len(block_principals),
+                        len(block_axes))
+            if block_t is None or natom == 0:
+                continue
+            temperatures.append(block_t)
+            active_modes.append(block_modes)
+            tensors.append(block_tensors[:natom])
+            principals.append(block_principals[:natom])
+            axes.append(block_axes[:natom])
+
+        # Temperatures reporting different atom counts (a truncated last block)
+        # would build a ragged array; keep what every block has.
+        if temperatures:
+            natom = min(len(block) for block in tensors)
+            tensors = [block[:natom] for block in tensors]
+            principals = [block[:natom] for block in principals]
+            axes = [block[:natom] for block in axes]
+
+        self.adp_temperature = np.array(temperatures, dtype=float)
+        self.adp_active_modes = np.array(active_modes, dtype=int)
+        # Tensor floats are bohr^2; the principal values already are ang^2.
+        self.adp = np.array(tensors, dtype=float) * bohr_squared
+        self.adp_principal = np.array(principals, dtype=float)
+        self.adp_axes = np.array(axes, dtype=float)
+
+        return self
+
+
     def get_anh_const(self):
         """
         Extract anharmonic terms of the PES (ANHAPES).
