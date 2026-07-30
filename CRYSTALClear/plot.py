@@ -6,6 +6,111 @@ Functions to visualize physical properties computed with CRYSTAL .
 
 ##############################################################################
 #                                                                            #
+#                                 TYPOGRAPHY                                 #
+#                                                                            #
+##############################################################################
+
+# Named font choices, as (label, key), the label being what a menu would show.
+FONT_FAMILIES = (
+    ("Matplotlib default", "default"),
+    ("Computer Modern", "cm"),
+    ("Computer Modern Sans", "cmss"),
+    ("Serif", "serif"),
+    ("Sans-serif", "sans-serif"),
+    ("Monospace", "monospace"),
+)
+
+# rcParams each named choice sets. Every recipe fixes 'mathtext.fontset' too,
+# so that a label such as $\tilde{\nu}_{12}$ is typeset in the same face as the
+# text around it instead of keeping matplotlib's default sans-serif maths.
+_FONT_RECIPES = {
+    "default": {
+        "font.family": "sans-serif",
+        "mathtext.fontset": "dejavusans",
+    },
+    # Computer Modern is what LaTeX sets by default, so this is the recipe that
+    # makes a figure match the surrounding text of a paper. 'cmr10' ships with
+    # matplotlib; 'CMU Serif' is the fuller Unicode cut of the same design, and
+    # is preferred when installed. No LaTeX installation is involved.
+    "cm": {
+        "font.family": "serif",
+        "font.serif": ["CMU Serif", "cmr10", "DejaVu Serif"],
+        "mathtext.fontset": "cm",
+        # cmr10 carries no U+2212, so a negative tick label would come out as a
+        # missing-glyph box; ASCII hyphens avoid it in every text artist at once.
+        "axes.unicode_minus": False,
+    },
+    "cmss": {
+        "font.family": "sans-serif",
+        "font.sans-serif": ["CMU Sans Serif", "cmss10", "DejaVu Sans"],
+        "mathtext.fontset": "cm",
+        "axes.unicode_minus": False,
+    },
+    "serif": {
+        "font.family": "serif",
+        "mathtext.fontset": "dejavuserif",
+    },
+    "sans-serif": {
+        "font.family": "sans-serif",
+        "mathtext.fontset": "dejavusans",
+    },
+    "monospace": {
+        "font.family": "monospace",
+        "mathtext.fontset": "dejavusans",
+    },
+}
+
+# Restored before a recipe is applied, so switching away from Computer Modern
+# does not leave its Unicode-minus workaround (or its font list) behind.
+_FONT_RESET = {
+    "font.family": "sans-serif",
+    "font.serif": ["DejaVu Serif"],
+    "font.sans-serif": ["DejaVu Sans"],
+    "font.monospace": ["DejaVu Sans Mono"],
+    "mathtext.fontset": "dejavusans",
+    "axes.unicode_minus": True,
+}
+
+
+def set_font(family=None, size=None):
+    """
+    Set the font every subsequent plot is drawn with.
+
+    Acts on matplotlib's rcParams, so it applies to figures created afterwards
+    and leaves existing ones alone.
+
+    Args:
+        family (str, optional): One of the keys of FONT_FAMILIES -- 'default', 'cm' (Computer Modern), 'cmss', 'serif', 'sans-serif', 'monospace' -- or the name of any installed font, e.g. 'Times New Roman'. Default is None, i.e. leave the family alone.
+        size (float, optional): Base font size in points. Everything else (tick labels, titles) is sized relative to it, except where a plot takes an explicit fontsize argument. Default is None, i.e. leave the size alone.
+
+    Returns:
+        dict: The rcParams that were applied, which is what to keep in order to
+            restore them later.
+    """
+
+    import matplotlib as mpl
+
+    applied = {}
+
+    if family is not None:
+        recipe = _FONT_RECIPES.get(family)
+        if recipe is None:
+            # An installed font named directly. Whether it is a serif or a sans
+            # is not knowable here, so mathtext is left as the reset leaves it.
+            recipe = {"font.family": family}
+        applied.update(_FONT_RESET)
+        applied.update(recipe)
+
+    if size is not None:
+        applied["font.size"] = size
+
+    mpl.rcParams.update(applied)
+
+    return applied
+
+
+##############################################################################
+#                                                                            #
 #                       ELECTRONIC STRUCTURE AND PHONONS                     #
 #                                                                            #
 ##############################################################################
@@ -3772,403 +3877,475 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
 
 # -----------------------------------ANHARMONIC--------------------------------#
 
-def plot_cry_vci3(co, list_mode, figsize=[8, 6], xlim=None, ylim=None,
-                  minval=None, maxval=None, cmap='bone_r'):
+def _vci_collect(co, states=None, frange=None, irrep=None, threshold=0.,
+                 max_states=None):
     """
-    Heatmap representatin of the VCI coefficients $A_{n,s}$ as a function of 
-    the energy and the configuration functions $\Phi^\mathbf{n}$. Wrapper of
-    matplotlib.pyplot.imshow.
+    Gather the contributions CRYSTAL prints for a selection of VCI states.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object.
-        figsize (tuple, optional): Image dimensions correspondig to matplotlib figsize. Default is [8, 6].
-        xlim(list[float]): Range of frequencies. Default is None.
-        ylim(list[float]): Range of configuration functions. Default is None.
-        cmap (str): Matplotlib colormap name used to map scalar data to colors. 
-        maxval (float):
-        minval (float):
+        co (crystal_io.Crystal_output): Crystal output object, on which get_vci() has already been called.
+        states (list[int], optional): VCI states to be collected, given as positional indices into co.VCI_energy. Takes precedence over frange. Default is None.
+        frange (list[float], optional): Wavenumber window [min, max] the states are taken from, in cm^-1 and relative to the ZPE. Default is None, i.e. every state of the run.
+        irrep (int, optional): Restrict the selection to the states of one irrep of the block-diagonalised VCI matrix. Default is None, i.e. all of them.
+        threshold (float, optional): Discard contributions whose coefficient is smaller than this in absolute value. Default is 0.
+        max_states (int, optional): Refuse to collect more states than this. A window spanning a whole run holds thousands of them, which makes for an unreadable figure rather than a useful one. Default is None, i.e. no limit.
+
+    Returns:
+        sel (np.array): Indices into co.VCI_energy of the selected states, sorted by increasing energy.
+        onvs (list): Occupation number vector of each contributing configuration.
+        C (np.array): 2D array of the signed VCI coefficients $A_{n,s}$, configurations along axis 0 and selected states along axis 1, zero where a configuration does not contribute.
+    """
+
+    import numpy as np
+
+    for attr in ('VCI_state', 'VCI_energy', 'VCI_list_conf'):
+        if not hasattr(co, attr):
+            raise AttributeError(
+                "No VCI data found: call Crystal_output.get_vci() first.")
+
+    energy = co.VCI_energy
+    ncontribs = co.VCI_state.shape[2]
+
+    # Configuration indices are local to the irrep of their state whenever the
+    # VCI matrix is block-diagonalised, so resolve them against the right list.
+    sym_conf = getattr(co, 'VCI_sym_conf', {})
+    state_irrep = getattr(co, 'VCI_irrep', np.zeros(len(energy), dtype=int))
+
+    # Select the states, sorted by increasing energy -->
+    pool = np.arange(len(energy))
+    if irrep is not None:
+        if not sym_conf:
+            raise ValueError("The VCI matrix of this run is not "
+                             "symmetry-blocked: leave irrep to None.")
+        pool = pool[state_irrep == irrep]
+        if pool.size == 0:
+            raise ValueError("No VCI state belongs to irrep %s." % irrep)
+
+    if states is not None:
+        sel = np.array(states, dtype=int)
+        if sel.min() < 0 or sel.max() >= len(energy):
+            raise ValueError("states must index co.VCI_energy, i.e. lie "
+                             "between 0 and %d." % (len(energy) - 1))
+    elif frange is None:
+        sel = pool
+    else:
+        fmin, fmax = sorted(frange)
+        sel = pool[(energy[pool] >= fmin) & (energy[pool] <= fmax)]
+        if sel.size == 0:
+            raise ValueError("No VCI state lies between %g and %g cm^-1."
+                             % (fmin, fmax))
+
+    if max_states is not None and sel.size > max_states:
+        raise ValueError(
+            "%d VCI states selected, more than max_states=%d: narrow the "
+            "window, pick an irrep, or raise max_states."
+            % (sel.size, max_states))
+
+    sel = sel[np.argsort(energy[sel])]
+    #<--
+
+    # Configurations are keyed by their occupation number vector, so that the
+    # same one stays a single entry even across irreps -->
+    keys = []
+    onvs = []
+    coeffs = {}
+    for pos, i in enumerate(sel):
+        for k in range(ncontribs):
+            iconf = int(co.VCI_state[i, 0, k])
+            if iconf < 1:
+                continue  # padding of a state with fewer printed contributions
+            A = co.VCI_state[i, 1, k]
+            if abs(A) < threshold:
+                continue
+            if sym_conf:
+                onv = sym_conf[state_irrep[i]][iconf - 1]
+            else:
+                onv = co.VCI_list_conf[iconf - 1]
+            key = tuple(int(n) for n in onv)
+            if key not in coeffs:
+                keys.append(key)
+                onvs.append(onv)
+                coeffs[key] = {}
+            coeffs[key][pos] = A
+    #<--
+
+    if not keys:
+        raise ValueError("No contribution above threshold=%s: lower it to "
+                         "plot." % threshold)
+
+    C = np.zeros((len(keys), len(sel)))
+    for j, key in enumerate(keys):
+        for pos, A in coeffs[key].items():
+            C[j, pos] = A
+
+    return sel, onvs, C
+
+
+def _vci_conf_label(onv, list_mode=None, basis='HO'):
+    """
+    Build a spectroscopic label for a VCI configuration from its occupation
+    number vector.
+
+    Args:
+        onv (array-like): Occupation number vector, one entry per VCI-active mode.
+        list_mode (list[int], optional): CRYSTAL mode index of each VCI-active mode. Default is None, in which case modes are numbered from 1.
+        basis (str): Zeroth-order basis, 'HO' or 'VSCF'. Harmonic quanta are denoted by nu, VSCF ones by nu with a tilde.
+
+    Returns:
+        str: A matplotlib mathtext label, e.g. '$2\\nu_{3}+\\nu_{12}$'.
+    """
+
+    sym = r'\tilde{\nu}' if basis == 'VSCF' else r'\nu'
+
+    terms = []
+    for m, n in enumerate(onv):
+        n = int(n)
+        if n == 0:
+            continue
+        mode = list_mode[m] if list_mode is not None else m + 1
+        prefactor = '' if n == 1 else str(n)
+        terms.append(r'%s%s_{%d}' % (prefactor, sym, mode))
+
+    if not terms:
+        return r'$\mathrm{ZPE}$'
+
+    return '$' + '+'.join(terms) + '$'
+
+
+def _vci_basis(co, basis=None):
+    """
+    Zeroth-order basis of a VCI run, 'HO' or 'VSCF', taken from the output
+    unless overridden.
+    """
+
+    if basis is None:
+        basis = getattr(co, 'VCI_basis', None)
+
+    return basis if basis is not None else 'HO'
+
+
+def plot_cry_vci(co, states=None, frange=None, irrep=None, list_mode=None,
+                 threshold=0.01, signed=False, basis=None, cmap=None,
+                 vmin=None, vmax=None, annotate=False, colorbar=True,
+                 max_states=60, figsize=[9, 7], fontsize=9, ax=None):
+    """
+    Heatmap of the VCI coefficients $A_{n,s}$: every row is a zeroth-order
+    configuration $\\Phi^\\mathbf{n}$, every column a VCI state $\\Psi_s$
+    labelled by its energy relative to the ZPE.
+
+    The zeroth-order basis is taken from co.VCI_basis, set by
+    crystal_io.Crystal_output.get_vci(): configurations are Hartree products of
+    harmonic eigenfunctions for a VCI@HO run (quanta labelled $\\nu_i$) and of
+    VSCF modals for a VCI@VSCF run (quanta labelled $\\tilde{\\nu}_i$).
+
+    Only the contributions CRYSTAL prints under 'MOST IMPORTANT
+    CONFIGURATIONS' are available, so a column sums up to slightly less than
+    one and configurations left out of every selected state are not shown.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_vci() has already been called.
+        states (list[int], optional): VCI states to be displayed, given as positional indices into co.VCI_energy. Note that the label CRYSTAL prints restarts from 1 in every symmetry block and is therefore not used here. Takes precedence over frange. Default is None.
+        frange (list[float], optional): Wavenumber window [min, max] the states are taken from, in cm^-1 and relative to the ZPE. Default is None, i.e. every state of the run, which max_states then caps.
+        irrep (int, optional): Restrict the map to the states of one irrep of the block-diagonalised VCI matrix. Default is None, i.e. all of them.
+        list_mode (list[int], optional): CRYSTAL mode index of each VCI-active mode, used to label the configurations. Default is None, in which case the VCI-active modes are numbered from 1.
+        threshold (float, optional): Minimum absolute value of a coefficient for its configuration to be shown. Default is 0.01.
+        signed (bool, optional): Whether to map the coefficients with their sign, on a diverging colormap centred on zero, rather than their absolute value. Default is `False`.
+        basis (str, optional): 'HO' or 'VSCF', overriding the flavour detected by get_vci(). Default is None.
+        cmap (str, optional): Matplotlib colormap name. Default is None, i.e. 'bone_r' when signed is `False` and 'RdBu_r' when it is `True`.
+        vmin (float, optional): Lower bound of the colour scale. Default is None, i.e. 0 when signed is `False` and minus the largest coefficient when it is `True`.
+        vmax (float, optional): Upper bound of the colour scale. Default is None, i.e. the largest coefficient found.
+        annotate (bool, optional): Whether to print the value of every non-zero coefficient in its cell. Default is `False`.
+        colorbar (bool, optional): Whether to draw the colorbar. Default is `True`.
+        max_states (int, optional): Refuse to draw more states than this, so that an unbounded window fails with a clear message instead of building an unreadable figure. Default is 60.
+        figsize (tuple, optional): Image dimensions corresponding to matplotlib figsize. Default is [9, 7].
+        fontsize (int, optional): Font size of the tick labels. Default is 9.
+        ax (matplotlib.axes.Axes, optional): Axes the map is drawn on. Default is None, in which case a new figure is created.
 
     Returns:
         matplotlib.figure.Figure
         matplotlib.axes.Axes
     """
 
-    from CRYSTALClear.units import thz_to_cm
-    import matplotlib.pyplot as plt
     import numpy as np
+    import matplotlib.pyplot as plt
 
-    # Unpack co
-    nconfs    = co.VCI_nconfs
-    nstates   = len(co.VCI_state)
-    ncontribs = len(co.VCI_state[0, 0])
-    energy    = co.VCI_energy.astype(np.int64)
-    list_conf = co.VCI_list_conf
+    basis = _vci_basis(co, basis)
+    sel, onvs, C = _vci_collect(co, states, frange, irrep, threshold, max_states)
 
-    # Compute harmonic energy for each conf -->
-    HA_energy = []
-    nmodes = len(list_conf[0])
-    for i in range(nconfs):
-        E0 = 0
-        for m in range(nmodes):
-            mode = list_mode[m] - 1
-            E0 = E0 + (0.5 + list_conf[i, m]) * thz_to_cm(co.frequency[0, mode]) 
-        HA_energy.append(E0)
-    HA_energy = np.array(HA_energy)
+    # Order the configurations by the state they contribute to most, which
+    # brings the dominant character of each state onto the diagonal -->
+    lead = np.argmax(np.abs(C), axis=1)
+    order = sorted(range(len(onvs)),
+                   key=lambda j: (lead[j], -abs(C[j, lead[j]])))
+    C = C[order]
+    onvs = [onvs[j] for j in order]
     #<--
 
-    A = np.zeros((nconfs, nstates))
+    M = C if signed else np.abs(C)
 
-    for i in range(nstates):
-        for k in range(ncontribs):
-            j = int(co.VCI_state[i, 0, k]) - 1 
-            A[j, i] = abs(co.VCI_state[i, 1, k])
+    if vmax is None:
+        vmax = np.abs(C).max()
+    if vmin is None:
+        vmin = -vmax if signed else 0.
+    if cmap is None:
+        cmap = 'RdBu_r' if signed else 'bone_r'
 
-    # Sort confs according to harmonic energy -->
-    idx = np.argsort(HA_energy)
-    HA_energy = HA_energy[idx]
-    list_conf = list_conf[idx]
-    for i in range(nstates):
-        A[:, i] = A[[idx], i]
-    #<--
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
 
-    nbins = 100
-    step  = energy[nstates-1] / nbins
+    im = ax.imshow(M, cmap=cmap, vmin=vmin, vmax=vmax, aspect='auto',
+                   interpolation='nearest')
 
-    B = np.zeros((nconfs, nbins))
-    xbins = np.zeros(nbins)
+    if colorbar:
+        cbar = fig.colorbar(im, ax=ax, shrink=0.8)
+        cbar.set_label('$A_{n,s}$' if signed else '$|A_{n,s}|$')
 
-    for i in range(nbins):
-        Ebini = energy[0] + step * i
-        Ebinf = energy[0] + step * (i+1)
-        xbins[i] = int(Ebini + step/2)
-        for s in range(nstates):
-            if((energy[s] >= Ebini) and (energy[s] < Ebinf)):
-                B[:, i] = B[:, i] + A[:, s]
+    # One tick per state, labelled by its energy relative to the ZPE
+    ax.set_xticks(np.arange(len(sel)))
+    ax.set_xticklabels(['%.1f' % e for e in co.VCI_energy[sel]],
+                       rotation=90, fontsize=fontsize)
 
-    if(maxval is None):
-        maxval = np.max(B)
-    if(minval is None):
-        minval = np.min(B)
+    # One tick per configuration, labelled by its occupation number vector
+    ax.set_yticks(np.arange(len(onvs)))
+    ax.set_yticklabels([_vci_conf_label(o, list_mode, basis) for o in onvs],
+                       fontsize=fontsize)
 
-    fig, ax = plt.subplots(figsize=figsize)
+    if annotate:
+        for j in range(M.shape[0]):
+            for s in range(M.shape[1]):
+                if C[j, s] == 0.:
+                    continue
+                # Keep the text readable over both ends of the colour scale
+                shade = (M[j, s] - vmin) / (vmax - vmin)
+                ax.text(s, j, '%.2f' % C[j, s], ha='center', va='center',
+                        fontsize=fontsize - 2,
+                        color='w' if shade > 0.6 else 'k')
 
-    B = B / maxval # normalize for maxval
-
-    maxval = np.max(B)
-
-    im = ax.imshow(B, 
-                   cmap = cmap, 
-                   vmin = minval, 
-                   vmax = maxval, 
-                   extent = [0, xbins[nbins-1], 0, HA_energy[-1]], 
-                   origin = 'lower', 
-                   aspect = 'auto', 
-                   alpha = 1
-                   ) 
-
-    fig.colorbar(im, shrink=1, ticks=[minval, maxval])
-
-    # Take care of axis
-    if(xlim is not None):
-       ax.set_xlim(xlim) 
-
-    if(ylim is not None):
-       ax.set_ylim(ylim) 
-
-    ax.set_xticks([])
-
-    ax.set_ylabel("Configuration functions $\Phi^\mathbf{n}$")
-    ax.set_xlabel("Wavenumber [cm$^{-1}$]")
+    ax.set_title('VCI@%s' % (basis))
+    ax.set_xlabel('VCI states, ENE - ZPE [cm$^{-1}$]')
+    ax.set_ylabel('Configurations $\\Phi^\\mathbf{n}$')
 
     return fig, ax
 
 
-
-
-def plot_cry_vci2(co, list_mode):
+def _vci_ribbon(ax, x0, x1, y0, h0, y1, h1, color, alpha):
     """
+    Draw a single Sankey ribbon connecting a source band of height h0 starting
+    at (x0, y0) to a target band of height h1 starting at (x1, y1).
     """
 
-    from CRYSTALClear.units import thz_to_cm
-    import matplotlib.pyplot as plt
-    from matplotlib.ticker import MaxNLocator
+    from matplotlib.path import Path
+    from matplotlib.patches import PathPatch
+
+    xm = (x0 + x1) / 2
+
+    verts = [(x0, y0), (xm, y0), (xm, y1), (x1, y1),
+             (x1, y1 + h1),
+             (xm, y1 + h1), (xm, y0 + h0), (x0, y0 + h0),
+             (x0, y0)]
+    codes = [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4,
+             Path.LINETO,
+             Path.CURVE4, Path.CURVE4, Path.CURVE4,
+             Path.CLOSEPOLY]
+
+    ax.add_patch(PathPatch(Path(verts, codes), facecolor=color,
+                           edgecolor='none', alpha=alpha, zorder=1))
+
+
+def plot_cry_vci_sankey(co, states=None, frange=None, irrep=None, list_mode=None,
+                        threshold=0.01, weight='square', color_by='config',
+                        cmap='tab20', basis=None, show_weights=False,
+                        max_states=60, figsize=[9, 7], node_width=0.03,
+                        gap=0.02, label_pitch=0.04, alpha=0.6, fontsize=9,
+                        ax=None):
+    """
+    Sankey representation of the VCI wavefunctions: the zeroth-order
+    configurations $\\Phi^\\mathbf{n}$ (left) are connected to the VCI states
+    $\\Psi_s$ they contribute to (right), each ribbon having a width
+    proportional to the weight of that configuration in that state.
+
+    The zeroth-order basis is taken from co.VCI_basis, set by
+    crystal_io.Crystal_output.get_vci(): configurations are Hartree products of
+    harmonic eigenfunctions for a VCI@HO run (quanta labelled $\\nu_i$) and of
+    VSCF modals for a VCI@VSCF run (quanta labelled $\\tilde{\\nu}_i$).
+
+    Only the contributions CRYSTAL prints under 'MOST IMPORTANT
+    CONFIGURATIONS' are available, so the ribbons entering a state sum up to
+    slightly less than one.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_vci() has already been called.
+        states (list[int], optional): VCI states to be displayed, given as positional indices into co.VCI_energy. Note that the label CRYSTAL prints restarts from 1 in every symmetry block and is therefore not used here. Takes precedence over frange. Default is None.
+        frange (list[float], optional): Wavenumber window [min, max] the states are taken from, in cm^-1 and relative to the ZPE. Default is None, i.e. every state of the run, which max_states then caps.
+        irrep (int, optional): Restrict the diagram to the states of one irrep of the block-diagonalised VCI matrix. Default is None, i.e. all of them.
+        list_mode (list[int], optional): CRYSTAL mode index of each VCI-active mode, used to label the configurations. Default is None, in which case the VCI-active modes are numbered from 1.
+        threshold (float, optional): Minimum weight for a ribbon to be drawn. Default is 0.01.
+        weight (str, optional): 'square' to make ribbons proportional to $|A_{n,s}|^2$, 'abs' for $|A_{n,s}|$. Default is 'square'.
+        color_by (str, optional): 'config' to colour ribbons by configuration, which highlights configurations shared by several states (resonances), or 'state' to colour them by VCI state. Default is 'config'.
+        cmap (str, optional): Matplotlib colormap used to colour the ribbons. Default is 'tab20'.
+        basis (str, optional): 'HO' or 'VSCF', overriding the flavour detected by get_vci(). Default is None.
+        show_weights (bool, optional): Whether to print the weight of each ribbon next to the configuration node. Default is `False`.
+        max_states (int, optional): Refuse to draw more states than this, so that an unbounded window fails with a clear message instead of building an unreadable figure. Default is 60.
+        figsize (tuple, optional): Image dimensions corresponding to matplotlib figsize. Default is [9, 7].
+        node_width (float, optional): Width of the node bars, the diagram being one unit wide. Default is 0.03.
+        gap (float, optional): Vertical gap between adjacent nodes, as a fraction of the total flow. Default is 0.02.
+        label_pitch (float, optional): Minimum distance between the centres of adjacent nodes, as a fraction of the total flow, which keeps the labels of thin nodes from overlapping. Default is 0.04.
+        alpha (float, optional): Opacity of the ribbons. Default is 0.6.
+        fontsize (int, optional): Font size of the node labels. Default is 9.
+        ax (matplotlib.axes.Axes, optional): Axes the diagram is drawn on. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
+    """
+
     import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Rectangle
 
-    # Unpack co
-    nconfs    = co.VCI_nconfs
-    nstates   = len(co.VCI_state)
-    ncontribs = len(co.VCI_state[0, 0])
-    energy    = co.VCI_energy.astype(np.int64)
-    list_conf = co.VCI_list_conf
-    
+    if weight not in ('square', 'abs'):
+        raise ValueError("weight must be either 'square' or 'abs'.")
 
-    # Compute harmonic energy for each conf -->
-    HA_energy = []
-    nmodes = len(list_conf[0])
-    for i in range(nconfs):
-        E0 = 0
-        for m in range(nmodes):
-            mode = list_mode[m] - 1
-            E0 = E0 + (0.5 + list_conf[i, m]) * thz_to_cm(co.frequency[0, mode]) 
-        HA_energy.append(E0)
-    HA_energy = np.array(HA_energy)
+    if color_by not in ('config', 'state'):
+        raise ValueError("color_by must be either 'config' or 'state'.")
 
-    #print(HA_energy - HA_energy[0])
+    basis = _vci_basis(co, basis)
+    energy = co.VCI_energy
+    sym_conf = getattr(co, 'VCI_sym_conf', {})
+    state_irrep = getattr(co, 'VCI_irrep', np.zeros(len(energy), dtype=int))
+
+    sel, onvs, C = _vci_collect(co, states, frange, irrep,
+                                max_states=max_states)
+
+    # Ribbon widths, thin ones dropped altogether -->
+    W = C ** 2 if weight == 'square' else np.abs(C)
+    W[W < threshold] = 0.
+
+    keep = W.sum(axis=1) > 0.
+    if not keep.any():
+        raise ValueError(
+            "No contribution above threshold=%s: lower it to plot." % threshold)
+    W = W[keep]
+    onvs = [o for o, k in zip(onvs, keep) if k]
     #<--
 
-    print("nconfs: ", nconfs)
-    print("nstates: ", nstates)
-    print("ncontribs: ", ncontribs)
-
-    A = np.zeros((nconfs, nstates))
-
-    for i in range(nstates):
-        #print("state:", i)
-        for k in range(ncontribs):
-            j = int(co.VCI_state[i, 0, k]) - 1 
-            #print("conf:", j)
-            A[j, i] = abs(co.VCI_state[i, 1, k])
-
-    #print("A0", A[0, :])
-    #print(list_conf[0])
-    #print(co.VCI_state[0, 0])
-    #print(list_conf[68])
-    #print(co.VCI_state[68, 0])
-    #print(nconfs)
-
-
-
-    # Sort confs according to harmonic energy -->
-    idx = np.argsort(HA_energy)
-    #print('prima', list_conf)
-    HA_energy = HA_energy[idx]
-    list_conf = list_conf[idx]
-    #print('dopo', list_conf)
-    #print('prima', A[:, 0])
-    #A[:, 0] = A[[idx], 0]
-    #print(A[[idx], 0])
-    #print('dopo', A[idx, 0])
-    for i in range(nstates):
-        A[:, i] = A[[idx], i]
+    # Order the configurations by the mean height of the states they feed, so
+    # as to keep the number of crossing ribbons low -->
+    order = np.argsort(W @ np.arange(len(sel)) / W.sum(axis=1), kind='stable')
+    W = W[order]
+    onvs = [onvs[j] for j in order]
     #<--
 
-    nbins2 = 100
-    nxticks = 10
-    step  = energy[nstates-1] / nbins2
+    # Heights of the nodes -->
+    conf_height = W.sum(axis=1)
+    state_height = W.sum(axis=0)
 
-    B = np.zeros((nconfs, nbins2))
-    xbins = np.zeros(nxticks)
+    total = max(conf_height.sum(), state_height.sum())
+    pad = gap * total
+    pitch = label_pitch * total
 
-    k = nbins2 / nxticks
-    j = 0
-    for i in range(nbins2):
-        Ebini = energy[0] + step * i
-        Ebinf = energy[0] + step * (i+1)
-        if(i % k == 0):
-            xbins[nxticks-j-1] = int(Ebini + step/2)
-            j += 1
+    def stack(heights):
+        """
+        Stack nodes top to bottom, leaving a gap of pad between them and
+        keeping the centres of consecutive ones at least pitch apart so that
+        the labels of thin nodes do not overlap. Gaps carry no meaning in a
+        Sankey diagram, so widening them leaves the ribbons faithful.
+        """
+        pos = np.zeros(len(heights))
+        y = 0.
+        center = None
+        for j, h in enumerate(heights):
+            if center is not None:
+                y = max(y, center + pitch - h / 2)
+            pos[j] = y
+            center = y + h / 2
+            y += h + pad
+        return pos, y - pad
 
-        for s in range(nstates):
-            if((energy[s] >= Ebini) and (energy[s] < Ebinf)):
-                B[:, nbins2-i-1] = B[:, nbins2-i-1] + A[:, s]
+    conf_y, left_span = stack(conf_height)
+    state_y, right_span = stack(state_height)
 
+    # Centre the shorter column on the taller one
+    span = max(left_span, right_span)
+    conf_y += (span - left_span) / 2
+    state_y += (span - right_span) / 2
+    #<--
 
+    # Colours -->
+    ncolors = len(onvs) if color_by == 'config' else len(sel)
+    colormap = plt.get_cmap(cmap)
+    if getattr(colormap, 'N', 256) <= 20:  # qualitative colormap, cycled
+        colors = [colormap(j % colormap.N) for j in range(ncolors)]
+    else:  # continuous colormap, sampled over its whole range
+        colors = [colormap(j / max(ncolors - 1, 1)) for j in range(ncolors)]
+    #<--
 
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
 
-    print('xbins', xbins)
-    print('ultima ene', energy[nstates-1])
+    x0 = node_width
+    x1 = 1. - node_width
 
+    # Ribbons, drawn from the top of each node downwards -->
+    conf_filled = np.zeros(len(onvs))
+    state_filled = np.zeros(len(sel))
 
+    for j in range(len(onvs)):
+        for pos in range(len(sel)):
+            w = W[j, pos]
+            if w == 0.:
+                continue
+            ys = conf_y[j] + conf_filled[j]
+            yt = state_y[pos] + state_filled[pos]
+            _vci_ribbon(ax, x0, x1, ys, w, yt, w,
+                        colors[j if color_by == 'config' else pos], alpha)
+            conf_filled[j] += w
+            state_filled[pos] += w
+    #<--
 
-    fig, ax = plt.subplots(figsize=[8, 8])
-    #im = ax.imshow(A[1:nstates+1,:], aspect='auto', cmap='RdBu')
-    im = ax.imshow(
-            #A[0:nstates+20,:], 
-            B[0:nconfs,:], 
-            cmap='Purples', 
-            vmin=0, 
-            vmax=2,
-            #extent = [0, energy[-1], 0, HA_energy[-1]],
-            #origin='lower',
-            aspect='auto',
-            alpha=1
-            ) 
-    fig.colorbar(im, shrink=0.80, ticks=[0, 2])
+    # Nodes and their labels -->
+    for j, onv in enumerate(onvs):
+        ax.add_patch(Rectangle((0., conf_y[j]), node_width, conf_height[j],
+                               facecolor=colors[j] if color_by == 'config'
+                               else '0.35', edgecolor='none', zorder=2))
+        label = _vci_conf_label(onv, list_mode, basis)
+        if show_weights:
+            label = '%s  (%.2f)' % (label, conf_height[j])
+        ax.text(-0.015, conf_y[j] + conf_height[j] / 2, label,
+                ha='right', va='center', fontsize=fontsize)
 
+    for pos, i in enumerate(sel):
+        ax.add_patch(Rectangle((x1, state_y[pos]), node_width,
+                               state_height[pos],
+                               facecolor=colors[pos] if color_by == 'state'
+                               else '0.35', edgecolor='none', zorder=2))
+        if sym_conf:  # states are numbered within their own irrep
+            tag = '%d/%d' % (state_irrep[i], co.VCI_label[i])
+        else:
+            tag = '%d' % co.VCI_label[i]
+        ax.text(1.015, state_y[pos] + state_height[pos] / 2,
+                '%s:  %.1f' % (tag, energy[i]),
+                ha='left', va='center', fontsize=fontsize)
+    #<--
 
-    # Take care of xticks
-    N = 50 # number of ticks
-    ax.xaxis.set_major_locator(MaxNLocator(nbins=11))
-    #ticks = ax.get_xticks()
-    #ticks = ticks.astype(int)              # convert to array indices
-    #ticks = ticks[(ticks >= 0) & (ticks < len(energy))]
-    #ax.set_xticks(ticks)                 # keep same positions
-    ax.set_xticklabels(xbins[0:])       # change only text
-    ax.tick_params(axis='x', rotation=45)
-    ax.set_xlabel("VCI Energy [cm$^{-1}$]")
+    zeroth = 'VSCF modals' if basis == 'VSCF' else 'harmonic eigenfunctions'
+    ax.set_title('VCI@%s' % basis)
+    ax.text(0., -0.02 * span, 'Configurations $\\Phi^\\mathbf{n}$',
+            ha='left', va='bottom', fontsize=fontsize + 1)
+    right = 'VCI states, %sENE - ZPE [cm$^{-1}$]' % ('irrep/n:  ' if sym_conf
+                                                     else 'n:  ')
+    ax.text(1., -0.02 * span, right,
+            ha='right', va='bottom', fontsize=fontsize + 1)
 
-    # Take care of yticks
-    HA_energy = (HA_energy - HA_energy[0]).astype(np.int64)
-    ax.yaxis.set_major_locator(MaxNLocator(N))
-    ticks = ax.get_yticks()
-    ticks = ticks.astype(int)              # convert to array indices
-    ticks = ticks[(ticks >= 0) & (ticks < len(HA_energy))]
-    ax.set_yticks(ticks)                 # keep same positions
-    #ax.set_yticklabels(HA_energy[ticks])       # change only text
-    ax.tick_params(axis='y', rotation=45)
-    #ax.set_ylabel("Harmonic Energy [cm$^{-1}$]")
-
-    #ax.set_xlim(5200, 0)
-    ax.set_ylim(0, 7000)
+    ax.set_xlim(-0.3, 1.3)
+    ax.set_ylim(1.06 * span, -0.06 * span)  # inverted: lowest state on top
+    ax.axis('off')
 
     return fig, ax
-
-
-
-
-def plot_cry_vci(co, list_mode):
-    """
-    """
-
-    from CRYSTALClear.units import thz_to_cm
-    import matplotlib.pyplot as plt
-    from matplotlib.ticker import MaxNLocator
-    import numpy as np
-
-    # Unpack co
-    nconfs    = co.VCI_nconfs
-    nstates   = len(co.VCI_state)
-    ncontribs = len(co.VCI_state[0, 0])
-    energy    = co.VCI_energy.astype(np.int64)
-    list_conf = co.VCI_list_conf
-
-
-    
-
-    # Compute harmonic energy for each conf -->
-    HA_energy = []
-    nmodes = len(list_conf[0])
-    for i in range(nconfs):
-        E0 = 0
-        for m in range(nmodes):
-            mode = list_mode[m] - 1
-            E0 = E0 + (0.5 + list_conf[i, m]) * thz_to_cm(co.frequency[0, mode]) 
-        HA_energy.append(E0)
-    HA_energy = np.array(HA_energy)
-
-    #print(HA_energy - HA_energy[0])
-    #<--
-
-    print("nconfs: ", nconfs)
-    print("nstates: ", nstates)
-    print("ncontribs: ", ncontribs)
-
-    A = np.zeros((nconfs, nstates))
-
-    for i in range(nstates):
-        #print("state:", i)
-        for k in range(ncontribs):
-            j = int(co.VCI_state[i, 0, k]) - 1 
-            #print("conf:", j)
-            A[j, i] = abs(co.VCI_state[i, 1, k])
-
-    #print("A0", A[0, :])
-    #print(list_conf[0])
-    #print(co.VCI_state[0, 0])
-    #print(list_conf[68])
-    #print(co.VCI_state[68, 0])
-    #print(nconfs)
-
-
-
-    # Sort confs according to harmonic energy -->
-    idx = np.argsort(HA_energy)
-    #print('prima', list_conf)
-    HA_energy = HA_energy[idx]
-    list_conf = list_conf[idx]
-    #print('dopo', list_conf)
-    #print('prima', A[:, 0])
-    #A[:, 0] = A[[idx], 0]
-    #print(A[[idx], 0])
-    #print('dopo', A[idx, 0])
-    for i in range(nstates):
-        A[:, i] = A[[idx], i]
-    #<--
-
-    #launo = np.array(A[1, :])
-
-    #A[1, :] = A[2, :]
-    #A[2, :] = A[3, :]
-    #A[3, :] = A[4, :]
-    #A[4, :] = launo
-
-
-
-
-
-
-
-
-    # Sort states according to their energy -->
-    idx = np.argsort(co.VCI_energy)
-    for j in range(nconfs):
-        A[j, :] = A[j, [idx]]
-    energy = energy[idx]
-    #<--
-
-
-    #debug
-    print(A[:, 0], energy[0])
-    print(A[:, 1], energy[1])
-    #debug
-
-
-
-
-
-    fig, ax = plt.subplots(figsize=[8, 8])
-    #im = ax.imshow(A[1:nstates+1,:], aspect='auto', cmap='RdBu')
-    im = ax.imshow(
-            #A[0:nstates+20,:], 
-            A[0:nconfs,:], 
-            cmap='bone_r', 
-            vmin=np.min(A), 
-            vmax=1,
-            #extent = [0, energy[-1], 0, HA_energy[-1]],
-            #origin='lower',
-            #aspect='auto'
-            ) 
-    #fig.colorbar(im, shrink=0.80, ticks=[np.min(A), np.max(A)])
-    fig.colorbar(im, shrink=0.80, ticks=[np.min(A), 1])
-
-
-    # Take care of xticks
-    N = 2000 # number of ticks
-    ax.xaxis.set_major_locator(MaxNLocator(N))
-    ticks = ax.get_xticks()
-    ticks = ticks.astype(int)              # convert to array indices
-    ticks = ticks[(ticks >= 0) & (ticks < len(energy))]
-    ax.set_xticks(ticks)                 # keep same positions
-    ax.set_xticklabels(energy[ticks])       # change only text
-    ax.tick_params(axis='x', rotation=45)
-    ax.set_xlabel("VCI Energy [cm$^{-1}$]")
-
-    # Take care of yticks
-    #HA_energy = (HA_energy - HA_energy[0]).astype(np.int64)
-    #ax.yaxis.set_major_locator(MaxNLocator(N))
-    #ticks = ax.get_yticks()
-    #ticks = ticks.astype(int)              # convert to array indices
-    #ticks = ticks[(ticks >= 0) & (ticks < len(HA_energy))]
-    #ax.set_yticks(ticks)                 # keep same positions
-    #ax.set_yticklabels(HA_energy[ticks])       # change only text
-    #ax.tick_params(axis='y', rotation=45)
-    #ax.set_ylabel("Harmonic Energy [cm$^{-1}$]")
-
-    ax.set_xlim(0, 6)
-    ax.set_ylim(0, 6)
-
-    return fig, ax
-
 
 
 def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
