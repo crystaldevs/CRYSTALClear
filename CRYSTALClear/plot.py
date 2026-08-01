@@ -6,6 +6,111 @@ Functions to visualize physical properties computed with CRYSTAL .
 
 ##############################################################################
 #                                                                            #
+#                                 TYPOGRAPHY                                 #
+#                                                                            #
+##############################################################################
+
+# Named font choices, as (label, key), the label being what a menu would show.
+FONT_FAMILIES = (
+    ("Matplotlib default", "default"),
+    ("Computer Modern", "cm"),
+    ("Computer Modern Sans", "cmss"),
+    ("Serif", "serif"),
+    ("Sans-serif", "sans-serif"),
+    ("Monospace", "monospace"),
+)
+
+# rcParams each named choice sets. Every recipe fixes 'mathtext.fontset' too,
+# so that a label such as $\tilde{\nu}_{12}$ is typeset in the same face as the
+# text around it instead of keeping matplotlib's default sans-serif maths.
+_FONT_RECIPES = {
+    "default": {
+        "font.family": "sans-serif",
+        "mathtext.fontset": "dejavusans",
+    },
+    # Computer Modern is what LaTeX sets by default, so this is the recipe that
+    # makes a figure match the surrounding text of a paper. 'cmr10' ships with
+    # matplotlib; 'CMU Serif' is the fuller Unicode cut of the same design, and
+    # is preferred when installed. No LaTeX installation is involved.
+    "cm": {
+        "font.family": "serif",
+        "font.serif": ["CMU Serif", "cmr10", "DejaVu Serif"],
+        "mathtext.fontset": "cm",
+        # cmr10 carries no U+2212, so a negative tick label would come out as a
+        # missing-glyph box; ASCII hyphens avoid it in every text artist at once.
+        "axes.unicode_minus": False,
+    },
+    "cmss": {
+        "font.family": "sans-serif",
+        "font.sans-serif": ["CMU Sans Serif", "cmss10", "DejaVu Sans"],
+        "mathtext.fontset": "cm",
+        "axes.unicode_minus": False,
+    },
+    "serif": {
+        "font.family": "serif",
+        "mathtext.fontset": "dejavuserif",
+    },
+    "sans-serif": {
+        "font.family": "sans-serif",
+        "mathtext.fontset": "dejavusans",
+    },
+    "monospace": {
+        "font.family": "monospace",
+        "mathtext.fontset": "dejavusans",
+    },
+}
+
+# Restored before a recipe is applied, so switching away from Computer Modern
+# does not leave its Unicode-minus workaround (or its font list) behind.
+_FONT_RESET = {
+    "font.family": "sans-serif",
+    "font.serif": ["DejaVu Serif"],
+    "font.sans-serif": ["DejaVu Sans"],
+    "font.monospace": ["DejaVu Sans Mono"],
+    "mathtext.fontset": "dejavusans",
+    "axes.unicode_minus": True,
+}
+
+
+def set_font(family=None, size=None):
+    """
+    Set the font every subsequent plot is drawn with.
+
+    Acts on matplotlib's rcParams, so it applies to figures created afterwards
+    and leaves existing ones alone.
+
+    Args:
+        family (str, optional): One of the keys of FONT_FAMILIES -- 'default', 'cm' (Computer Modern), 'cmss', 'serif', 'sans-serif', 'monospace' -- or the name of any installed font, e.g. 'Times New Roman'. Default is None, i.e. leave the family alone.
+        size (float, optional): Base font size in points. Everything else (tick labels, titles) is sized relative to it, except where a plot takes an explicit fontsize argument. Default is None, i.e. leave the size alone.
+
+    Returns:
+        dict: The rcParams that were applied, which is what to keep in order to
+            restore them later.
+    """
+
+    import matplotlib as mpl
+
+    applied = {}
+
+    if family is not None:
+        recipe = _FONT_RECIPES.get(family)
+        if recipe is None:
+            # An installed font named directly. Whether it is a serif or a sans
+            # is not knowable here, so mathtext is left as the reset leaves it.
+            recipe = {"font.family": family}
+        applied.update(_FONT_RESET)
+        applied.update(recipe)
+
+    if size is not None:
+        applied["font.size"] = size
+
+    mpl.rcParams.update(applied)
+
+    return applied
+
+
+##############################################################################
+#                                                                            #
 #                       ELECTRONIC STRUCTURE AND PHONONS                     #
 #                                                                            #
 ##############################################################################
@@ -3772,403 +3877,475 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
 
 # -----------------------------------ANHARMONIC--------------------------------#
 
-def plot_cry_vci3(co, list_mode, figsize=[8, 6], xlim=None, ylim=None,
-                  minval=None, maxval=None, cmap='bone_r'):
+def _vci_collect(co, states=None, frange=None, irrep=None, threshold=0.,
+                 max_states=None):
     """
-    Heatmap representatin of the VCI coefficients $A_{n,s}$ as a function of 
-    the energy and the configuration functions $\Phi^\mathbf{n}$. Wrapper of
-    matplotlib.pyplot.imshow.
+    Gather the contributions CRYSTAL prints for a selection of VCI states.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object.
-        figsize (tuple, optional): Image dimensions correspondig to matplotlib figsize. Default is [8, 6].
-        xlim(list[float]): Range of frequencies. Default is None.
-        ylim(list[float]): Range of configuration functions. Default is None.
-        cmap (str): Matplotlib colormap name used to map scalar data to colors. 
-        maxval (float):
-        minval (float):
+        co (crystal_io.Crystal_output): Crystal output object, on which get_vci() has already been called.
+        states (list[int], optional): VCI states to be collected, given as positional indices into co.VCI_energy. Takes precedence over frange. Default is None.
+        frange (list[float], optional): Wavenumber window [min, max] the states are taken from, in cm^-1 and relative to the ZPE. Default is None, i.e. every state of the run.
+        irrep (int, optional): Restrict the selection to the states of one irrep of the block-diagonalised VCI matrix. Default is None, i.e. all of them.
+        threshold (float, optional): Discard contributions whose coefficient is smaller than this in absolute value. Default is 0.
+        max_states (int, optional): Refuse to collect more states than this. A window spanning a whole run holds thousands of them, which makes for an unreadable figure rather than a useful one. Default is None, i.e. no limit.
+
+    Returns:
+        sel (np.array): Indices into co.VCI_energy of the selected states, sorted by increasing energy.
+        onvs (list): Occupation number vector of each contributing configuration.
+        C (np.array): 2D array of the signed VCI coefficients $A_{n,s}$, configurations along axis 0 and selected states along axis 1, zero where a configuration does not contribute.
+    """
+
+    import numpy as np
+
+    for attr in ('VCI_state', 'VCI_energy', 'VCI_list_conf'):
+        if not hasattr(co, attr):
+            raise AttributeError(
+                "No VCI data found: call Crystal_output.get_vci() first.")
+
+    energy = co.VCI_energy
+    ncontribs = co.VCI_state.shape[2]
+
+    # Configuration indices are local to the irrep of their state whenever the
+    # VCI matrix is block-diagonalised, so resolve them against the right list.
+    sym_conf = getattr(co, 'VCI_sym_conf', {})
+    state_irrep = getattr(co, 'VCI_irrep', np.zeros(len(energy), dtype=int))
+
+    # Select the states, sorted by increasing energy -->
+    pool = np.arange(len(energy))
+    if irrep is not None:
+        if not sym_conf:
+            raise ValueError("The VCI matrix of this run is not "
+                             "symmetry-blocked: leave irrep to None.")
+        pool = pool[state_irrep == irrep]
+        if pool.size == 0:
+            raise ValueError("No VCI state belongs to irrep %s." % irrep)
+
+    if states is not None:
+        sel = np.array(states, dtype=int)
+        if sel.min() < 0 or sel.max() >= len(energy):
+            raise ValueError("states must index co.VCI_energy, i.e. lie "
+                             "between 0 and %d." % (len(energy) - 1))
+    elif frange is None:
+        sel = pool
+    else:
+        fmin, fmax = sorted(frange)
+        sel = pool[(energy[pool] >= fmin) & (energy[pool] <= fmax)]
+        if sel.size == 0:
+            raise ValueError("No VCI state lies between %g and %g cm^-1."
+                             % (fmin, fmax))
+
+    if max_states is not None and sel.size > max_states:
+        raise ValueError(
+            "%d VCI states selected, more than max_states=%d: narrow the "
+            "window, pick an irrep, or raise max_states."
+            % (sel.size, max_states))
+
+    sel = sel[np.argsort(energy[sel])]
+    #<--
+
+    # Configurations are keyed by their occupation number vector, so that the
+    # same one stays a single entry even across irreps -->
+    keys = []
+    onvs = []
+    coeffs = {}
+    for pos, i in enumerate(sel):
+        for k in range(ncontribs):
+            iconf = int(co.VCI_state[i, 0, k])
+            if iconf < 1:
+                continue  # padding of a state with fewer printed contributions
+            A = co.VCI_state[i, 1, k]
+            if abs(A) < threshold:
+                continue
+            if sym_conf:
+                onv = sym_conf[state_irrep[i]][iconf - 1]
+            else:
+                onv = co.VCI_list_conf[iconf - 1]
+            key = tuple(int(n) for n in onv)
+            if key not in coeffs:
+                keys.append(key)
+                onvs.append(onv)
+                coeffs[key] = {}
+            coeffs[key][pos] = A
+    #<--
+
+    if not keys:
+        raise ValueError("No contribution above threshold=%s: lower it to "
+                         "plot." % threshold)
+
+    C = np.zeros((len(keys), len(sel)))
+    for j, key in enumerate(keys):
+        for pos, A in coeffs[key].items():
+            C[j, pos] = A
+
+    return sel, onvs, C
+
+
+def _vci_conf_label(onv, list_mode=None, basis='HO'):
+    """
+    Build a spectroscopic label for a VCI configuration from its occupation
+    number vector.
+
+    Args:
+        onv (array-like): Occupation number vector, one entry per VCI-active mode.
+        list_mode (list[int], optional): CRYSTAL mode index of each VCI-active mode. Default is None, in which case modes are numbered from 1.
+        basis (str): Zeroth-order basis, 'HO' or 'VSCF'. Harmonic quanta are denoted by nu, VSCF ones by nu with a tilde.
+
+    Returns:
+        str: A matplotlib mathtext label, e.g. '$2\\nu_{3}+\\nu_{12}$'.
+    """
+
+    sym = r'\tilde{\nu}' if basis == 'VSCF' else r'\nu'
+
+    terms = []
+    for m, n in enumerate(onv):
+        n = int(n)
+        if n == 0:
+            continue
+        mode = list_mode[m] if list_mode is not None else m + 1
+        prefactor = '' if n == 1 else str(n)
+        terms.append(r'%s%s_{%d}' % (prefactor, sym, mode))
+
+    if not terms:
+        return r'$\mathrm{ZPE}$'
+
+    return '$' + '+'.join(terms) + '$'
+
+
+def _vci_basis(co, basis=None):
+    """
+    Zeroth-order basis of a VCI run, 'HO' or 'VSCF', taken from the output
+    unless overridden.
+    """
+
+    if basis is None:
+        basis = getattr(co, 'VCI_basis', None)
+
+    return basis if basis is not None else 'HO'
+
+
+def plot_cry_vci(co, states=None, frange=None, irrep=None, list_mode=None,
+                 threshold=0.01, signed=False, basis=None, cmap=None,
+                 vmin=None, vmax=None, annotate=False, colorbar=True,
+                 max_states=60, figsize=[9, 7], fontsize=9, ax=None):
+    """
+    Heatmap of the VCI coefficients $A_{n,s}$: every row is a zeroth-order
+    configuration $\\Phi^\\mathbf{n}$, every column a VCI state $\\Psi_s$
+    labelled by its energy relative to the ZPE.
+
+    The zeroth-order basis is taken from co.VCI_basis, set by
+    crystal_io.Crystal_output.get_vci(): configurations are Hartree products of
+    harmonic eigenfunctions for a VCI@HO run (quanta labelled $\\nu_i$) and of
+    VSCF modals for a VCI@VSCF run (quanta labelled $\\tilde{\\nu}_i$).
+
+    Only the contributions CRYSTAL prints under 'MOST IMPORTANT
+    CONFIGURATIONS' are available, so a column sums up to slightly less than
+    one and configurations left out of every selected state are not shown.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_vci() has already been called.
+        states (list[int], optional): VCI states to be displayed, given as positional indices into co.VCI_energy. Note that the label CRYSTAL prints restarts from 1 in every symmetry block and is therefore not used here. Takes precedence over frange. Default is None.
+        frange (list[float], optional): Wavenumber window [min, max] the states are taken from, in cm^-1 and relative to the ZPE. Default is None, i.e. every state of the run, which max_states then caps.
+        irrep (int, optional): Restrict the map to the states of one irrep of the block-diagonalised VCI matrix. Default is None, i.e. all of them.
+        list_mode (list[int], optional): CRYSTAL mode index of each VCI-active mode, used to label the configurations. Default is None, in which case the VCI-active modes are numbered from 1.
+        threshold (float, optional): Minimum absolute value of a coefficient for its configuration to be shown. Default is 0.01.
+        signed (bool, optional): Whether to map the coefficients with their sign, on a diverging colormap centred on zero, rather than their absolute value. Default is `False`.
+        basis (str, optional): 'HO' or 'VSCF', overriding the flavour detected by get_vci(). Default is None.
+        cmap (str, optional): Matplotlib colormap name. Default is None, i.e. 'bone_r' when signed is `False` and 'RdBu_r' when it is `True`.
+        vmin (float, optional): Lower bound of the colour scale. Default is None, i.e. 0 when signed is `False` and minus the largest coefficient when it is `True`.
+        vmax (float, optional): Upper bound of the colour scale. Default is None, i.e. the largest coefficient found.
+        annotate (bool, optional): Whether to print the value of every non-zero coefficient in its cell. Default is `False`.
+        colorbar (bool, optional): Whether to draw the colorbar. Default is `True`.
+        max_states (int, optional): Refuse to draw more states than this, so that an unbounded window fails with a clear message instead of building an unreadable figure. Default is 60.
+        figsize (tuple, optional): Image dimensions corresponding to matplotlib figsize. Default is [9, 7].
+        fontsize (int, optional): Font size of the tick labels. Default is 9.
+        ax (matplotlib.axes.Axes, optional): Axes the map is drawn on. Default is None, in which case a new figure is created.
 
     Returns:
         matplotlib.figure.Figure
         matplotlib.axes.Axes
     """
 
-    from CRYSTALClear.units import thz_to_cm
-    import matplotlib.pyplot as plt
     import numpy as np
+    import matplotlib.pyplot as plt
 
-    # Unpack co
-    nconfs    = co.VCI_nconfs
-    nstates   = len(co.VCI_state)
-    ncontribs = len(co.VCI_state[0, 0])
-    energy    = co.VCI_energy.astype(np.int64)
-    list_conf = co.VCI_list_conf
+    basis = _vci_basis(co, basis)
+    sel, onvs, C = _vci_collect(co, states, frange, irrep, threshold, max_states)
 
-    # Compute harmonic energy for each conf -->
-    HA_energy = []
-    nmodes = len(list_conf[0])
-    for i in range(nconfs):
-        E0 = 0
-        for m in range(nmodes):
-            mode = list_mode[m] - 1
-            E0 = E0 + (0.5 + list_conf[i, m]) * thz_to_cm(co.frequency[0, mode]) 
-        HA_energy.append(E0)
-    HA_energy = np.array(HA_energy)
+    # Order the configurations by the state they contribute to most, which
+    # brings the dominant character of each state onto the diagonal -->
+    lead = np.argmax(np.abs(C), axis=1)
+    order = sorted(range(len(onvs)),
+                   key=lambda j: (lead[j], -abs(C[j, lead[j]])))
+    C = C[order]
+    onvs = [onvs[j] for j in order]
     #<--
 
-    A = np.zeros((nconfs, nstates))
+    M = C if signed else np.abs(C)
 
-    for i in range(nstates):
-        for k in range(ncontribs):
-            j = int(co.VCI_state[i, 0, k]) - 1 
-            A[j, i] = abs(co.VCI_state[i, 1, k])
+    if vmax is None:
+        vmax = np.abs(C).max()
+    if vmin is None:
+        vmin = -vmax if signed else 0.
+    if cmap is None:
+        cmap = 'RdBu_r' if signed else 'bone_r'
 
-    # Sort confs according to harmonic energy -->
-    idx = np.argsort(HA_energy)
-    HA_energy = HA_energy[idx]
-    list_conf = list_conf[idx]
-    for i in range(nstates):
-        A[:, i] = A[[idx], i]
-    #<--
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
 
-    nbins = 100
-    step  = energy[nstates-1] / nbins
+    im = ax.imshow(M, cmap=cmap, vmin=vmin, vmax=vmax, aspect='auto',
+                   interpolation='nearest')
 
-    B = np.zeros((nconfs, nbins))
-    xbins = np.zeros(nbins)
+    if colorbar:
+        cbar = fig.colorbar(im, ax=ax, shrink=0.8)
+        cbar.set_label('$A_{n,s}$' if signed else '$|A_{n,s}|$')
 
-    for i in range(nbins):
-        Ebini = energy[0] + step * i
-        Ebinf = energy[0] + step * (i+1)
-        xbins[i] = int(Ebini + step/2)
-        for s in range(nstates):
-            if((energy[s] >= Ebini) and (energy[s] < Ebinf)):
-                B[:, i] = B[:, i] + A[:, s]
+    # One tick per state, labelled by its energy relative to the ZPE
+    ax.set_xticks(np.arange(len(sel)))
+    ax.set_xticklabels(['%.1f' % e for e in co.VCI_energy[sel]],
+                       rotation=90, fontsize=fontsize)
 
-    if(maxval is None):
-        maxval = np.max(B)
-    if(minval is None):
-        minval = np.min(B)
+    # One tick per configuration, labelled by its occupation number vector
+    ax.set_yticks(np.arange(len(onvs)))
+    ax.set_yticklabels([_vci_conf_label(o, list_mode, basis) for o in onvs],
+                       fontsize=fontsize)
 
-    fig, ax = plt.subplots(figsize=figsize)
+    if annotate:
+        for j in range(M.shape[0]):
+            for s in range(M.shape[1]):
+                if C[j, s] == 0.:
+                    continue
+                # Keep the text readable over both ends of the colour scale
+                shade = (M[j, s] - vmin) / (vmax - vmin)
+                ax.text(s, j, '%.2f' % C[j, s], ha='center', va='center',
+                        fontsize=fontsize - 2,
+                        color='w' if shade > 0.6 else 'k')
 
-    B = B / maxval # normalize for maxval
-
-    maxval = np.max(B)
-
-    im = ax.imshow(B, 
-                   cmap = cmap, 
-                   vmin = minval, 
-                   vmax = maxval, 
-                   extent = [0, xbins[nbins-1], 0, HA_energy[-1]], 
-                   origin = 'lower', 
-                   aspect = 'auto', 
-                   alpha = 1
-                   ) 
-
-    fig.colorbar(im, shrink=1, ticks=[minval, maxval])
-
-    # Take care of axis
-    if(xlim is not None):
-       ax.set_xlim(xlim) 
-
-    if(ylim is not None):
-       ax.set_ylim(ylim) 
-
-    ax.set_xticks([])
-
-    ax.set_ylabel("Configuration functions $\Phi^\mathbf{n}$")
-    ax.set_xlabel("Wavenumber [cm$^{-1}$]")
+    ax.set_title('VCI@%s' % (basis))
+    ax.set_xlabel('VCI states, ENE - ZPE [cm$^{-1}$]')
+    ax.set_ylabel('Configurations $\\Phi^\\mathbf{n}$')
 
     return fig, ax
 
 
-
-
-def plot_cry_vci2(co, list_mode):
+def _vci_ribbon(ax, x0, x1, y0, h0, y1, h1, color, alpha):
     """
+    Draw a single Sankey ribbon connecting a source band of height h0 starting
+    at (x0, y0) to a target band of height h1 starting at (x1, y1).
     """
 
-    from CRYSTALClear.units import thz_to_cm
-    import matplotlib.pyplot as plt
-    from matplotlib.ticker import MaxNLocator
+    from matplotlib.path import Path
+    from matplotlib.patches import PathPatch
+
+    xm = (x0 + x1) / 2
+
+    verts = [(x0, y0), (xm, y0), (xm, y1), (x1, y1),
+             (x1, y1 + h1),
+             (xm, y1 + h1), (xm, y0 + h0), (x0, y0 + h0),
+             (x0, y0)]
+    codes = [Path.MOVETO, Path.CURVE4, Path.CURVE4, Path.CURVE4,
+             Path.LINETO,
+             Path.CURVE4, Path.CURVE4, Path.CURVE4,
+             Path.CLOSEPOLY]
+
+    ax.add_patch(PathPatch(Path(verts, codes), facecolor=color,
+                           edgecolor='none', alpha=alpha, zorder=1))
+
+
+def plot_cry_vci_sankey(co, states=None, frange=None, irrep=None, list_mode=None,
+                        threshold=0.01, weight='square', color_by='config',
+                        cmap='tab20', basis=None, show_weights=False,
+                        max_states=60, figsize=[9, 7], node_width=0.03,
+                        gap=0.02, label_pitch=0.04, alpha=0.6, fontsize=9,
+                        ax=None):
+    """
+    Sankey representation of the VCI wavefunctions: the zeroth-order
+    configurations $\\Phi^\\mathbf{n}$ (left) are connected to the VCI states
+    $\\Psi_s$ they contribute to (right), each ribbon having a width
+    proportional to the weight of that configuration in that state.
+
+    The zeroth-order basis is taken from co.VCI_basis, set by
+    crystal_io.Crystal_output.get_vci(): configurations are Hartree products of
+    harmonic eigenfunctions for a VCI@HO run (quanta labelled $\\nu_i$) and of
+    VSCF modals for a VCI@VSCF run (quanta labelled $\\tilde{\\nu}_i$).
+
+    Only the contributions CRYSTAL prints under 'MOST IMPORTANT
+    CONFIGURATIONS' are available, so the ribbons entering a state sum up to
+    slightly less than one.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_vci() has already been called.
+        states (list[int], optional): VCI states to be displayed, given as positional indices into co.VCI_energy. Note that the label CRYSTAL prints restarts from 1 in every symmetry block and is therefore not used here. Takes precedence over frange. Default is None.
+        frange (list[float], optional): Wavenumber window [min, max] the states are taken from, in cm^-1 and relative to the ZPE. Default is None, i.e. every state of the run, which max_states then caps.
+        irrep (int, optional): Restrict the diagram to the states of one irrep of the block-diagonalised VCI matrix. Default is None, i.e. all of them.
+        list_mode (list[int], optional): CRYSTAL mode index of each VCI-active mode, used to label the configurations. Default is None, in which case the VCI-active modes are numbered from 1.
+        threshold (float, optional): Minimum weight for a ribbon to be drawn. Default is 0.01.
+        weight (str, optional): 'square' to make ribbons proportional to $|A_{n,s}|^2$, 'abs' for $|A_{n,s}|$. Default is 'square'.
+        color_by (str, optional): 'config' to colour ribbons by configuration, which highlights configurations shared by several states (resonances), or 'state' to colour them by VCI state. Default is 'config'.
+        cmap (str, optional): Matplotlib colormap used to colour the ribbons. Default is 'tab20'.
+        basis (str, optional): 'HO' or 'VSCF', overriding the flavour detected by get_vci(). Default is None.
+        show_weights (bool, optional): Whether to print the weight of each ribbon next to the configuration node. Default is `False`.
+        max_states (int, optional): Refuse to draw more states than this, so that an unbounded window fails with a clear message instead of building an unreadable figure. Default is 60.
+        figsize (tuple, optional): Image dimensions corresponding to matplotlib figsize. Default is [9, 7].
+        node_width (float, optional): Width of the node bars, the diagram being one unit wide. Default is 0.03.
+        gap (float, optional): Vertical gap between adjacent nodes, as a fraction of the total flow. Default is 0.02.
+        label_pitch (float, optional): Minimum distance between the centres of adjacent nodes, as a fraction of the total flow, which keeps the labels of thin nodes from overlapping. Default is 0.04.
+        alpha (float, optional): Opacity of the ribbons. Default is 0.6.
+        fontsize (int, optional): Font size of the node labels. Default is 9.
+        ax (matplotlib.axes.Axes, optional): Axes the diagram is drawn on. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
+    """
+
     import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Rectangle
 
-    # Unpack co
-    nconfs    = co.VCI_nconfs
-    nstates   = len(co.VCI_state)
-    ncontribs = len(co.VCI_state[0, 0])
-    energy    = co.VCI_energy.astype(np.int64)
-    list_conf = co.VCI_list_conf
-    
+    if weight not in ('square', 'abs'):
+        raise ValueError("weight must be either 'square' or 'abs'.")
 
-    # Compute harmonic energy for each conf -->
-    HA_energy = []
-    nmodes = len(list_conf[0])
-    for i in range(nconfs):
-        E0 = 0
-        for m in range(nmodes):
-            mode = list_mode[m] - 1
-            E0 = E0 + (0.5 + list_conf[i, m]) * thz_to_cm(co.frequency[0, mode]) 
-        HA_energy.append(E0)
-    HA_energy = np.array(HA_energy)
+    if color_by not in ('config', 'state'):
+        raise ValueError("color_by must be either 'config' or 'state'.")
 
-    #print(HA_energy - HA_energy[0])
+    basis = _vci_basis(co, basis)
+    energy = co.VCI_energy
+    sym_conf = getattr(co, 'VCI_sym_conf', {})
+    state_irrep = getattr(co, 'VCI_irrep', np.zeros(len(energy), dtype=int))
+
+    sel, onvs, C = _vci_collect(co, states, frange, irrep,
+                                max_states=max_states)
+
+    # Ribbon widths, thin ones dropped altogether -->
+    W = C ** 2 if weight == 'square' else np.abs(C)
+    W[W < threshold] = 0.
+
+    keep = W.sum(axis=1) > 0.
+    if not keep.any():
+        raise ValueError(
+            "No contribution above threshold=%s: lower it to plot." % threshold)
+    W = W[keep]
+    onvs = [o for o, k in zip(onvs, keep) if k]
     #<--
 
-    print("nconfs: ", nconfs)
-    print("nstates: ", nstates)
-    print("ncontribs: ", ncontribs)
-
-    A = np.zeros((nconfs, nstates))
-
-    for i in range(nstates):
-        #print("state:", i)
-        for k in range(ncontribs):
-            j = int(co.VCI_state[i, 0, k]) - 1 
-            #print("conf:", j)
-            A[j, i] = abs(co.VCI_state[i, 1, k])
-
-    #print("A0", A[0, :])
-    #print(list_conf[0])
-    #print(co.VCI_state[0, 0])
-    #print(list_conf[68])
-    #print(co.VCI_state[68, 0])
-    #print(nconfs)
-
-
-
-    # Sort confs according to harmonic energy -->
-    idx = np.argsort(HA_energy)
-    #print('prima', list_conf)
-    HA_energy = HA_energy[idx]
-    list_conf = list_conf[idx]
-    #print('dopo', list_conf)
-    #print('prima', A[:, 0])
-    #A[:, 0] = A[[idx], 0]
-    #print(A[[idx], 0])
-    #print('dopo', A[idx, 0])
-    for i in range(nstates):
-        A[:, i] = A[[idx], i]
+    # Order the configurations by the mean height of the states they feed, so
+    # as to keep the number of crossing ribbons low -->
+    order = np.argsort(W @ np.arange(len(sel)) / W.sum(axis=1), kind='stable')
+    W = W[order]
+    onvs = [onvs[j] for j in order]
     #<--
 
-    nbins2 = 100
-    nxticks = 10
-    step  = energy[nstates-1] / nbins2
+    # Heights of the nodes -->
+    conf_height = W.sum(axis=1)
+    state_height = W.sum(axis=0)
 
-    B = np.zeros((nconfs, nbins2))
-    xbins = np.zeros(nxticks)
+    total = max(conf_height.sum(), state_height.sum())
+    pad = gap * total
+    pitch = label_pitch * total
 
-    k = nbins2 / nxticks
-    j = 0
-    for i in range(nbins2):
-        Ebini = energy[0] + step * i
-        Ebinf = energy[0] + step * (i+1)
-        if(i % k == 0):
-            xbins[nxticks-j-1] = int(Ebini + step/2)
-            j += 1
+    def stack(heights):
+        """
+        Stack nodes top to bottom, leaving a gap of pad between them and
+        keeping the centres of consecutive ones at least pitch apart so that
+        the labels of thin nodes do not overlap. Gaps carry no meaning in a
+        Sankey diagram, so widening them leaves the ribbons faithful.
+        """
+        pos = np.zeros(len(heights))
+        y = 0.
+        center = None
+        for j, h in enumerate(heights):
+            if center is not None:
+                y = max(y, center + pitch - h / 2)
+            pos[j] = y
+            center = y + h / 2
+            y += h + pad
+        return pos, y - pad
 
-        for s in range(nstates):
-            if((energy[s] >= Ebini) and (energy[s] < Ebinf)):
-                B[:, nbins2-i-1] = B[:, nbins2-i-1] + A[:, s]
+    conf_y, left_span = stack(conf_height)
+    state_y, right_span = stack(state_height)
 
+    # Centre the shorter column on the taller one
+    span = max(left_span, right_span)
+    conf_y += (span - left_span) / 2
+    state_y += (span - right_span) / 2
+    #<--
 
+    # Colours -->
+    ncolors = len(onvs) if color_by == 'config' else len(sel)
+    colormap = plt.get_cmap(cmap)
+    if getattr(colormap, 'N', 256) <= 20:  # qualitative colormap, cycled
+        colors = [colormap(j % colormap.N) for j in range(ncolors)]
+    else:  # continuous colormap, sampled over its whole range
+        colors = [colormap(j / max(ncolors - 1, 1)) for j in range(ncolors)]
+    #<--
 
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
 
-    print('xbins', xbins)
-    print('ultima ene', energy[nstates-1])
+    x0 = node_width
+    x1 = 1. - node_width
 
+    # Ribbons, drawn from the top of each node downwards -->
+    conf_filled = np.zeros(len(onvs))
+    state_filled = np.zeros(len(sel))
 
+    for j in range(len(onvs)):
+        for pos in range(len(sel)):
+            w = W[j, pos]
+            if w == 0.:
+                continue
+            ys = conf_y[j] + conf_filled[j]
+            yt = state_y[pos] + state_filled[pos]
+            _vci_ribbon(ax, x0, x1, ys, w, yt, w,
+                        colors[j if color_by == 'config' else pos], alpha)
+            conf_filled[j] += w
+            state_filled[pos] += w
+    #<--
 
-    fig, ax = plt.subplots(figsize=[8, 8])
-    #im = ax.imshow(A[1:nstates+1,:], aspect='auto', cmap='RdBu')
-    im = ax.imshow(
-            #A[0:nstates+20,:], 
-            B[0:nconfs,:], 
-            cmap='Purples', 
-            vmin=0, 
-            vmax=2,
-            #extent = [0, energy[-1], 0, HA_energy[-1]],
-            #origin='lower',
-            aspect='auto',
-            alpha=1
-            ) 
-    fig.colorbar(im, shrink=0.80, ticks=[0, 2])
+    # Nodes and their labels -->
+    for j, onv in enumerate(onvs):
+        ax.add_patch(Rectangle((0., conf_y[j]), node_width, conf_height[j],
+                               facecolor=colors[j] if color_by == 'config'
+                               else '0.35', edgecolor='none', zorder=2))
+        label = _vci_conf_label(onv, list_mode, basis)
+        if show_weights:
+            label = '%s  (%.2f)' % (label, conf_height[j])
+        ax.text(-0.015, conf_y[j] + conf_height[j] / 2, label,
+                ha='right', va='center', fontsize=fontsize)
 
+    for pos, i in enumerate(sel):
+        ax.add_patch(Rectangle((x1, state_y[pos]), node_width,
+                               state_height[pos],
+                               facecolor=colors[pos] if color_by == 'state'
+                               else '0.35', edgecolor='none', zorder=2))
+        if sym_conf:  # states are numbered within their own irrep
+            tag = '%d/%d' % (state_irrep[i], co.VCI_label[i])
+        else:
+            tag = '%d' % co.VCI_label[i]
+        ax.text(1.015, state_y[pos] + state_height[pos] / 2,
+                '%s:  %.1f' % (tag, energy[i]),
+                ha='left', va='center', fontsize=fontsize)
+    #<--
 
-    # Take care of xticks
-    N = 50 # number of ticks
-    ax.xaxis.set_major_locator(MaxNLocator(nbins=11))
-    #ticks = ax.get_xticks()
-    #ticks = ticks.astype(int)              # convert to array indices
-    #ticks = ticks[(ticks >= 0) & (ticks < len(energy))]
-    #ax.set_xticks(ticks)                 # keep same positions
-    ax.set_xticklabels(xbins[0:])       # change only text
-    ax.tick_params(axis='x', rotation=45)
-    ax.set_xlabel("VCI Energy [cm$^{-1}$]")
+    zeroth = 'VSCF modals' if basis == 'VSCF' else 'harmonic eigenfunctions'
+    ax.set_title('VCI@%s' % basis)
+    ax.text(0., -0.02 * span, 'Configurations $\\Phi^\\mathbf{n}$',
+            ha='left', va='bottom', fontsize=fontsize + 1)
+    right = 'VCI states, %sENE - ZPE [cm$^{-1}$]' % ('irrep/n:  ' if sym_conf
+                                                     else 'n:  ')
+    ax.text(1., -0.02 * span, right,
+            ha='right', va='bottom', fontsize=fontsize + 1)
 
-    # Take care of yticks
-    HA_energy = (HA_energy - HA_energy[0]).astype(np.int64)
-    ax.yaxis.set_major_locator(MaxNLocator(N))
-    ticks = ax.get_yticks()
-    ticks = ticks.astype(int)              # convert to array indices
-    ticks = ticks[(ticks >= 0) & (ticks < len(HA_energy))]
-    ax.set_yticks(ticks)                 # keep same positions
-    #ax.set_yticklabels(HA_energy[ticks])       # change only text
-    ax.tick_params(axis='y', rotation=45)
-    #ax.set_ylabel("Harmonic Energy [cm$^{-1}$]")
-
-    #ax.set_xlim(5200, 0)
-    ax.set_ylim(0, 7000)
+    ax.set_xlim(-0.3, 1.3)
+    ax.set_ylim(1.06 * span, -0.06 * span)  # inverted: lowest state on top
+    ax.axis('off')
 
     return fig, ax
-
-
-
-
-def plot_cry_vci(co, list_mode):
-    """
-    """
-
-    from CRYSTALClear.units import thz_to_cm
-    import matplotlib.pyplot as plt
-    from matplotlib.ticker import MaxNLocator
-    import numpy as np
-
-    # Unpack co
-    nconfs    = co.VCI_nconfs
-    nstates   = len(co.VCI_state)
-    ncontribs = len(co.VCI_state[0, 0])
-    energy    = co.VCI_energy.astype(np.int64)
-    list_conf = co.VCI_list_conf
-
-
-    
-
-    # Compute harmonic energy for each conf -->
-    HA_energy = []
-    nmodes = len(list_conf[0])
-    for i in range(nconfs):
-        E0 = 0
-        for m in range(nmodes):
-            mode = list_mode[m] - 1
-            E0 = E0 + (0.5 + list_conf[i, m]) * thz_to_cm(co.frequency[0, mode]) 
-        HA_energy.append(E0)
-    HA_energy = np.array(HA_energy)
-
-    #print(HA_energy - HA_energy[0])
-    #<--
-
-    print("nconfs: ", nconfs)
-    print("nstates: ", nstates)
-    print("ncontribs: ", ncontribs)
-
-    A = np.zeros((nconfs, nstates))
-
-    for i in range(nstates):
-        #print("state:", i)
-        for k in range(ncontribs):
-            j = int(co.VCI_state[i, 0, k]) - 1 
-            #print("conf:", j)
-            A[j, i] = abs(co.VCI_state[i, 1, k])
-
-    #print("A0", A[0, :])
-    #print(list_conf[0])
-    #print(co.VCI_state[0, 0])
-    #print(list_conf[68])
-    #print(co.VCI_state[68, 0])
-    #print(nconfs)
-
-
-
-    # Sort confs according to harmonic energy -->
-    idx = np.argsort(HA_energy)
-    #print('prima', list_conf)
-    HA_energy = HA_energy[idx]
-    list_conf = list_conf[idx]
-    #print('dopo', list_conf)
-    #print('prima', A[:, 0])
-    #A[:, 0] = A[[idx], 0]
-    #print(A[[idx], 0])
-    #print('dopo', A[idx, 0])
-    for i in range(nstates):
-        A[:, i] = A[[idx], i]
-    #<--
-
-    #launo = np.array(A[1, :])
-
-    #A[1, :] = A[2, :]
-    #A[2, :] = A[3, :]
-    #A[3, :] = A[4, :]
-    #A[4, :] = launo
-
-
-
-
-
-
-
-
-    # Sort states according to their energy -->
-    idx = np.argsort(co.VCI_energy)
-    for j in range(nconfs):
-        A[j, :] = A[j, [idx]]
-    energy = energy[idx]
-    #<--
-
-
-    #debug
-    print(A[:, 0], energy[0])
-    print(A[:, 1], energy[1])
-    #debug
-
-
-
-
-
-    fig, ax = plt.subplots(figsize=[8, 8])
-    #im = ax.imshow(A[1:nstates+1,:], aspect='auto', cmap='RdBu')
-    im = ax.imshow(
-            #A[0:nstates+20,:], 
-            A[0:nconfs,:], 
-            cmap='bone_r', 
-            vmin=np.min(A), 
-            vmax=1,
-            #extent = [0, energy[-1], 0, HA_energy[-1]],
-            #origin='lower',
-            #aspect='auto'
-            ) 
-    #fig.colorbar(im, shrink=0.80, ticks=[np.min(A), np.max(A)])
-    fig.colorbar(im, shrink=0.80, ticks=[np.min(A), 1])
-
-
-    # Take care of xticks
-    N = 2000 # number of ticks
-    ax.xaxis.set_major_locator(MaxNLocator(N))
-    ticks = ax.get_xticks()
-    ticks = ticks.astype(int)              # convert to array indices
-    ticks = ticks[(ticks >= 0) & (ticks < len(energy))]
-    ax.set_xticks(ticks)                 # keep same positions
-    ax.set_xticklabels(energy[ticks])       # change only text
-    ax.tick_params(axis='x', rotation=45)
-    ax.set_xlabel("VCI Energy [cm$^{-1}$]")
-
-    # Take care of yticks
-    #HA_energy = (HA_energy - HA_energy[0]).astype(np.int64)
-    #ax.yaxis.set_major_locator(MaxNLocator(N))
-    #ticks = ax.get_yticks()
-    #ticks = ticks.astype(int)              # convert to array indices
-    #ticks = ticks[(ticks >= 0) & (ticks < len(HA_energy))]
-    #ax.set_yticks(ticks)                 # keep same positions
-    #ax.set_yticklabels(HA_energy[ticks])       # change only text
-    #ax.tick_params(axis='y', rotation=45)
-    #ax.set_ylabel("Harmonic Energy [cm$^{-1}$]")
-
-    ax.set_xlim(0, 6)
-    ax.set_ylim(0, 6)
-
-    return fig, ax
-
 
 
 def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
@@ -4451,139 +4628,693 @@ def plot_cry_spec_multi(files, typeS="lorentz", components=False, bwidth=5,
     return fig, ax
 
 
-def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
-                    scanpot=True, figsize=[10, 10]):
+def _ho_eigenfunctions(xi, nbasis):
     """
-    This function provides a plotting tool for the ANSCAN keyword.  
+    Normalised harmonic oscillator eigenfunctions
+
+    .. math::
+        \\psi_m(\\xi) = \\pi^{-1/4}(2^m m!)^{-1/2}H_m(\\xi)e^{-\\xi^2/2}
+
+    of the dimensionless coordinate xi, evaluated through the upward
+    recurrence rather than through the Hermite polynomials themselves, which
+    overflow well before the ~100 basis functions an ANSCAN run uses.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object.
-        scale_wf (float, optional): Scaling factor for wavefunctions plot. By 
-        default, wavefunctions are not plotted. Providing a value for this 
-        argument enables the wavefunction plot and scales it accordingly.  
-        scale_prob (float, optional): Scaling factor for probability density 
-        plot. By default, probability densities are not plotted. Providing a 
-        value for this argument enables the probability density plot and 
-        scales it accordingly.  
-        harmpot (bool, optional): A logical flag to activate the plotting of 
-        the harmonic potential (default is False). 
-        scanpot (bool, optional): A logical flag to activate the plotting of 
-        the scan potential provided by ANSCAN (default is True). 
-        figsize (list[float])
+        xi (np.array): Coordinates the functions are evaluated on.
+        nbasis (int): Number of functions, i.e. quantum numbers 0 to nbasis-1.
 
-    Notes:
-        - This is a work in progress.
+    Returns:
+        np.array: (len(xi), nbasis) array of eigenfunctions.
+    """
+
+    import numpy as np
+
+    psi = np.zeros([len(xi), nbasis])
+    psi[:, 0] = np.pi**-0.25 * np.exp(-xi**2 / 2)
+    if nbasis > 1:
+        psi[:, 1] = np.sqrt(2.) * xi * psi[:, 0]
+    for m in range(2, nbasis):
+        psi[:, m] = (np.sqrt(2./m) * xi * psi[:, m-1]
+                     - np.sqrt((m-1)/m) * psi[:, m-2])
+
+    return psi
+
+
+def _pes_frequency(co, mode):
+    """
+    Harmonic frequency of ``mode`` in cm^-1, signed, from get_phonon().
+
+    The PES constants are numbered by CRYSTAL mode index, which is the position
+    in the frequency array of the Gamma point plus one.
+
+    Args:
+        co (crystal_io.Crystal_output): Output on which get_phonon() has run.
+        mode (int): CRYSTAL index of the mode.
+
+    Returns:
+        float: The frequency in cm^-1.
+    """
+
+    from CRYSTALClear import units
+
+    frequency = getattr(co, 'frequency', None)
+    if frequency is None:
+        raise AttributeError(
+            'No harmonic frequencies on this output: call get_phonon() before '
+            'plotting a PES, the quadratic term comes from there.')
+    if not (1 <= mode <= frequency.shape[1]):
+        raise ValueError(
+            f'Mode {mode} is outside the {frequency.shape[1]} modes of this run.')
+    return float(units.thz_to_cm(frequency[0, mode-1]))
+
+
+def _pes_single(co, mode):
+    """
+    ``(omega, eta3, eta4)`` of one mode, in cm^-1, w.r.t. the dimensionless xi.
+
+    Args:
+        co (crystal_io.Crystal_output): Output on which get_anh_const() and
+            get_phonon() have run.
+        mode (int): CRYSTAL index of the mode.
+
+    Returns:
+        tuple: The harmonic frequency and the cubic and quartic derivatives.
+    """
+
+    import numpy as np
+
+    single = getattr(co, 'PES_single', None)
+    if single is None or not len(single):
+        raise AttributeError(
+            'No PES constants on this output: call get_anh_const() first.')
+    row = np.asarray(single)[np.asarray(single)[:, 0] == mode]
+    if not len(row):
+        raise ValueError(f'Mode {mode} was not scanned by this ANHAPES run.')
+    return _pes_frequency(co, mode), float(row[0, 1]), float(row[0, 2])
+
+
+def _pes_couple(co, modei, modej):
+    """
+    The five two-mode derivatives of a pair, in cm^-1, as (IIJ, IJJ, IIIJ, IJJJ, IIJJ).
+
+    CRYSTAL writes each pair once, with the lower index first. Asking for it the
+    other way round is answered by relabelling, which swaps the two constants
+    that are not symmetric in I and J.
+
+    Args:
+        co (crystal_io.Crystal_output): Output on which get_anh_const() has run.
+        modei, modej (int): CRYSTAL indices of the two modes.
+
+    Returns:
+        tuple: The five derivatives, ordered for (modei, modej) as given.
+    """
+
+    import numpy as np
+
+    couple = getattr(co, 'PES_couple', None)
+    if couple is None or not len(couple):
+        raise AttributeError(
+            'No two-mode PES constants on this output: call get_anh_const() '
+            'first, and check the run coupled any modes at all.')
+    couple = np.asarray(couple)
+    match = couple[(couple[:, 0] == modei) & (couple[:, 1] == modej)]
+    if len(match):
+        iij, ijj, iiij, ijjj, iijj = match[0, 2:7]
+        return float(iij), float(ijj), float(iiij), float(ijjj), float(iijj)
+
+    match = couple[(couple[:, 0] == modej) & (couple[:, 1] == modei)]
+    if len(match):
+        iij, ijj, iiij, ijjj, iijj = match[0, 2:7]
+        return float(ijj), float(iij), float(ijjj), float(iiij), float(iijj)
+
+    raise ValueError(f'Modes {modei} and {modej} were not coupled by this run.')
+
+
+def _pes_potential_1d(xi, omega, eta3, eta4):
+    """
+    The one-mode PES in cm^-1, as the Taylor series ANHAPES writes.
+
+    .. math::
+        V(\\xi) = \\frac{1}{2}\\omega\\xi^2 + \\frac{1}{6}\\eta_3\\xi^3
+                  + \\frac{1}{24}\\eta_4\\xi^4
+
+    Args:
+        xi (np.array): Coordinates, in classical ground state amplitudes.
+        omega (float): Harmonic frequency, cm^-1.
+        eta3, eta4 (float): Cubic and quartic derivatives, cm^-1.
+
+    Returns:
+        np.array: The potential on ``xi``.
+    """
+
+    return omega/2 * xi**2 + eta3/6 * xi**3 + eta4/24 * xi**4
+
+
+def _pes_potential_2d(xi, xj, omegai, omegaj, single_i, single_j, couple):
+    """
+    The two-mode PES in cm^-1, term by term as ANHAPES writes them.
+
+    Every derivative carries its multivariate Taylor factor, so a term in
+    :math:`\\xi_I^a\\xi_J^b` is divided by :math:`a!b!`.
+
+    Args:
+        xi, xj (np.array): Coordinates, broadcastable against each other.
+        omegai, omegaj (float): Harmonic frequencies, cm^-1.
+        single_i, single_j (tuple): ``(eta3, eta4)`` of each mode.
+        couple (tuple): ``(IIJ, IJJ, IIIJ, IJJJ, IIJJ)``.
+
+    Returns:
+        tuple: ``(harmonic, diagonal, coupling)`` contributions, so that a
+        caller can draw their sum or any part of it.
+    """
+
+    iij, ijj, iiij, ijjj, iijj = couple
+
+    harmonic = omegai/2 * xi**2 + omegaj/2 * xj**2
+    diagonal = (single_i[0]/6 * xi**3 + single_i[1]/24 * xi**4
+                + single_j[0]/6 * xj**3 + single_j[1]/24 * xj**4)
+    coupling = (iij/2 * xi**2 * xj + ijj/2 * xi * xj**2
+                + iiij/6 * xi**3 * xj + ijjj/6 * xi * xj**3
+                + iijj/4 * xi**2 * xj**2)
+
+    return harmonic, diagonal, coupling
+
+
+def _pes_solve_1d(omega, eta3, eta4, nbasis=60):
+    """
+    Vibrational states of a one-mode PES, in the harmonic basis of the mode.
+
+    The Hamiltonian is assembled from the position operator alone: in the
+    dimensionless coordinate the harmonic part is diagonal, and the cubic and
+    quartic terms are powers of
+
+    .. math::
+        \\langle m|\\xi|n\\rangle = \\sqrt{n/2}\\,\\delta_{m,n-1}
+                                  + \\sqrt{(n+1)/2}\\,\\delta_{m,n+1}
+
+    A few extra functions are carried through the matrix products and dropped
+    afterwards, since a truncated product is wrong in its last rows.
+
+    An imaginary mode is solved as well as a real one: xi is built on the
+    modulus of the frequency, which leaves an inverted quadratic term behind
+    rather than an undefined basis.
+
+    Args:
+        omega (float): Harmonic frequency, cm^-1, negative if imaginary.
+        eta3, eta4 (float): Cubic and quartic derivatives, cm^-1.
+        nbasis (int, optional): Harmonic functions kept. Default is 60.
+
+    Returns:
+        np.array: Eigenvalues in cm^-1, ascending.
+        np.array: (nbasis, nbasis) eigenvectors, one state per column.
+    """
+
+    import numpy as np
+
+    pad = nbasis + 8
+    n = np.arange(pad)
+    off = np.sqrt((n[1:]) / 2.)
+    X = np.diag(off, 1) + np.diag(off, -1)
+
+    X2 = X @ X
+    X3 = X2 @ X
+    X4 = X2 @ X2
+
+    reference = abs(omega)
+    H = (np.diag(reference * (n + 0.5))
+         + (omega - reference)/2 * X2      # zero unless the mode is imaginary
+         + eta3/6 * X3
+         + eta4/24 * X4)[:nbasis, :nbasis]
+
+    energy, vector = np.linalg.eigh(H)
+    return energy, vector
+
+
+def _pes_turning_points(omega, eta3, eta4, energy, reach=6.):
+    """
+    Where a one-mode PES last crosses ``energy``, i.e. the classical turning
+    points of a state sitting at it.
+
+    Bounded by ``reach``: a potential whose quartic term is negative comes back
+    down and has no outer turning point at all.
+
+    Args:
+        omega, eta3, eta4 (float): The potential, in cm^-1.
+        energy (float): The level, cm^-1.
+        reach (float, optional): Widest coordinate considered. Default is 6.
+
+    Returns:
+        list[float]: ``[left, right]``, clamped to +/- ``reach``.
+    """
+
+    import numpy as np
+
+    xi = np.linspace(-reach, reach, 4001)
+    inside = xi[_pes_potential_1d(xi, omega, eta3, eta4) <= energy]
+    if not len(inside):
+        return [-reach, reach]
+    return [float(inside.min()), float(inside.max())]
+
+
+def plot_cry_pes_1D(co, mode, xlim=None, npts=500, harmonic=True,
+                    levels=False, nstates=5, scale_wf=None, nbasis=60,
+                    npts_wf=500, legend=True, figsize=[7, 6], ax=None):
+    """
+    The anharmonic potential of one normal mode, from the cubic and quartic
+    derivatives ANHAPES computes.
+
+    The abscissa is the dimensionless normal coordinate $\\xi$, the
+    displacement in units of the classical amplitude at the ground state
+    energy, which is what the derivatives are taken with respect to. CRYSTAL
+    fits them from a scan of a fraction of an amplitude either side of
+    equilibrium, so a wide window is an extrapolation of a quartic and should
+    be read as one.
+
+    With ``levels`` the one-dimensional vibrational problem is solved in the
+    harmonic basis of the mode and its states are drawn on the potential. Those
+    are this potential's own states, not the run's: a VSCF or VCI step couples
+    the modes and lands elsewhere.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
+        mode (int): CRYSTAL index of the mode to draw.
+        xlim (list[float], optional): Bounds of the abscissa, in units of $\\xi$. Default is None, i.e. [-2, 2]. Whatever it is, `levels` widens it far enough to hold the states being drawn, since a state cut off at the edge of the window says less than the extrapolation needed to contain it.
+        npts (int, optional): Number of points the potential is sampled on. Default is 500.
+        harmonic (bool, optional): Whether to draw the harmonic parabola of the mode alongside. Default is `True`.
+        levels (bool, optional): Whether to solve the mode and draw its vibrational states. Default is `False`.
+        nstates (int, optional): Number of states to draw, counting from the ground state. Default is 5.
+        scale_wf (float, optional): Height the wavefunctions are drawn at, in cm^-1. Default is None, i.e. the mean spacing of the states being drawn, which fills the gaps without crossing them.
+        nbasis (int, optional): Harmonic functions the states are expanded on. Default is 60.
+        npts_wf (int, optional): Number of points the wavefunctions are sampled on. Default is 500.
+        legend (bool, optional): Whether to label the curves. Default is `True`.
+        figsize (list[float], optional): Image dimensions corresponding to matplotlib figsize. Default is [7, 6].
+        ax (matplotlib.axes.Axes, optional): Axes the curves are drawn on. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
+    """
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    omega, eta3, eta4 = _pes_single(co, mode)
+
+    # The states are solved before the window is fixed: a stiff mode reaches
+    # well past the couple of amplitudes the constants were fitted over, and
+    # drawing its states cut off at the edge of that window says less than
+    # extrapolating the curve out to meet them.
+    if xlim is None:
+        xlim = [-2., 2.]
+    if (levels):
+        energy, vector = _pes_solve_1d(omega, eta3, eta4, nbasis=nbasis)
+        nstates = min(nstates, len(energy))
+        turning = _pes_turning_points(omega, eta3, eta4, energy[nstates-1])
+        xlim = [min(xlim[0], 1.15*turning[0]), max(xlim[1], 1.15*turning[1])]
+
+    xi = np.linspace(xlim[0], xlim[1], npts)
+    potential = _pes_potential_1d(xi, omega, eta3, eta4)
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+
+    if (harmonic):
+        ax.plot(xi, omega/2 * xi**2, 'r--', linewidth=2, label='harmonic')
+    ax.plot(xi, potential, 'b', linewidth=2, label='cubic + quartic')
+
+    # States of this potential -->
+    if (levels):
+        if scale_wf is None:
+            gaps = np.diff(energy[:nstates])
+            scale_wf = float(np.mean(gaps)) if len(gaps) else abs(omega)
+
+        xwf = np.linspace(xlim[0], xlim[1], npts_wf)
+        wf = _ho_eigenfunctions(xwf, vector.shape[0]) @ vector[:, :nstates]
+        for s in range(nstates):
+            ax.hlines(y=energy[s], xmin=xlim[0], xmax=xlim[1],
+                      colors='k', linewidth=0.3)
+            ax.plot(xwf, wf[:, s]*scale_wf + energy[s], 'm-', linewidth=1)
+        bottom = min(0., float(potential.min()))
+        span = energy[nstates-1] - bottom
+        # Room for the topmost wavefunction as well as its level.
+        ax.set_ylim([bottom - 0.05*span,
+                     energy[nstates-1] + max(0.15*span, 0.9*scale_wf)])
+    # <-- States
+
+    if (legend):
+        ax.legend(loc='upper center')
+
+    ax.set_xlabel(r'$\xi_{%d}$' % mode)
+    ax.set_ylabel(r'$V$ [cm$^{-1}$]')
+    ax.set_xlim(xlim)
+
+    return fig, ax
+
+
+def _pes_grid(co, modei, modej, quantity, xlim, ylim, npts):
+    """
+    The two-mode surface a PES figure draws, on its grid.
+
+    Args:
+        co (crystal_io.Crystal_output): Output carrying the PES constants.
+        modei, modej (int): CRYSTAL indices of the two modes.
+        quantity (str): 'anharmonic', 'coupling' or 'total'.
+        xlim, ylim (list[float]): Bounds of the two coordinates.
+        npts (int): Grid points along each axis.
+
+    Returns:
+        np.array, np.array: The coordinate grids.
+        np.array: The surface, cm^-1.
+        str: Axis label for it.
+        bool: Whether it changes sign, i.e. has to be read against zero.
+    """
+
+    import numpy as np
+
+    if quantity not in ('anharmonic', 'coupling', 'total'):
+        raise ValueError(f'unknown PES quantity {quantity!r}')
+
+    omegai, eta3i, eta4i = _pes_single(co, modei)
+    omegaj, eta3j, eta4j = _pes_single(co, modej)
+    couple = _pes_couple(co, modei, modej)
+
+    xi, xj = np.meshgrid(np.linspace(xlim[0], xlim[1], npts),
+                         np.linspace(ylim[0], ylim[1], npts))
+    harmonic, diagonal, coupling = _pes_potential_2d(
+        xi, xj, omegai, omegaj, (eta3i, eta4i), (eta3j, eta4j), couple)
+
+    if quantity == 'total':
+        return xi, xj, harmonic + diagonal + coupling, r'$V$ [cm$^{-1}$]', False
+    if quantity == 'coupling':
+        return (xi, xj, coupling, r'$V-V_{\rm 1D}$ [cm$^{-1}$]', True)
+    return (xi, xj, diagonal + coupling, r'$V-V_{\rm harm}$ [cm$^{-1}$]', True)
+
+
+def _pes_bounds(surface, nlevels, signed):
+    """
+    Contour levels for a PES surface, centred on zero when it changes sign.
+
+    Args:
+        surface (np.array): The surface.
+        nlevels (int): Number of levels.
+        signed (bool): Whether zero is the reference.
+
+    Returns:
+        np.array: The levels, ascending.
+    """
+
+    import numpy as np
+
+    if signed:
+        span = float(np.abs(surface).max()) or 1.
+        return np.linspace(-span, span, nlevels)
+    return np.linspace(float(surface.min()), float(surface.max()), nlevels)
+
+
+def plot_cry_pes_3D(co, modei, modej, quantity='anharmonic', xlim=[-2., 2.],
+                    ylim=None, npts=120, nlevels=21, cmap=None, colorbar=True,
+                    contours=False, elev=30., azim=-60., alpha=1.,
+                    figsize=[8, 6.5], ax=None):
+    """
+    The potential-energy surface of two coupled normal modes, drawn as a
+    surface rather than a map.
+
+    The same quantity :func:`plot_cry_pes_2D` maps, with the same default: the
+    harmonic bowl is one to two orders of magnitude deeper than everything the
+    anharmonic constants add, and a surface of the total is a paraboloid.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
+        modei, modej (int): CRYSTAL indices of the two modes, in either order.
+        quantity (str, optional): 'anharmonic' for the surface with the harmonic part subtracted, 'coupling' for the two-mode terms alone, 'total' for the surface itself. Default is 'anharmonic'.
+        xlim (list[float], optional): Bounds of the first mode's coordinate. Default is [-2, 2].
+        ylim (list[float], optional): Bounds of the second mode's coordinate. Default is None, i.e. the same as xlim.
+        npts (int, optional): Grid points along each axis. Default is 120, lower than the map's since every quad is drawn.
+        nlevels (int, optional): Number of colour steps, and of floor contours when they are drawn. Default is 21.
+        cmap (str, optional): Matplotlib colormap name. Default is None, i.e. a diverging map centred on zero for a quantity that changes sign and a sequential one for the total surface.
+        colorbar (bool, optional): Whether to draw the colorbar. Default is `True`.
+        contours (bool, optional): Whether to project contour lines onto the floor of the box, which is what makes a surface readable quantitatively. Default is `False`.
+        elev (float, optional): Elevation of the view, degrees. Default is 30.
+        azim (float, optional): Azimuth of the view, degrees. Default is -60.
+        alpha (float, optional): Opacity of the surface. Default is 1, i.e. opaque.
+        figsize (list[float], optional): Image dimensions corresponding to matplotlib figsize. Default is [8, 6.5].
+        ax (mpl_toolkits.mplot3d.axes3d.Axes3D, optional): Axes the surface is drawn on, which have to have been created with a 3D projection. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        mpl_toolkits.mplot3d.axes3d.Axes3D
+    """
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    if ylim is None:
+        ylim = list(xlim)
+    xi, xj, surface, label, signed = _pes_grid(
+        co, modei, modej, quantity, xlim, ylim, npts)
+    bounds = _pes_bounds(surface, nlevels, signed)
+
+    if cmap is None:
+        cmap = 'RdBu_r' if signed else 'viridis'
+
+    if ax is None:
+        fig = plt.figure(figsize=figsize)
+        ax = fig.add_subplot(projection='3d')
+    else:
+        if not hasattr(ax, 'plot_surface'):
+            raise TypeError(
+                'plot_cry_pes_3D needs axes made with a 3D projection, e.g. '
+                "fig.add_subplot(projection='3d').")
+        fig = ax.get_figure()
+
+    drawn = ax.plot_surface(xi, xj, surface, cmap=cmap,
+                            vmin=bounds[0], vmax=bounds[-1],
+                            linewidth=0, antialiased=True, alpha=alpha,
+                            rcount=npts, ccount=npts)
+
+    # Contours on the floor rather than on the surface: laid over it they are
+    # hidden by the relief they describe wherever the surface turns away.
+    if (contours):
+        floor = float(surface.min()) - 0.25*float(np.ptp(surface))
+        # One muted colour rather than the surface's own: a diverging map sends
+        # everything near zero to near-white, which on the floor is invisible.
+        ax.contour(xi, xj, surface, levels=bounds, colors='k',
+                   linewidths=0.4, alpha=0.4, offset=floor)
+        ax.set_zlim(floor, float(surface.max()))
+
+    # No label on the bar: the vertical axis already names the quantity, and
+    # the colour only repeats what the height says.
+    if (colorbar):
+        fig.colorbar(drawn, ax=ax, shrink=0.6, pad=0.1)
+
+    ax.view_init(elev=elev, azim=azim)
+    ax.set_xlabel(r'$\xi_{%d}$' % modei)
+    ax.set_ylabel(r'$\xi_{%d}$' % modej)
+    ax.set_zlabel(label)
+
+    return fig, ax
+
+
+def plot_cry_pes_2D(co, modei, modej, quantity='anharmonic', xlim=[-2., 2.],
+                    ylim=None, npts=200, nlevels=21, cmap=None, colorbar=True,
+                    contours=True, figsize=[7, 6], ax=None):
+    """
+    The potential-energy surface of two coupled normal modes, from the cubic
+    and quartic derivatives ANHAPES computes.
+
+    Both axes are dimensionless normal coordinates $\\xi$, the displacement in
+    units of the classical amplitude at the ground state energy.
+
+    What is mapped is chosen with ``quantity``. The harmonic bowl is one to two
+    orders of magnitude deeper than everything the anharmonic constants add, so
+    contours of the total surface are ellipses and say nothing about the
+    coupling; ``'anharmonic'``, the default, takes it out and maps what the
+    cubic and quartic terms are worth.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
+        modei, modej (int): CRYSTAL indices of the two modes, in either order.
+        quantity (str, optional): 'anharmonic' for the surface with the harmonic part subtracted, 'coupling' for the two-mode terms alone, 'total' for the surface itself. Default is 'anharmonic'.
+        xlim (list[float], optional): Bounds of the first mode's coordinate. Default is [-2, 2].
+        ylim (list[float], optional): Bounds of the second mode's coordinate. Default is None, i.e. the same as xlim.
+        npts (int, optional): Grid points along each axis. Default is 200.
+        nlevels (int, optional): Number of filled contour levels. Default is 21.
+        cmap (str, optional): Matplotlib colormap name. Default is None, i.e. a diverging map centred on zero for a quantity that changes sign and a sequential one for the total surface.
+        colorbar (bool, optional): Whether to draw the colorbar. Default is `True`.
+        contours (bool, optional): Whether to draw contour lines over the filled map. Default is `True`.
+        figsize (list[float], optional): Image dimensions corresponding to matplotlib figsize. Default is [7, 6].
+        ax (matplotlib.axes.Axes, optional): Axes the map is drawn on. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
+    """
+
+    import matplotlib.pyplot as plt
+
+    if ylim is None:
+        ylim = list(xlim)
+    xi, xj, surface, label, signed = _pes_grid(
+        co, modei, modej, quantity, xlim, ylim, npts)
+    bounds = _pes_bounds(surface, nlevels, signed)
+
+    if cmap is None:
+        cmap = 'RdBu_r' if signed else 'viridis'
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+
+    filled = ax.contourf(xi, xj, surface, levels=bounds, cmap=cmap, extend='both')
+    if (contours):
+        ax.contour(xi, xj, surface, levels=bounds, colors='k',
+                   linewidths=0.3, alpha=0.5)
+    if (colorbar):
+        fig.colorbar(filled, ax=ax, label=label)
+
+    ax.set_xlabel(r'$\xi_{%d}$' % modei)
+    ax.set_ylabel(r'$\xi_{%d}$' % modej)
+    ax.set_aspect('equal', adjustable='box')
+
+    return fig, ax
+
+
+def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
+                    scanpot=True, nstates=None, npts=2000, xlim=None,
+                    ylim=None, legend=True, figsize=[10, 10], ax=None):
+    """
+    Potential and anharmonic vibrational states of an ANSCAN run, drawn
+    against the dimensionless normal coordinate $\\xi$ the scan is performed
+    on, i.e. the [DISPLAC] column of the output.
+
+    The potential is the Taylor expansion ANSCAN fits to the scanned points,
+
+    .. math::
+        V(\\xi) = \\sum_n \\frac{1}{n!}
+                  \\left(\\frac{d^nV}{d\\xi^n}\\right)\\xi^n
+
+    summed over every derivative CRYSTAL prints, and the wavefunctions are
+    rebuilt from the ANSCANWF.DAT coefficients over the harmonic basis of the
+    same coordinate. Wavefunctions are only available for the states written
+    to ANSCANWF.DAT, ten of them in a standard run.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_anscan() has already been called.
+        scale_wf (float, optional): Scaling factor of the wavefunctions, which are drawn on top of the level they belong to. Default is None, i.e. no wavefunction is drawn.
+        scale_prob (float, optional): Scaling factor of the probability densities, which are filled between the level they belong to and the density itself. Default is None, i.e. no density is drawn.
+        harmpot (bool, optional): Whether to draw the harmonic potential of the mode. Default is `False`.
+        scanpot (bool, optional): Whether to draw the points ANSCAN actually computed the potential on. Default is `True`.
+        nstates (int, optional): Number of states, counting from the ground state, to draw a wavefunction or a density for. Default is None, i.e. every state found in ANSCANWF.DAT.
+        npts (int, optional): Number of points the curves are sampled on. Default is 2000.
+        xlim (list[float], optional): Bounds of the abscissa, in units of $\\xi$. Default is None, i.e. the range of the scan.
+        ylim (list[float], optional): Bounds of the ordinate, in cm^-1. Default is None, in which case it is set around the states being drawn.
+        legend (bool, optional): Whether to label the potentials. Default is `True`.
+        figsize (list[float], optional): Image dimensions corresponding to matplotlib figsize. Default is [10, 10].
+        ax (matplotlib.axes.Axes, optional): Axes the curves are drawn on. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
     """
 
     import math
 
     import matplotlib.pyplot as plt
     import numpy as np
-    from scipy import special
 
     # Unpack co
     harm_freq = co.harm_freq
     force_const = co.force_const
-    energy = co.energy
-    wf = co.wf
-    scan_energy = co.anhpot
-    alpha = co.alpha
+    energy = np.array(co.energy)
+    coeff = np.array(co.wf)
+    scan_energy = np.array(co.anhpot)
     rangescan = co.rangescan
 
-    # debug
-    print(co.alpha)
-    # debug
+    # ANSCAN expresses displacements as times of the classical amplitude at
+    # the ground state energy, which makes [DISPLAC] the dimensionless normal
+    # coordinate xi = sqrt(mu*omega/hbar)*Q. Levels, potentials, scanned
+    # points and wavefunctions therefore already share this abscissa and none
+    # of them needs to be rescaled.
+    if xlim is None:
+        xlim = [rangescan[0], rangescan[1]]
+    xi = np.linspace(xlim[0], xlim[1], npts)
 
-    # npts
-    npts = 10000
+    # States a wavefunction is available for
+    nwf = min(coeff.shape[1], len(energy))
+    if nstates is None:
+        nstates = nwf
+    else:
+        nstates = min(nstates, nwf)
 
-    # Matplotlib aspect ratio
-    fig, ax = plt.subplots(figsize=figsize)
+    # Potential fitted by ANSCAN, from every derivative that was printed
+    anhpot = np.zeros(npts)
+    for n, fc in enumerate(force_const):
+        anhpot = anhpot + fc / math.factorial(n) * xi**n
 
-    # Define harmonic freq
-    amu_me = 1822.88848
-    Ha2wn = 219473.5152
-    lambda_AU = abs(harm_freq / Ha2wn) * amu_me
+    # Harmonic potential, negative all the way through for an imaginary mode
+    HOpot = 1/2 * harm_freq * xi**2
 
-    # debug
-    print(harm_freq)
-    print(lambda_AU)
-    # debug
+    # Vertical range, wide enough for the states being drawn -->
+    if ylim is None:
+        ybot = min(0., np.min(anhpot), np.min(scan_energy))
+        if harmpot:
+            ybot = min(ybot, np.min(HOpot))
+        ytop = energy[nstates-1]
+        span = ytop - ybot
+        ylim = [ybot - 0.05*span, ytop + 0.15*span]
+    # <--
 
-    # Define coordinates (basis set)
-    x = np.linspace(-1000, 1000, npts)
-    xi = x * alpha
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
 
-    # Plot levels
-    Nlevel = len(energy)
-    for i in range(Nlevel):
-        ax.hlines(y=energy[i], xmin=rangescan[0], xmax=rangescan[1],
-                   colors='k', linewidth=0.3)
+    # Plot the levels lying in the window
+    for e in energy[(energy >= ylim[0]) & (energy <= ylim[1])]:
+        ax.hlines(y=e, xmin=xlim[0], xmax=xlim[1], colors='k', linewidth=0.3)
 
-    # Set number of basis functions and wf
-    N = len(wf)
-    Nwf = N
-
-    # Compute Gaussian functions
-    G = np.exp(-(xi)**2/2)
-
-    # Compute harmonic wf
-    wfHO = np.zeros([len(xi), N])
-    for m in range(N):
-        norm = np.sqrt((alpha) / ((np.sqrt(math.pi))
-                       * (2**m) * math.factorial(m)))
-        Herm = special.hermite(m, monic=False)
-        wfHO[:, m] = norm * Herm(xi) * G
-
-    # Build anharmonic wf
-    wfANH = np.zeros([len(wfHO), N])
-
-    # Define coordinates (wf)
-    x = np.linspace(-100, 100, npts)
-    xi = x * lambda_AU**0.25
-
-    # for s in range(N):
-    for s in range(9):
-        for i in range(N):
-            wfANH[:, s] = wfANH[:, s] + wf[i, s]*wfHO[:, i]
+    # Build the anharmonic wavefunctions -->
+    if (scale_wf is not None) or (scale_prob is not None):
+        wfHO = _ho_eigenfunctions(xi, coeff.shape[0])
+        wfANH = wfHO @ coeff[:, :nstates]
+    # <--
 
     # Wavefunctions -->
     if (scale_wf is not None):
-
-        # Plot wf
-        for i in range(Nwf):
-            yp = wfANH[:, i]*scale_wf + energy[i]
+        for s in range(nstates):
+            yp = wfANH[:, s]*scale_wf + energy[s]
             ax.plot(xi, yp, "m-", linewidth=1)
     # <-- Wavefunctions
 
     # Probability density  -->
     if (scale_prob is not None):
-        for s in range(Nlevel):
-            prob = wfANH[:, s]**2*scale_prob**2 + energy[s]
+        for s in range(nstates):
+            prob = wfANH[:, s]**2*scale_prob + energy[s]
             lower_bound = energy[s] + 0*xi
             ax.fill_between(xi, lower_bound, prob, color='c', alpha=0.3)
+    # <-- Probability density
 
     # Plot anharmonic potential
-    anhpot = 1/2 * force_const[2] * xi**2 \
-           + 1/6 * force_const[3] * xi**3 \
-           + 1/24 * force_const[4] * xi**4
-    ax.plot(xi, anhpot, 'b', linewidth=2)
+    ax.plot(xi, anhpot, 'b', linewidth=2, label='ANSCAN fit')
 
     # Plot harmonic potential
     if (harmpot):
-        HOpot = 1/2 * harm_freq * xi**2
-        ax.plot(xi, HOpot, 'r--', linewidth=2)
+        ax.plot(xi, HOpot, 'r--', linewidth=2, label='harmonic')
 
     # Plot scan potential
     if (scanpot):
-        # Define scaled_x
-        scaled_x = np.linspace(rangescan[0], rangescan[1], len(scan_energy))
-        ax.plot(scaled_x, scan_energy, 'bo')
+        ax.plot(co.displac, scan_energy, 'bo', label='scanned points')
 
-    ax.set_ylabel('$\Delta E$ [cm$^{-1}$]')
+    if (legend):
+        ax.legend(loc='upper right')
+
+    ax.set_ylabel(r'$\Delta E$ [cm$^{-1}$]')
     ax.set_xlabel(r'$\xi$')
-    ax.set_xlim([rangescan[0], rangescan[1]])
-    ax.set_ylim([-100, abs(harm_freq)*10])
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
 
     return fig, ax
 

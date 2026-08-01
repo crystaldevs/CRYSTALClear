@@ -2281,11 +2281,29 @@ class Crystal_output:
 
         Returns:
             self (Crystal_output): New attributes listed below.
-            self.VCI_label(np.array)
-            self.VCI_state(np.array)
-            self.VCI_energy(np.array)
-            self.VCI_nconfs(int)
-            self.VCI_list_conf(np.array)
+            self.VCI_label(np.array): Label of each state, as printed by
+                CRYSTAL. It restarts from 1 in every symmetry block, so it
+                identifies a state only together with self.VCI_irrep.
+            self.VCI_state(np.array): 3D array of the printed contributions to
+                each state (axis 0), holding their configuration index (axis 1
+                index 0) and the corresponding VCI coefficient (axis 1 index
+                1). States printing fewer contributions than the longest one
+                are padded with a null configuration index.
+            self.VCI_energy(np.array): Energy of each state relative to the
+                zero point energy, in cm^-1.
+            self.VCI_nconfs(int): Total number of configurations.
+            self.VCI_list_conf(np.array): 2D array of the occupation number
+                vector of every configuration.
+            self.VCI_basis(str): Zeroth-order basis the VCI expansion is built
+                on, either 'HO' (VCI@HO) or 'VSCF' (VCI@VSCF).
+            self.VCI_zpe(float): Vibrational zero point energy in cm^-1.
+            self.VCI_irrep(np.array): Irrep the VCI matrix block each state
+                comes from, 0 when symmetry is not exploited.
+            self.VCI_sym_conf(dict): Configuration list of each irrep, keyed by
+                irrep. The configuration indices held by self.VCI_state are
+                local to these lists, not to self.VCI_list_conf, whenever the
+                VCI matrix is block-diagonalised. Empty dictionary when
+                symmetry is not exploited.
         """
 
         import re
@@ -2299,6 +2317,14 @@ class Crystal_output:
         state2 = []
         ONVs = []
 
+        sym_save = False
+        irrep = 0
+        irreps = []
+        sym_ONVs = {}
+
+        self.VCI_basis = None
+        self.VCI_zpe = None
+
         # Get harmonic freqs -->
         self.get_phonon()
         #<--
@@ -2309,66 +2335,119 @@ class Crystal_output:
             if re.match(r'^\s*\*\s*VIBRATIONAL\s+CONFIGURATION\s+INTERACTION\s+\(VCI\)\s*\*$', line):
                 save = True
 
-            if re.match(r'\s* VCI PERFORMED', line):
+            if re.match(r'\s*VCI PERFORMED', line):
                 save = False
+                # Both the current labels, '... HARMONIC BASIS (VCI-HO)' and
+                # '... VSCF FUNDAMENTAL BASIS (VCI-VSCF)', and the older ones,
+                # '... BASIS OF THE HARMONIC EIGENFUNCTIONS' and '... BASIS OF
+                # THE VSCF FUNDAMENTAL STATE (VIRTUAL VCI)', are recognised.
+                if 'VSCF' in line:
+                    self.VCI_basis = 'VSCF'
+                else:
+                    self.VCI_basis = 'HO'
 
-            if (re.match(r'^\s*\d', line) and save):
-                #ONVs.append(line.split()[2:])  # only for taglia e cuci
-                ONVs.append(line.split()[3:]) # this is the correct one
+            if re.match(r'\s*ZPE\s*=', line):
+                self.VCI_zpe = float(re.search(r'ZPE\s*=\s*(-?\d+\.?\d*)',
+                                               line).group(1))
 
-            #################################
-            # Remember to update VCI print in CRYSTAL !!!!!!
-            #################################
+            # Match the shape of a configuration line, i.e. its indices
+            # followed by the parenthesised occupation number vector, rather
+            # than any line starting with a digit: some versions of CRYSTAL
+            # print debugging output in the middle of the list.
+            if (save and re.match(r'^\s*\d+(\s+\d+)?\s+\(', line)):
+                fields = line.split()
+                ONVs.append(fields[fields.index('(') + 1:])
 
-            if re.match(r'\s*TOTAL NUMBER OF CONFIGURATIONS', line):
-                self.VCI_nconfs = (int(line.split()[4]))
+            # When symmetry is exploited the VCI matrix is block-diagonalised,
+            # each irrep printing its own configuration list and its own set of
+            # states. The configuration indices of a state then refer to the
+            # list of its own irrep, not to the global one.
+            if re.match(r'\s*CONSTRUCTION OF VCI MATRIX FOR IRREP', line):
+                irrep = int(line.split()[-1])
+                sym_ONVs[irrep] = []
 
-            if re.match(r'\s* VCI STATE \(', line): 
-                nstate += 1
-                label.append(int(line.split()[3].replace(")", "")))
-                energy.append((float(line.split()[7])))
-                p = 3
-                loop = True
+            if re.match(r'\s*CONFIGURATIONS WITH THIS SYMMETRY ARE', line):
+                sym_save = True
+
+            if re.match(r'\s*VCI ANHARMONIC VIBRATIONAL STATES', line):
+                sym_save = False
+
+            if sym_save and re.match(r'^\s*\d+(\s+\d+)?\s+\(', line):
+                fields = line.split()
+                sym_ONVs[irrep].append(
+                    [int(x.replace(')', '').replace(',', ''))
+                     for x in fields[fields.index('(') + 1:]])
+
+            if re.match(r'\s*VCI STATE \(', line):
+                # Look the block of printed contributions up rather than
+                # assuming a fixed offset: the number of blank lines preceding
+                # it varies with the version of CRYSTAL.
+                p = 1
+                while (i + p < len(self.data)
+                       and not re.match(r'\s*CONFs', self.data[i+p])
+                       and not re.match(r'\s*VCI STATE \(', self.data[i+p])):
+                    p += 1
+
+                if (i + p == len(self.data)
+                        or not re.match(r'\s*CONFs', self.data[i+p])):
+                    continue  # truncated output, leave the state out
+
+                # A state holds from 4 to 16 contributions, printed a few per
+                # line, so read the whole block and sort its lines by tag
+                # instead of relying on either count.
                 confs_tmp = []
                 coeffs_tmp = []
-                while loop:
-                    confs_tmp = confs_tmp + self.data[i+p].split()[1:]
-                    coeffs_tmp = coeffs_tmp + self.data[i+p+1].split()[1:]
-                    if (re.match(r'\s*CONFs', self.data[i+p+2])):
-                        loop = True
-                        p += 2
+                while i + p < len(self.data):
+                    if re.match(r'\s*CONFs', self.data[i+p]):
+                        confs_tmp = confs_tmp + self.data[i+p].split()[1:]
+                    elif re.match(r'\s*COEFs', self.data[i+p]):
+                        coeffs_tmp = coeffs_tmp + self.data[i+p].split()[1:]
                     else:
-                        loop = False
                         break
+                    p += 1
 
-                confs = [int(x) for x in confs_tmp]
-                coeffs = [float(x) for x in coeffs_tmp]
-
-                state1.append(confs)
-                state2.append(coeffs)
+                nstate += 1
+                irreps.append(irrep)
+                label.append(int(line.split()[3].replace(")", "")))
+                energy.append((float(line.split()[7])))
+                state1.append([int(x) for x in confs_tmp])
+                state2.append([float(x) for x in coeffs_tmp])
         #<--
 
 
         # Parsing of ONVs -->
+        self.VCI_nconfs = len(ONVs)
+
         nmodes = len(ONVs[0])
+        if any(len(o) != nmodes for o in ONVs):
+            raise Exception("EXITING: the VCI configuration list of %s could "
+                            "not be parsed, its entries not all spanning the "
+                            "same %d modes." % (self.name, nmodes))
         for i in range(self.VCI_nconfs):
             for m in range(nmodes):
                 ONVs[i][m] = int(ONVs[i][m].replace(')', '').replace(',', ''))
-                pass
         self.VCI_list_conf = np.array(ONVs)
         #<--
 
+        # Per-irrep configuration lists, empty when symmetry is not exploited
+        self.VCI_sym_conf = {k: np.array(v) for k, v in sym_ONVs.items() if v}
 
-        A = np.zeros((nstate, 2, len(confs)), dtype=float)
+
+        # States need not all print the same number of contributions: pad the
+        # short ones with a null configuration index, which plots skip.
+        ncontribs = max(len(c) for c in state1)
+
+        A = np.zeros((nstate, 2, ncontribs), dtype=float)
 
         for i in range(nstate):
-            A[i, 0] = np.array(state1[i])
-            A[i, 1] = np.array(state2[i])
+            A[i, 0, :len(state1[i])] = np.array(state1[i])
+            A[i, 1, :len(state2[i])] = np.array(state2[i])
 
 
         self.VCI_label  = np.array(label)
         self.VCI_energy = np.array(energy)
         self.VCI_state  = A
+        self.VCI_irrep  = np.array(irreps)
 
         return self
 
@@ -3079,7 +3158,28 @@ class Crystal_output:
     # ANSCAN+DWELL
     def get_anscan(self, anscanwf):
         """
-        Work in progress for ANSCAN stuff (in development).
+        Extracts the results of an ANSCAN run: the potential scanned along one
+        normal mode, its Taylor expansion, the anharmonic vibrational states
+        and their wavefunctions.
+
+        Everything is stored in the dimensionless normal coordinate xi that
+        ANSCAN itself uses, i.e. the [DISPLAC] column of the output, which
+        measures the displacement in units of the classical amplitude at the
+        quantum ground state energy.
+
+        Args:
+            anscanwf (str): Path to the ANSCANWF.DAT file of the run.
+
+        Returns:
+            self.rangescan (list[float]): [first, last] displacement of the scan.
+            self.displac (np.array): Displacements the scan was run on.
+            self.anhpot (np.array): Scanned potential, cm^-1.
+            self.harmpot (np.array): Harmonic potential, cm^-1.
+            self.energy (list[float]): Anharmonic vibrational states, cm^-1. The first entry is the ground state (the ZPE printed by CRYSTAL).
+            self.force_const (list[float]): Derivatives of the potential with respect to xi, cm^-1, ordered by (and indexed by) their order.
+            self.harm_freq (float): Harmonic frequency of the scanned mode, cm^-1, negative if the mode is imaginary.
+            self.wf (np.array): Expansion coefficients of the anharmonic wavefunctions over the harmonic basis, (n_basis, n_states).
+            self.alpha (float): ALPHA constant printed in ANSCANWF.DAT.
         """
 
         import re
@@ -3105,33 +3205,40 @@ class Crystal_output:
                 self.rangescan = [first*step, last*step]
             if re.match(r'\s*\[DISPLAC\]\s*\[\s*SCAN POTENTIAL\s*\]', line):
                 V = np.zeros([ndispl+1, 2])
+                D = np.zeros(ndispl+1)
                 for k in range(ndispl+1):
+                    D[k] = float(self.data[i+2+k].split()[0])
+                    # The central point carries no energy, it is the reference
                     if (re.match(r'^\s+0.0000*', self.data[i+2+k])):
                         continue
                     V[k, 0] = float(self.data[i+2+k].split()[2])
                     V[k, 1] = float(self.data[i+2+k].split()[4])
+                self.displac = D
                 self.anhpot = V[:, 0]
                 self.harmpot = V[:, 1]
                 # Save index of anscan mode
                 strtmp = self.data[i-1].split()[1]
                 strtmp = strtmp[:strtmp.find('(')]
                 anhmode = int(strtmp)
-            if re.match(r'\s*ANHARMONIC VIBRATIONAL STATES', self.data[i-3]):
-                storeE = True
+            if (i > 2):
+                if re.match(r'\s*ANHARMONIC VIBRATIONAL STATES', self.data[i-3]):
+                    storeE = True
             if re.match(r'\s*POTENTIAL ENERGY DERIVATIVES', line):
                 storeE = False
             if (storeE and (len(self.data[i].split()) != 0)):
                 self.energy.append(float(self.data[i].split()[2]))
-            if re.match(r'\s*POTENTIAL ENERGY DERIVATIVES', self.data[i-3]):
-                storeFC = True
+            if (i > 2):
+                if re.match(r'\s*POTENTIAL ENERGY DERIVATIVES', self.data[i-3]):
+                    storeFC = True
             if (storeFC and (re.match(r'^(?!\s*\d)', line))):
                 storeFC = False
             if (storeFC):
                 self.force_const.append(float(line.split()[2]))
 
-        # Call get_phonon() method and save harmonic freq
+        # Call get_phonon() method and save harmonic freq. The sign is kept,
+        # so that imaginary modes come out negative as they do in the output.
         self.get_phonon(rm_imaginary=False)
-        self.harm_freq = self.frequency[0, anhmode-1]*33.333333
+        self.harm_freq = units.thz_to_cm(self.frequency[0, anhmode-1])
 
         # Read ANSCANWF.DAT
         try:
@@ -3142,10 +3249,11 @@ class Crystal_output:
             raise FileNotFoundError(
                 'EXITING: a .anscanwf file needs to be specified')
 
-        self.wf = np.zeros([len(self.energy), 10])
+        # One row per harmonic basis function, one column per anharmonic state
+        coeff = []
         self.alpha = None
 
-        for i, line in enumerate(data):
+        for line in data:
             if re.match(r'^\s*$', line):
                 break
             if re.match(r'.ALP.*', line):
@@ -3153,8 +3261,9 @@ class Crystal_output:
                 break
             if re.match(r'.ANH.*', line):
                 continue
-            for j in range(10):
-                self.wf[i-1, j] = float(line.split()[j])
+            coeff.append([float(x) for x in line.split()])
+
+        self.wf = np.array(coeff)
 
     # ANSCAN+DWELL
 
