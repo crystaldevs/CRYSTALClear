@@ -3158,7 +3158,28 @@ class Crystal_output:
     # ANSCAN+DWELL
     def get_anscan(self, anscanwf):
         """
-        Work in progress for ANSCAN stuff (in development).
+        Extracts the results of an ANSCAN run: the potential scanned along one
+        normal mode, its Taylor expansion, the anharmonic vibrational states
+        and their wavefunctions.
+
+        Everything is stored in the dimensionless normal coordinate xi that
+        ANSCAN itself uses, i.e. the [DISPLAC] column of the output, which
+        measures the displacement in units of the classical amplitude at the
+        quantum ground state energy.
+
+        Args:
+            anscanwf (str): Path to the ANSCANWF.DAT file of the run.
+
+        Returns:
+            self.rangescan (list[float]): [first, last] displacement of the scan.
+            self.displac (np.array): Displacements the scan was run on.
+            self.anhpot (np.array): Scanned potential, cm^-1.
+            self.harmpot (np.array): Harmonic potential, cm^-1.
+            self.energy (list[float]): Anharmonic vibrational states, cm^-1. The first entry is the ground state (the ZPE printed by CRYSTAL).
+            self.force_const (list[float]): Derivatives of the potential with respect to xi, cm^-1, ordered by (and indexed by) their order.
+            self.harm_freq (float): Harmonic frequency of the scanned mode, cm^-1, negative if the mode is imaginary.
+            self.wf (np.array): Expansion coefficients of the anharmonic wavefunctions over the harmonic basis, (n_basis, n_states).
+            self.alpha (float): ALPHA constant printed in ANSCANWF.DAT.
         """
 
         import re
@@ -3184,33 +3205,40 @@ class Crystal_output:
                 self.rangescan = [first*step, last*step]
             if re.match(r'\s*\[DISPLAC\]\s*\[\s*SCAN POTENTIAL\s*\]', line):
                 V = np.zeros([ndispl+1, 2])
+                D = np.zeros(ndispl+1)
                 for k in range(ndispl+1):
+                    D[k] = float(self.data[i+2+k].split()[0])
+                    # The central point carries no energy, it is the reference
                     if (re.match(r'^\s+0.0000*', self.data[i+2+k])):
                         continue
                     V[k, 0] = float(self.data[i+2+k].split()[2])
                     V[k, 1] = float(self.data[i+2+k].split()[4])
+                self.displac = D
                 self.anhpot = V[:, 0]
                 self.harmpot = V[:, 1]
                 # Save index of anscan mode
                 strtmp = self.data[i-1].split()[1]
                 strtmp = strtmp[:strtmp.find('(')]
                 anhmode = int(strtmp)
-            if re.match(r'\s*ANHARMONIC VIBRATIONAL STATES', self.data[i-3]):
-                storeE = True
+            if (i > 2):
+                if re.match(r'\s*ANHARMONIC VIBRATIONAL STATES', self.data[i-3]):
+                    storeE = True
             if re.match(r'\s*POTENTIAL ENERGY DERIVATIVES', line):
                 storeE = False
             if (storeE and (len(self.data[i].split()) != 0)):
                 self.energy.append(float(self.data[i].split()[2]))
-            if re.match(r'\s*POTENTIAL ENERGY DERIVATIVES', self.data[i-3]):
-                storeFC = True
+            if (i > 2):
+                if re.match(r'\s*POTENTIAL ENERGY DERIVATIVES', self.data[i-3]):
+                    storeFC = True
             if (storeFC and (re.match(r'^(?!\s*\d)', line))):
                 storeFC = False
             if (storeFC):
                 self.force_const.append(float(line.split()[2]))
 
-        # Call get_phonon() method and save harmonic freq
+        # Call get_phonon() method and save harmonic freq. The sign is kept,
+        # so that imaginary modes come out negative as they do in the output.
         self.get_phonon(rm_imaginary=False)
-        self.harm_freq = self.frequency[0, anhmode-1]*33.333333
+        self.harm_freq = units.thz_to_cm(self.frequency[0, anhmode-1])
 
         # Read ANSCANWF.DAT
         try:
@@ -3221,10 +3249,11 @@ class Crystal_output:
             raise FileNotFoundError(
                 'EXITING: a .anscanwf file needs to be specified')
 
-        self.wf = np.zeros([len(self.energy), 10])
+        # One row per harmonic basis function, one column per anharmonic state
+        coeff = []
         self.alpha = None
 
-        for i, line in enumerate(data):
+        for line in data:
             if re.match(r'^\s*$', line):
                 break
             if re.match(r'.ALP.*', line):
@@ -3232,8 +3261,9 @@ class Crystal_output:
                 break
             if re.match(r'.ANH.*', line):
                 continue
-            for j in range(10):
-                self.wf[i-1, j] = float(line.split()[j])
+            coeff.append([float(x) for x in line.split()])
+
+        self.wf = np.array(coeff)
 
     # ANSCAN+DWELL
 

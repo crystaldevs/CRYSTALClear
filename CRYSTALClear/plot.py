@@ -4628,139 +4628,693 @@ def plot_cry_spec_multi(files, typeS="lorentz", components=False, bwidth=5,
     return fig, ax
 
 
-def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
-                    scanpot=True, figsize=[10, 10]):
+def _ho_eigenfunctions(xi, nbasis):
     """
-    This function provides a plotting tool for the ANSCAN keyword.  
+    Normalised harmonic oscillator eigenfunctions
+
+    .. math::
+        \\psi_m(\\xi) = \\pi^{-1/4}(2^m m!)^{-1/2}H_m(\\xi)e^{-\\xi^2/2}
+
+    of the dimensionless coordinate xi, evaluated through the upward
+    recurrence rather than through the Hermite polynomials themselves, which
+    overflow well before the ~100 basis functions an ANSCAN run uses.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object.
-        scale_wf (float, optional): Scaling factor for wavefunctions plot. By 
-        default, wavefunctions are not plotted. Providing a value for this 
-        argument enables the wavefunction plot and scales it accordingly.  
-        scale_prob (float, optional): Scaling factor for probability density 
-        plot. By default, probability densities are not plotted. Providing a 
-        value for this argument enables the probability density plot and 
-        scales it accordingly.  
-        harmpot (bool, optional): A logical flag to activate the plotting of 
-        the harmonic potential (default is False). 
-        scanpot (bool, optional): A logical flag to activate the plotting of 
-        the scan potential provided by ANSCAN (default is True). 
-        figsize (list[float])
+        xi (np.array): Coordinates the functions are evaluated on.
+        nbasis (int): Number of functions, i.e. quantum numbers 0 to nbasis-1.
 
-    Notes:
-        - This is a work in progress.
+    Returns:
+        np.array: (len(xi), nbasis) array of eigenfunctions.
+    """
+
+    import numpy as np
+
+    psi = np.zeros([len(xi), nbasis])
+    psi[:, 0] = np.pi**-0.25 * np.exp(-xi**2 / 2)
+    if nbasis > 1:
+        psi[:, 1] = np.sqrt(2.) * xi * psi[:, 0]
+    for m in range(2, nbasis):
+        psi[:, m] = (np.sqrt(2./m) * xi * psi[:, m-1]
+                     - np.sqrt((m-1)/m) * psi[:, m-2])
+
+    return psi
+
+
+def _pes_frequency(co, mode):
+    """
+    Harmonic frequency of ``mode`` in cm^-1, signed, from get_phonon().
+
+    The PES constants are numbered by CRYSTAL mode index, which is the position
+    in the frequency array of the Gamma point plus one.
+
+    Args:
+        co (crystal_io.Crystal_output): Output on which get_phonon() has run.
+        mode (int): CRYSTAL index of the mode.
+
+    Returns:
+        float: The frequency in cm^-1.
+    """
+
+    from CRYSTALClear import units
+
+    frequency = getattr(co, 'frequency', None)
+    if frequency is None:
+        raise AttributeError(
+            'No harmonic frequencies on this output: call get_phonon() before '
+            'plotting a PES, the quadratic term comes from there.')
+    if not (1 <= mode <= frequency.shape[1]):
+        raise ValueError(
+            f'Mode {mode} is outside the {frequency.shape[1]} modes of this run.')
+    return float(units.thz_to_cm(frequency[0, mode-1]))
+
+
+def _pes_single(co, mode):
+    """
+    ``(omega, eta3, eta4)`` of one mode, in cm^-1, w.r.t. the dimensionless xi.
+
+    Args:
+        co (crystal_io.Crystal_output): Output on which get_anh_const() and
+            get_phonon() have run.
+        mode (int): CRYSTAL index of the mode.
+
+    Returns:
+        tuple: The harmonic frequency and the cubic and quartic derivatives.
+    """
+
+    import numpy as np
+
+    single = getattr(co, 'PES_single', None)
+    if single is None or not len(single):
+        raise AttributeError(
+            'No PES constants on this output: call get_anh_const() first.')
+    row = np.asarray(single)[np.asarray(single)[:, 0] == mode]
+    if not len(row):
+        raise ValueError(f'Mode {mode} was not scanned by this ANHAPES run.')
+    return _pes_frequency(co, mode), float(row[0, 1]), float(row[0, 2])
+
+
+def _pes_couple(co, modei, modej):
+    """
+    The five two-mode derivatives of a pair, in cm^-1, as (IIJ, IJJ, IIIJ, IJJJ, IIJJ).
+
+    CRYSTAL writes each pair once, with the lower index first. Asking for it the
+    other way round is answered by relabelling, which swaps the two constants
+    that are not symmetric in I and J.
+
+    Args:
+        co (crystal_io.Crystal_output): Output on which get_anh_const() has run.
+        modei, modej (int): CRYSTAL indices of the two modes.
+
+    Returns:
+        tuple: The five derivatives, ordered for (modei, modej) as given.
+    """
+
+    import numpy as np
+
+    couple = getattr(co, 'PES_couple', None)
+    if couple is None or not len(couple):
+        raise AttributeError(
+            'No two-mode PES constants on this output: call get_anh_const() '
+            'first, and check the run coupled any modes at all.')
+    couple = np.asarray(couple)
+    match = couple[(couple[:, 0] == modei) & (couple[:, 1] == modej)]
+    if len(match):
+        iij, ijj, iiij, ijjj, iijj = match[0, 2:7]
+        return float(iij), float(ijj), float(iiij), float(ijjj), float(iijj)
+
+    match = couple[(couple[:, 0] == modej) & (couple[:, 1] == modei)]
+    if len(match):
+        iij, ijj, iiij, ijjj, iijj = match[0, 2:7]
+        return float(ijj), float(iij), float(ijjj), float(iiij), float(iijj)
+
+    raise ValueError(f'Modes {modei} and {modej} were not coupled by this run.')
+
+
+def _pes_potential_1d(xi, omega, eta3, eta4):
+    """
+    The one-mode PES in cm^-1, as the Taylor series ANHAPES writes.
+
+    .. math::
+        V(\\xi) = \\frac{1}{2}\\omega\\xi^2 + \\frac{1}{6}\\eta_3\\xi^3
+                  + \\frac{1}{24}\\eta_4\\xi^4
+
+    Args:
+        xi (np.array): Coordinates, in classical ground state amplitudes.
+        omega (float): Harmonic frequency, cm^-1.
+        eta3, eta4 (float): Cubic and quartic derivatives, cm^-1.
+
+    Returns:
+        np.array: The potential on ``xi``.
+    """
+
+    return omega/2 * xi**2 + eta3/6 * xi**3 + eta4/24 * xi**4
+
+
+def _pes_potential_2d(xi, xj, omegai, omegaj, single_i, single_j, couple):
+    """
+    The two-mode PES in cm^-1, term by term as ANHAPES writes them.
+
+    Every derivative carries its multivariate Taylor factor, so a term in
+    :math:`\\xi_I^a\\xi_J^b` is divided by :math:`a!b!`.
+
+    Args:
+        xi, xj (np.array): Coordinates, broadcastable against each other.
+        omegai, omegaj (float): Harmonic frequencies, cm^-1.
+        single_i, single_j (tuple): ``(eta3, eta4)`` of each mode.
+        couple (tuple): ``(IIJ, IJJ, IIIJ, IJJJ, IIJJ)``.
+
+    Returns:
+        tuple: ``(harmonic, diagonal, coupling)`` contributions, so that a
+        caller can draw their sum or any part of it.
+    """
+
+    iij, ijj, iiij, ijjj, iijj = couple
+
+    harmonic = omegai/2 * xi**2 + omegaj/2 * xj**2
+    diagonal = (single_i[0]/6 * xi**3 + single_i[1]/24 * xi**4
+                + single_j[0]/6 * xj**3 + single_j[1]/24 * xj**4)
+    coupling = (iij/2 * xi**2 * xj + ijj/2 * xi * xj**2
+                + iiij/6 * xi**3 * xj + ijjj/6 * xi * xj**3
+                + iijj/4 * xi**2 * xj**2)
+
+    return harmonic, diagonal, coupling
+
+
+def _pes_solve_1d(omega, eta3, eta4, nbasis=60):
+    """
+    Vibrational states of a one-mode PES, in the harmonic basis of the mode.
+
+    The Hamiltonian is assembled from the position operator alone: in the
+    dimensionless coordinate the harmonic part is diagonal, and the cubic and
+    quartic terms are powers of
+
+    .. math::
+        \\langle m|\\xi|n\\rangle = \\sqrt{n/2}\\,\\delta_{m,n-1}
+                                  + \\sqrt{(n+1)/2}\\,\\delta_{m,n+1}
+
+    A few extra functions are carried through the matrix products and dropped
+    afterwards, since a truncated product is wrong in its last rows.
+
+    An imaginary mode is solved as well as a real one: xi is built on the
+    modulus of the frequency, which leaves an inverted quadratic term behind
+    rather than an undefined basis.
+
+    Args:
+        omega (float): Harmonic frequency, cm^-1, negative if imaginary.
+        eta3, eta4 (float): Cubic and quartic derivatives, cm^-1.
+        nbasis (int, optional): Harmonic functions kept. Default is 60.
+
+    Returns:
+        np.array: Eigenvalues in cm^-1, ascending.
+        np.array: (nbasis, nbasis) eigenvectors, one state per column.
+    """
+
+    import numpy as np
+
+    pad = nbasis + 8
+    n = np.arange(pad)
+    off = np.sqrt((n[1:]) / 2.)
+    X = np.diag(off, 1) + np.diag(off, -1)
+
+    X2 = X @ X
+    X3 = X2 @ X
+    X4 = X2 @ X2
+
+    reference = abs(omega)
+    H = (np.diag(reference * (n + 0.5))
+         + (omega - reference)/2 * X2      # zero unless the mode is imaginary
+         + eta3/6 * X3
+         + eta4/24 * X4)[:nbasis, :nbasis]
+
+    energy, vector = np.linalg.eigh(H)
+    return energy, vector
+
+
+def _pes_turning_points(omega, eta3, eta4, energy, reach=6.):
+    """
+    Where a one-mode PES last crosses ``energy``, i.e. the classical turning
+    points of a state sitting at it.
+
+    Bounded by ``reach``: a potential whose quartic term is negative comes back
+    down and has no outer turning point at all.
+
+    Args:
+        omega, eta3, eta4 (float): The potential, in cm^-1.
+        energy (float): The level, cm^-1.
+        reach (float, optional): Widest coordinate considered. Default is 6.
+
+    Returns:
+        list[float]: ``[left, right]``, clamped to +/- ``reach``.
+    """
+
+    import numpy as np
+
+    xi = np.linspace(-reach, reach, 4001)
+    inside = xi[_pes_potential_1d(xi, omega, eta3, eta4) <= energy]
+    if not len(inside):
+        return [-reach, reach]
+    return [float(inside.min()), float(inside.max())]
+
+
+def plot_cry_pes_1D(co, mode, xlim=None, npts=500, harmonic=True,
+                    levels=False, nstates=5, scale_wf=None, nbasis=60,
+                    npts_wf=500, legend=True, figsize=[7, 6], ax=None):
+    """
+    The anharmonic potential of one normal mode, from the cubic and quartic
+    derivatives ANHAPES computes.
+
+    The abscissa is the dimensionless normal coordinate $\\xi$, the
+    displacement in units of the classical amplitude at the ground state
+    energy, which is what the derivatives are taken with respect to. CRYSTAL
+    fits them from a scan of a fraction of an amplitude either side of
+    equilibrium, so a wide window is an extrapolation of a quartic and should
+    be read as one.
+
+    With ``levels`` the one-dimensional vibrational problem is solved in the
+    harmonic basis of the mode and its states are drawn on the potential. Those
+    are this potential's own states, not the run's: a VSCF or VCI step couples
+    the modes and lands elsewhere.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
+        mode (int): CRYSTAL index of the mode to draw.
+        xlim (list[float], optional): Bounds of the abscissa, in units of $\\xi$. Default is None, i.e. [-2, 2]. Whatever it is, `levels` widens it far enough to hold the states being drawn, since a state cut off at the edge of the window says less than the extrapolation needed to contain it.
+        npts (int, optional): Number of points the potential is sampled on. Default is 500.
+        harmonic (bool, optional): Whether to draw the harmonic parabola of the mode alongside. Default is `True`.
+        levels (bool, optional): Whether to solve the mode and draw its vibrational states. Default is `False`.
+        nstates (int, optional): Number of states to draw, counting from the ground state. Default is 5.
+        scale_wf (float, optional): Height the wavefunctions are drawn at, in cm^-1. Default is None, i.e. the mean spacing of the states being drawn, which fills the gaps without crossing them.
+        nbasis (int, optional): Harmonic functions the states are expanded on. Default is 60.
+        npts_wf (int, optional): Number of points the wavefunctions are sampled on. Default is 500.
+        legend (bool, optional): Whether to label the curves. Default is `True`.
+        figsize (list[float], optional): Image dimensions corresponding to matplotlib figsize. Default is [7, 6].
+        ax (matplotlib.axes.Axes, optional): Axes the curves are drawn on. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
+    """
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    omega, eta3, eta4 = _pes_single(co, mode)
+
+    # The states are solved before the window is fixed: a stiff mode reaches
+    # well past the couple of amplitudes the constants were fitted over, and
+    # drawing its states cut off at the edge of that window says less than
+    # extrapolating the curve out to meet them.
+    if xlim is None:
+        xlim = [-2., 2.]
+    if (levels):
+        energy, vector = _pes_solve_1d(omega, eta3, eta4, nbasis=nbasis)
+        nstates = min(nstates, len(energy))
+        turning = _pes_turning_points(omega, eta3, eta4, energy[nstates-1])
+        xlim = [min(xlim[0], 1.15*turning[0]), max(xlim[1], 1.15*turning[1])]
+
+    xi = np.linspace(xlim[0], xlim[1], npts)
+    potential = _pes_potential_1d(xi, omega, eta3, eta4)
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+
+    if (harmonic):
+        ax.plot(xi, omega/2 * xi**2, 'r--', linewidth=2, label='harmonic')
+    ax.plot(xi, potential, 'b', linewidth=2, label='cubic + quartic')
+
+    # States of this potential -->
+    if (levels):
+        if scale_wf is None:
+            gaps = np.diff(energy[:nstates])
+            scale_wf = float(np.mean(gaps)) if len(gaps) else abs(omega)
+
+        xwf = np.linspace(xlim[0], xlim[1], npts_wf)
+        wf = _ho_eigenfunctions(xwf, vector.shape[0]) @ vector[:, :nstates]
+        for s in range(nstates):
+            ax.hlines(y=energy[s], xmin=xlim[0], xmax=xlim[1],
+                      colors='k', linewidth=0.3)
+            ax.plot(xwf, wf[:, s]*scale_wf + energy[s], 'm-', linewidth=1)
+        bottom = min(0., float(potential.min()))
+        span = energy[nstates-1] - bottom
+        # Room for the topmost wavefunction as well as its level.
+        ax.set_ylim([bottom - 0.05*span,
+                     energy[nstates-1] + max(0.15*span, 0.9*scale_wf)])
+    # <-- States
+
+    if (legend):
+        ax.legend(loc='upper center')
+
+    ax.set_xlabel(r'$\xi_{%d}$' % mode)
+    ax.set_ylabel(r'$V$ [cm$^{-1}$]')
+    ax.set_xlim(xlim)
+
+    return fig, ax
+
+
+def _pes_grid(co, modei, modej, quantity, xlim, ylim, npts):
+    """
+    The two-mode surface a PES figure draws, on its grid.
+
+    Args:
+        co (crystal_io.Crystal_output): Output carrying the PES constants.
+        modei, modej (int): CRYSTAL indices of the two modes.
+        quantity (str): 'anharmonic', 'coupling' or 'total'.
+        xlim, ylim (list[float]): Bounds of the two coordinates.
+        npts (int): Grid points along each axis.
+
+    Returns:
+        np.array, np.array: The coordinate grids.
+        np.array: The surface, cm^-1.
+        str: Axis label for it.
+        bool: Whether it changes sign, i.e. has to be read against zero.
+    """
+
+    import numpy as np
+
+    if quantity not in ('anharmonic', 'coupling', 'total'):
+        raise ValueError(f'unknown PES quantity {quantity!r}')
+
+    omegai, eta3i, eta4i = _pes_single(co, modei)
+    omegaj, eta3j, eta4j = _pes_single(co, modej)
+    couple = _pes_couple(co, modei, modej)
+
+    xi, xj = np.meshgrid(np.linspace(xlim[0], xlim[1], npts),
+                         np.linspace(ylim[0], ylim[1], npts))
+    harmonic, diagonal, coupling = _pes_potential_2d(
+        xi, xj, omegai, omegaj, (eta3i, eta4i), (eta3j, eta4j), couple)
+
+    if quantity == 'total':
+        return xi, xj, harmonic + diagonal + coupling, r'$V$ [cm$^{-1}$]', False
+    if quantity == 'coupling':
+        return (xi, xj, coupling, r'$V-V_{\rm 1D}$ [cm$^{-1}$]', True)
+    return (xi, xj, diagonal + coupling, r'$V-V_{\rm harm}$ [cm$^{-1}$]', True)
+
+
+def _pes_bounds(surface, nlevels, signed):
+    """
+    Contour levels for a PES surface, centred on zero when it changes sign.
+
+    Args:
+        surface (np.array): The surface.
+        nlevels (int): Number of levels.
+        signed (bool): Whether zero is the reference.
+
+    Returns:
+        np.array: The levels, ascending.
+    """
+
+    import numpy as np
+
+    if signed:
+        span = float(np.abs(surface).max()) or 1.
+        return np.linspace(-span, span, nlevels)
+    return np.linspace(float(surface.min()), float(surface.max()), nlevels)
+
+
+def plot_cry_pes_3D(co, modei, modej, quantity='anharmonic', xlim=[-2., 2.],
+                    ylim=None, npts=120, nlevels=21, cmap=None, colorbar=True,
+                    contours=False, elev=30., azim=-60., alpha=1.,
+                    figsize=[8, 6.5], ax=None):
+    """
+    The potential-energy surface of two coupled normal modes, drawn as a
+    surface rather than a map.
+
+    The same quantity :func:`plot_cry_pes_2D` maps, with the same default: the
+    harmonic bowl is one to two orders of magnitude deeper than everything the
+    anharmonic constants add, and a surface of the total is a paraboloid.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
+        modei, modej (int): CRYSTAL indices of the two modes, in either order.
+        quantity (str, optional): 'anharmonic' for the surface with the harmonic part subtracted, 'coupling' for the two-mode terms alone, 'total' for the surface itself. Default is 'anharmonic'.
+        xlim (list[float], optional): Bounds of the first mode's coordinate. Default is [-2, 2].
+        ylim (list[float], optional): Bounds of the second mode's coordinate. Default is None, i.e. the same as xlim.
+        npts (int, optional): Grid points along each axis. Default is 120, lower than the map's since every quad is drawn.
+        nlevels (int, optional): Number of colour steps, and of floor contours when they are drawn. Default is 21.
+        cmap (str, optional): Matplotlib colormap name. Default is None, i.e. a diverging map centred on zero for a quantity that changes sign and a sequential one for the total surface.
+        colorbar (bool, optional): Whether to draw the colorbar. Default is `True`.
+        contours (bool, optional): Whether to project contour lines onto the floor of the box, which is what makes a surface readable quantitatively. Default is `False`.
+        elev (float, optional): Elevation of the view, degrees. Default is 30.
+        azim (float, optional): Azimuth of the view, degrees. Default is -60.
+        alpha (float, optional): Opacity of the surface. Default is 1, i.e. opaque.
+        figsize (list[float], optional): Image dimensions corresponding to matplotlib figsize. Default is [8, 6.5].
+        ax (mpl_toolkits.mplot3d.axes3d.Axes3D, optional): Axes the surface is drawn on, which have to have been created with a 3D projection. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        mpl_toolkits.mplot3d.axes3d.Axes3D
+    """
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    if ylim is None:
+        ylim = list(xlim)
+    xi, xj, surface, label, signed = _pes_grid(
+        co, modei, modej, quantity, xlim, ylim, npts)
+    bounds = _pes_bounds(surface, nlevels, signed)
+
+    if cmap is None:
+        cmap = 'RdBu_r' if signed else 'viridis'
+
+    if ax is None:
+        fig = plt.figure(figsize=figsize)
+        ax = fig.add_subplot(projection='3d')
+    else:
+        if not hasattr(ax, 'plot_surface'):
+            raise TypeError(
+                'plot_cry_pes_3D needs axes made with a 3D projection, e.g. '
+                "fig.add_subplot(projection='3d').")
+        fig = ax.get_figure()
+
+    drawn = ax.plot_surface(xi, xj, surface, cmap=cmap,
+                            vmin=bounds[0], vmax=bounds[-1],
+                            linewidth=0, antialiased=True, alpha=alpha,
+                            rcount=npts, ccount=npts)
+
+    # Contours on the floor rather than on the surface: laid over it they are
+    # hidden by the relief they describe wherever the surface turns away.
+    if (contours):
+        floor = float(surface.min()) - 0.25*float(np.ptp(surface))
+        # One muted colour rather than the surface's own: a diverging map sends
+        # everything near zero to near-white, which on the floor is invisible.
+        ax.contour(xi, xj, surface, levels=bounds, colors='k',
+                   linewidths=0.4, alpha=0.4, offset=floor)
+        ax.set_zlim(floor, float(surface.max()))
+
+    # No label on the bar: the vertical axis already names the quantity, and
+    # the colour only repeats what the height says.
+    if (colorbar):
+        fig.colorbar(drawn, ax=ax, shrink=0.6, pad=0.1)
+
+    ax.view_init(elev=elev, azim=azim)
+    ax.set_xlabel(r'$\xi_{%d}$' % modei)
+    ax.set_ylabel(r'$\xi_{%d}$' % modej)
+    ax.set_zlabel(label)
+
+    return fig, ax
+
+
+def plot_cry_pes_2D(co, modei, modej, quantity='anharmonic', xlim=[-2., 2.],
+                    ylim=None, npts=200, nlevels=21, cmap=None, colorbar=True,
+                    contours=True, figsize=[7, 6], ax=None):
+    """
+    The potential-energy surface of two coupled normal modes, from the cubic
+    and quartic derivatives ANHAPES computes.
+
+    Both axes are dimensionless normal coordinates $\\xi$, the displacement in
+    units of the classical amplitude at the ground state energy.
+
+    What is mapped is chosen with ``quantity``. The harmonic bowl is one to two
+    orders of magnitude deeper than everything the anharmonic constants add, so
+    contours of the total surface are ellipses and say nothing about the
+    coupling; ``'anharmonic'``, the default, takes it out and maps what the
+    cubic and quartic terms are worth.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
+        modei, modej (int): CRYSTAL indices of the two modes, in either order.
+        quantity (str, optional): 'anharmonic' for the surface with the harmonic part subtracted, 'coupling' for the two-mode terms alone, 'total' for the surface itself. Default is 'anharmonic'.
+        xlim (list[float], optional): Bounds of the first mode's coordinate. Default is [-2, 2].
+        ylim (list[float], optional): Bounds of the second mode's coordinate. Default is None, i.e. the same as xlim.
+        npts (int, optional): Grid points along each axis. Default is 200.
+        nlevels (int, optional): Number of filled contour levels. Default is 21.
+        cmap (str, optional): Matplotlib colormap name. Default is None, i.e. a diverging map centred on zero for a quantity that changes sign and a sequential one for the total surface.
+        colorbar (bool, optional): Whether to draw the colorbar. Default is `True`.
+        contours (bool, optional): Whether to draw contour lines over the filled map. Default is `True`.
+        figsize (list[float], optional): Image dimensions corresponding to matplotlib figsize. Default is [7, 6].
+        ax (matplotlib.axes.Axes, optional): Axes the map is drawn on. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
+    """
+
+    import matplotlib.pyplot as plt
+
+    if ylim is None:
+        ylim = list(xlim)
+    xi, xj, surface, label, signed = _pes_grid(
+        co, modei, modej, quantity, xlim, ylim, npts)
+    bounds = _pes_bounds(surface, nlevels, signed)
+
+    if cmap is None:
+        cmap = 'RdBu_r' if signed else 'viridis'
+
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+
+    filled = ax.contourf(xi, xj, surface, levels=bounds, cmap=cmap, extend='both')
+    if (contours):
+        ax.contour(xi, xj, surface, levels=bounds, colors='k',
+                   linewidths=0.3, alpha=0.5)
+    if (colorbar):
+        fig.colorbar(filled, ax=ax, label=label)
+
+    ax.set_xlabel(r'$\xi_{%d}$' % modei)
+    ax.set_ylabel(r'$\xi_{%d}$' % modej)
+    ax.set_aspect('equal', adjustable='box')
+
+    return fig, ax
+
+
+def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
+                    scanpot=True, nstates=None, npts=2000, xlim=None,
+                    ylim=None, legend=True, figsize=[10, 10], ax=None):
+    """
+    Potential and anharmonic vibrational states of an ANSCAN run, drawn
+    against the dimensionless normal coordinate $\\xi$ the scan is performed
+    on, i.e. the [DISPLAC] column of the output.
+
+    The potential is the Taylor expansion ANSCAN fits to the scanned points,
+
+    .. math::
+        V(\\xi) = \\sum_n \\frac{1}{n!}
+                  \\left(\\frac{d^nV}{d\\xi^n}\\right)\\xi^n
+
+    summed over every derivative CRYSTAL prints, and the wavefunctions are
+    rebuilt from the ANSCANWF.DAT coefficients over the harmonic basis of the
+    same coordinate. Wavefunctions are only available for the states written
+    to ANSCANWF.DAT, ten of them in a standard run.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_anscan() has already been called.
+        scale_wf (float, optional): Scaling factor of the wavefunctions, which are drawn on top of the level they belong to. Default is None, i.e. no wavefunction is drawn.
+        scale_prob (float, optional): Scaling factor of the probability densities, which are filled between the level they belong to and the density itself. Default is None, i.e. no density is drawn.
+        harmpot (bool, optional): Whether to draw the harmonic potential of the mode. Default is `False`.
+        scanpot (bool, optional): Whether to draw the points ANSCAN actually computed the potential on. Default is `True`.
+        nstates (int, optional): Number of states, counting from the ground state, to draw a wavefunction or a density for. Default is None, i.e. every state found in ANSCANWF.DAT.
+        npts (int, optional): Number of points the curves are sampled on. Default is 2000.
+        xlim (list[float], optional): Bounds of the abscissa, in units of $\\xi$. Default is None, i.e. the range of the scan.
+        ylim (list[float], optional): Bounds of the ordinate, in cm^-1. Default is None, in which case it is set around the states being drawn.
+        legend (bool, optional): Whether to label the potentials. Default is `True`.
+        figsize (list[float], optional): Image dimensions corresponding to matplotlib figsize. Default is [10, 10].
+        ax (matplotlib.axes.Axes, optional): Axes the curves are drawn on. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
     """
 
     import math
 
     import matplotlib.pyplot as plt
     import numpy as np
-    from scipy import special
 
     # Unpack co
     harm_freq = co.harm_freq
     force_const = co.force_const
-    energy = co.energy
-    wf = co.wf
-    scan_energy = co.anhpot
-    alpha = co.alpha
+    energy = np.array(co.energy)
+    coeff = np.array(co.wf)
+    scan_energy = np.array(co.anhpot)
     rangescan = co.rangescan
 
-    # debug
-    print(co.alpha)
-    # debug
+    # ANSCAN expresses displacements as times of the classical amplitude at
+    # the ground state energy, which makes [DISPLAC] the dimensionless normal
+    # coordinate xi = sqrt(mu*omega/hbar)*Q. Levels, potentials, scanned
+    # points and wavefunctions therefore already share this abscissa and none
+    # of them needs to be rescaled.
+    if xlim is None:
+        xlim = [rangescan[0], rangescan[1]]
+    xi = np.linspace(xlim[0], xlim[1], npts)
 
-    # npts
-    npts = 10000
+    # States a wavefunction is available for
+    nwf = min(coeff.shape[1], len(energy))
+    if nstates is None:
+        nstates = nwf
+    else:
+        nstates = min(nstates, nwf)
 
-    # Matplotlib aspect ratio
-    fig, ax = plt.subplots(figsize=figsize)
+    # Potential fitted by ANSCAN, from every derivative that was printed
+    anhpot = np.zeros(npts)
+    for n, fc in enumerate(force_const):
+        anhpot = anhpot + fc / math.factorial(n) * xi**n
 
-    # Define harmonic freq
-    amu_me = 1822.88848
-    Ha2wn = 219473.5152
-    lambda_AU = abs(harm_freq / Ha2wn) * amu_me
+    # Harmonic potential, negative all the way through for an imaginary mode
+    HOpot = 1/2 * harm_freq * xi**2
 
-    # debug
-    print(harm_freq)
-    print(lambda_AU)
-    # debug
+    # Vertical range, wide enough for the states being drawn -->
+    if ylim is None:
+        ybot = min(0., np.min(anhpot), np.min(scan_energy))
+        if harmpot:
+            ybot = min(ybot, np.min(HOpot))
+        ytop = energy[nstates-1]
+        span = ytop - ybot
+        ylim = [ybot - 0.05*span, ytop + 0.15*span]
+    # <--
 
-    # Define coordinates (basis set)
-    x = np.linspace(-1000, 1000, npts)
-    xi = x * alpha
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
 
-    # Plot levels
-    Nlevel = len(energy)
-    for i in range(Nlevel):
-        ax.hlines(y=energy[i], xmin=rangescan[0], xmax=rangescan[1],
-                   colors='k', linewidth=0.3)
+    # Plot the levels lying in the window
+    for e in energy[(energy >= ylim[0]) & (energy <= ylim[1])]:
+        ax.hlines(y=e, xmin=xlim[0], xmax=xlim[1], colors='k', linewidth=0.3)
 
-    # Set number of basis functions and wf
-    N = len(wf)
-    Nwf = N
-
-    # Compute Gaussian functions
-    G = np.exp(-(xi)**2/2)
-
-    # Compute harmonic wf
-    wfHO = np.zeros([len(xi), N])
-    for m in range(N):
-        norm = np.sqrt((alpha) / ((np.sqrt(math.pi))
-                       * (2**m) * math.factorial(m)))
-        Herm = special.hermite(m, monic=False)
-        wfHO[:, m] = norm * Herm(xi) * G
-
-    # Build anharmonic wf
-    wfANH = np.zeros([len(wfHO), N])
-
-    # Define coordinates (wf)
-    x = np.linspace(-100, 100, npts)
-    xi = x * lambda_AU**0.25
-
-    # for s in range(N):
-    for s in range(9):
-        for i in range(N):
-            wfANH[:, s] = wfANH[:, s] + wf[i, s]*wfHO[:, i]
+    # Build the anharmonic wavefunctions -->
+    if (scale_wf is not None) or (scale_prob is not None):
+        wfHO = _ho_eigenfunctions(xi, coeff.shape[0])
+        wfANH = wfHO @ coeff[:, :nstates]
+    # <--
 
     # Wavefunctions -->
     if (scale_wf is not None):
-
-        # Plot wf
-        for i in range(Nwf):
-            yp = wfANH[:, i]*scale_wf + energy[i]
+        for s in range(nstates):
+            yp = wfANH[:, s]*scale_wf + energy[s]
             ax.plot(xi, yp, "m-", linewidth=1)
     # <-- Wavefunctions
 
     # Probability density  -->
     if (scale_prob is not None):
-        for s in range(Nlevel):
-            prob = wfANH[:, s]**2*scale_prob**2 + energy[s]
+        for s in range(nstates):
+            prob = wfANH[:, s]**2*scale_prob + energy[s]
             lower_bound = energy[s] + 0*xi
             ax.fill_between(xi, lower_bound, prob, color='c', alpha=0.3)
+    # <-- Probability density
 
     # Plot anharmonic potential
-    anhpot = 1/2 * force_const[2] * xi**2 \
-           + 1/6 * force_const[3] * xi**3 \
-           + 1/24 * force_const[4] * xi**4
-    ax.plot(xi, anhpot, 'b', linewidth=2)
+    ax.plot(xi, anhpot, 'b', linewidth=2, label='ANSCAN fit')
 
     # Plot harmonic potential
     if (harmpot):
-        HOpot = 1/2 * harm_freq * xi**2
-        ax.plot(xi, HOpot, 'r--', linewidth=2)
+        ax.plot(xi, HOpot, 'r--', linewidth=2, label='harmonic')
 
     # Plot scan potential
     if (scanpot):
-        # Define scaled_x
-        scaled_x = np.linspace(rangescan[0], rangescan[1], len(scan_energy))
-        ax.plot(scaled_x, scan_energy, 'bo')
+        ax.plot(co.displac, scan_energy, 'bo', label='scanned points')
 
-    ax.set_ylabel('$\Delta E$ [cm$^{-1}$]')
+    if (legend):
+        ax.legend(loc='upper right')
+
+    ax.set_ylabel(r'$\Delta E$ [cm$^{-1}$]')
     ax.set_xlabel(r'$\xi$')
-    ax.set_xlim([rangescan[0], rangescan[1]])
-    ax.set_ylim([-100, abs(harm_freq)*10])
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
 
     return fig, ax
 
