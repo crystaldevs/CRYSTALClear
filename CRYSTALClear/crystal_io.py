@@ -3216,7 +3216,7 @@ class Crystal_output:
                 self.harmpot = V[:, 1]
                 # Save index of anscan mode
                 strtmp = self.data[i-1].split()[1]
-                strtmp = strtmp[:strtmp.find()]
+                strtmp = strtmp[:strtmp.find('(')]
                 anhmode = int(strtmp)
             if (i > 2):
                 if re.match(r'\s*ANHARMONIC VIBRATIONAL STATES', self.data[i-3]):
