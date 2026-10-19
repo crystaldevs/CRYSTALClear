@@ -1,19 +1,30 @@
 How to Cite CRYSTALClear
 ==========================
 
-If CRYSTALClear happens to be helpful to you, please do consider citing it,
-which is important for the continuation of this project.
+.. rst-class:: cc-lead
 
-Reference
----------
+If CRYSTALClear helps your work, please cite it: citations are what keep the
+project going.
 
-**CRYSTALpytools: A Python infrastructure for the CRYSTAL code**
+CRYSTALClear grew out of CRYSTALpytools, and the paper that describes it is the
+one to cite:
 
-`<https://www.sciencedirect.com/science/article/pii/S0010465523001984>`_
+.. container:: cc-reference
 
-Camino, Bruno, Huanyu Zhou, Eleonora Ascrizzi, Alberto Boccuni, Filippo Bodo,
-Alessandro Cossard, Davide Mitoli, Anna Maria Ferrari, Alessandro Erba,
-and Nicholas M. Harrison, *Comput. Phys. Commun.* **292**, 108853 (2023).
+   .. rubric:: CRYSTALpytools: A Python infrastructure for the CRYSTAL code
+
+   Camino, Bruno, Huanyu Zhou, Eleonora Ascrizzi, Alberto Boccuni, Filippo Bodo,
+   Alessandro Cossard, Davide Mitoli, Anna Maria Ferrari, Alessandro Erba,
+   and Nicholas M. Harrison, *Comput. Phys. Commun.* **292**, 108853 (2023).
+
+   .. raw:: html
+
+      <p class="cc-buttons cc-buttons-left">
+        <a class="cc-btn cc-btn-primary" href="https://www.sciencedirect.com/science/article/pii/S0010465523001984">Read the paper</a>
+      </p>
+
+BibTeX
+------
 
 .. code-block:: bibtex
 

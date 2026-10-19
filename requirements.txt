@@ -1,5 +1,7 @@
 sphinx
 sphinx-book-theme
+sphinx-design
+sphinx-copybutton
 nbsphinx
 pymatgen>=2022
 numpy
