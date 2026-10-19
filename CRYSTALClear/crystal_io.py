@@ -2362,6 +2362,7 @@ class Crystal_output:
         """
 
         import re
+
         import numpy as np
 
         save = False
@@ -3545,7 +3546,13 @@ class Crystal_output:
 
     def get_locmodes(self):
         '''
-        Docs will be provided shortly
+        Extracts the LOCMODES output from a crystal calculation
+
+        Returns:
+            self.bonds: pandas DataFrame containing atoms, atoms labels, atoms cell location, bonds local force constants, bonds local mass, bonds local frequency.
+            self.angle: pandas DataFrame containing atoms, atoms labels, atoms cell location, angles local force constants in mdyn/A and mdyn, angles local mass, angles local frequency.
+            self.dih: pandas DataFrame containing atoms, atoms labels, atoms cell location, dihedrals local force constants in mdyn/A and mdyn, dihedrals local mass, dihedrals local frequency.
+            self.cnm: pandas DataFrame containing CNM decomposition for each of the acoustic modes
         '''
         import re
 
@@ -3614,13 +3621,15 @@ class Crystal_output:
                   for line in self.data[dih_start[1]+1:section_end[1]]]
         # <--
 
-        # Creation of Bonds dataframe
+        # Creation of Bonds dataframe -->
         for bond in bonds:
             bond[0] = int(bond[0])
             bond[1] = int(bond[1])
             bond[3] = int(bond[3])
             bond[-2] = float(bond[-2])
-            del bond[5:-2]
+            cell_index = bond[5:-2]
+            bond[5] = ' '.join(cell_index)
+            del bond[6:-2]
             bond.pop(-1)
 
         for bond in bonds_fc:
@@ -3636,13 +3645,14 @@ class Crystal_output:
                                                   'Atom 1',
                                                   'Atom 2 label',
                                                   'Atom 2',
+                                                  'Atom 2 cell index',
                                                   'Bond Length',
                                                   'k^a',
                                                   'm^a',
                                                   'w^a'])
         # <--
 
-        # Creation of Bonds dataframe
+        # Creation of Angles dataframe -->
         for ang in angle:
             opening = [i for i, n in enumerate(ang) if n.startswith('(')]
             ending = [i for i, n in enumerate(ang) if n.endswith(')')]
@@ -3655,7 +3665,9 @@ class Crystal_output:
             ending.sort(reverse=True)
             for i, j in enumerate(opening):
                 if j != ending[i]:
-                    del ang[j:ending[i]+1]
+                    cell_index = ' '.join(ang[j:ending[i]+1])
+                    ang[j] = cell_index
+                    del ang[j+1:ending[i]+1]
                 else:
                     ang.pop(j)
             ang.pop(-1)
@@ -3673,8 +3685,10 @@ class Crystal_output:
                                                   'Atom 1',
                                                   'Atom 2 label',
                                                   'Atom 2',
+                                                  'Atom 2 cell index',
                                                   'Atom 3 label',
                                                   'Atom 3',
+                                                  'Atom 3 cell index',
                                                   'Angle',
                                                   'k^a',
                                                   'k^a(d)',
@@ -3682,7 +3696,7 @@ class Crystal_output:
                                                   'w^a'])
         # <--
 
-        # Creation of Bonds dataframe
+        # Creation of Dihedrals dataframe -->
         for d in dih:
             opening = [i for i, n in enumerate(d) if n.startswith('(')]
             ending = [i for i, n in enumerate(d) if n.endswith(')')]
@@ -3696,7 +3710,9 @@ class Crystal_output:
             ending.sort(reverse=True)
             for i, j in enumerate(opening):
                 if j != ending[i]:
-                    del d[j:ending[i]+1]
+                    cell_index = ' '.join(d[j:ending[i]+1])
+                    d[j] = cell_index
+                    del d[j+1:ending[i]+1]
                 else:
                     d.pop(j)
             d.pop(-1)
@@ -3714,10 +3730,13 @@ class Crystal_output:
                                               'Atom 1',
                                               'Atom 2 label',
                                               'Atom 2',
+                                              'Atom 2 cell index',
                                               'Atom 3 label',
                                               'Atom 3',
+                                              'Atom 3 cell index',
                                               'Atom 4 label',
                                               'Atom 4',
+                                              'Atom 4 cell index',
                                               'Angle',
                                               'k^a',
                                               'k^a(d)',
