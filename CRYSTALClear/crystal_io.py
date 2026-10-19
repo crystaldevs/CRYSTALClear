@@ -3544,234 +3544,409 @@ class Crystal_output:
 
         return self
 
-    def get_locmodes(self):
-        '''
-        Extracts the LOCMODES output from a crystal calculation
+    def get_locmodes(self, symmetry=True, symprec=1e-5, fc_tol=1.5e-3, bond_tol=1e-3,
+                     value_tol=1e-3):
+        """
+        Extracts the LOCMODES output of a CRYSTAL calculation: the internal
+        coordinates with their adiabatic force constants, the characterization of
+        normal modes (CNM) and, optionally, its reduction to symmetry independent
+        internal coordinates.
+
+        Args:
+            symmetry (bool, optional): Whether to sum the CNM contributions of symmetry equivalent internal coordinates. When `False` every internal coordinate is kept on its own and symprec, fc_tol, bond_tol and value_tol are not used. Default is `True`.
+            symprec (float, optional): Tolerance of the spglib symmetry search, in Angstrom. Default is 1e-5.
+            fc_tol (float, optional): Largest difference between the force constants of symmetry equivalent internal coordinates: k^a for bonds, k^a(d) for angles and dihedrals. Default is 1.5e-3.
+            bond_tol (float, optional): Largest difference, in Angstrom, between a printed bond length and the one recomputed from the structure, which checks that atom numbering and cell indices are read consistently. Default is 1e-3.
+            value_tol (float, optional): Largest difference between the absolute values (Angstrom or degrees) of an internal coordinate and its symmetry image, which tells apart internal coordinates on the same atoms, e.g. the two components of a linear bending. Default is 1e-3.
 
         Returns:
-            self.bonds: pandas DataFrame containing atoms, atoms labels, atoms cell location, bonds local force constants, bonds local mass, bonds local frequency.
-            self.angle: pandas DataFrame containing atoms, atoms labels, atoms cell location, angles local force constants in mdyn/A and mdyn, angles local mass, angles local frequency.
-            self.dih: pandas DataFrame containing atoms, atoms labels, atoms cell location, dihedrals local force constants in mdyn/A and mdyn, dihedrals local mass, dihedrals local frequency.
-            self.cnm: pandas DataFrame containing CNM decomposition for each of the acoustic modes
-        '''
+            self (crystal_io.Crystal_output): New attributes listed below, and those set by _locmodes_symmetry()
+                self.bonds (pandas.DataFrame): Bonds: atoms, atom labels, cell index of atom 2 (as printed, e.g. '( 0-1 0)'), bond length [Angstrom], local force constant k^a [mdyn/A], local mass m^a [amu], local frequency w^a [cm^-1].
+                self.angle (pandas.DataFrame): Angles: atoms, atom labels, cell indices of atoms 2 and 3, angle [degrees], k^a [mdyn/A], k^a(d) [mdyn*A/rad^2], m^a [amu*A], w^a [cm^-1].
+                self.dih (pandas.DataFrame): Dihedrals: as self.angle, with atom 4.
+                self.cnm (pandas.DataFrame): CNM decomposition [%]: column 0 is the internal coordinate number, then one column per mode, in the order of self.cnm_modes.
+                self.cnm_modes (list[int]): Mode number of each CNM column of self.cnm.
+                self.ic_positions (np.ndarray): Cartesian coordinates of the atoms of the primitive cell, in Angstrom, as CRYSTAL stores them: the cell indices of the internal coordinates refer to these.
+        """
         import re
 
         import numpy as np
         import pandas as pd
 
-        # Definition of the pattern to find -->
-        internal_list_find = '\sN\sOF\sREMAINING\sINTERNAL\sCOORDINATES\sAFTER\sSCREENING:\s+[0-9]+'
-        force_constant_find = '\sNUM\s+K\^A\s+K\^A\(D\)\s+M\^A\s+W\^A'
-        cnm_find = '\sMODE:\|(\s+([0-9]+\s+)+)[0-9]+'
-        end_section = '\s=+'
-        bonds_find = '(L)'
-        angle_find = '(A)'
-        dih_find = '(D)'
+        # Last block of internal coordinates kept after screening, and the table
+        # of their force constants that follows it -->
+        fc_header = r'^\s+NUM\s+K\^A\s+K\^A\(D\)\s+M\^A\s+W\^A'
+        ic_start = fc_start = None
+        for countline, line in enumerate(self.data):
+            if re.match(r'^\s+N OF REMAINING INTERNAL COORDINATES AFTER SCREENING:', line):
+                ic_start, fc_start = countline, None
+                n_internal = int(line.split()[-1])
+            elif ic_start is not None and fc_start is None and re.match(fc_header, line):
+                fc_start = countline
+
+        if ic_start is None:
+            raise ValueError(
+                'No LOCMODES internal coordinates found in the output.')
+        if fc_start is None:
+            raise ValueError('No table of adiabatic force constants (NUM K^A K^A(D) '
+                             'M^A W^A) after the internal coordinates: output '
+                             'format not supported.')
         # <--
 
-        # Vari\able declaration -->
-        internal = False
-        section_end = []
-        cnm_section_start = []
-        bond_start = []
-        angle_start = []
-        dih_start = []
+        # Internal coordinates: number, then label and atom of every point, with
+        # the cell index of all but the first, then the value. A cell index is
+        # three fixed width fields, e.g. '( 0-1 0)' or '(-1-1-1)' -->
+        point_find = re.compile(
+            r'\s*(\d+)\s+([A-Za-z]+)\s*(?:\(([ \-\d]{2})([ \-\d]{2})([ \-\d]{2})\))?')
+        n_points = {'L': 2, 'A': 3, 'D': 4}
+        rows = {'L': [], 'A': [], 'D': []}
+        kind = None
+        countline = ic_start
+        while sum(len(found) for found in rows.values()) < n_internal:
+            countline += 1
+            line = self.data[countline]
+            tokens = line.split()
+            if tokens and tokens[0] in ('(L)', '(A)', '(D)'):
+                kind = tokens[0][1]
+                continue
+            if kind is None or not tokens or not tokens[0].isdigit():
+                continue
+
+            number = re.match(r'\s*(\d+)', line)
+            row, pos = [int(number.group(1))], number.end()
+            for point in range(n_points[kind]):
+                match = point_find.match(line, pos)
+                if match is None or (point > 0 and match.group(3) is None):
+                    raise ValueError('Cannot read point %d of internal coordinate %d: %s'
+                                     % (point + 1, row[0], line.strip()))
+                pos = match.end()
+                row += [int(match.group(1)), match.group(2)]
+                if point > 0:
+                    row.append('(%2d%2d%2d)' % tuple(int(match.group(i))
+                               for i in (3, 4, 5)))
+            row.append(float(line[pos:].split()[0]))
+            rows[kind].append(row)
         # <--
 
-        # Extraction of start and end indexes for different sections -->
-        for index, line in enumerate(self.data):
-            if re.match(internal_list_find, line):
-                internal = True
-                internal_start = index
-                internal_number = int(line.split()[-1])
-
-            if (internal) and (len(line.split()) > 0):
-                if line.split()[0] == bonds_find:
-                    bond_start.append(index)
-                elif line.split()[0] == angle_find:
-                    angle_start.append(index)
-                elif line.split()[0] == dih_find:
-                    dih_start.append(index)
-
-            if (internal) and (re.match(force_constant_find, line)):
-                fc_start = index
-
-            if (internal) and (re.match(end_section, line)) and (self.data[index+1].split() == []):
-                section_end.append(index)
-
-            if (internal) and (re.match(cnm_find, line)):
-                cnm_section_start.append(index)
+        # Force constants: K^A, K^A(D) (angles and dihedrals only), M^A, W^A -->
+        force_constants = {}
+        for line in self.data[fc_start + 2:]:
+            tokens = line.split()
+            if tokens and tokens[0].startswith('='):
+                break
+            if tokens and tokens[0].isdigit():
+                force_constants[int(tokens[0])] = [self._locmodes_float(k)
+                                                   for k in tokens[1:]]
         # <--
 
-        # Extraction of bond, angle and dih information -->
-        bonds = [line.split()
-                 for line in self.data[bond_start[0]+1:angle_start[0]]]
-        angle = [line.split()
-                 for line in self.data[angle_start[0]+1:dih_start[0]]]
-        dih = [line.split()
-               for line in self.data[dih_start[0]+1:section_end[0]]]
+        # Bonds, angles and dihedrals dataframes -->
+        def columns(n):
+            names = ['ic index']
+            for point in range(1, n + 1):
+                names += ['Atom %d label' % point, 'Atom %d' % point]
+                if point > 1:
+                    names.append('Atom %d cell index' % point)
+            return names
+
+        self.bonds = pd.DataFrame([row + force_constants[row[0]] for row in rows['L']],
+                                  columns=columns(2) + ['Bond Length', 'k^a', 'm^a', 'w^a'])
+        self.angle = pd.DataFrame([row + force_constants[row[0]] for row in rows['A']],
+                                  columns=columns(3) + ['Angle', 'k^a', 'k^a(d)', 'm^a', 'w^a'])
+        self.dih = pd.DataFrame([row + force_constants[row[0]] for row in rows['D']],
+                                columns=columns(4) + ['Angle', 'k^a', 'k^a(d)', 'm^a', 'w^a'])
         # <--
 
-        # Extraction of bond, angle and dih force constants information -->
-        bonds_fc = [line.split()
-                    for line in self.data[bond_start[1]+1:angle_start[1]]]
-        angle_fc = [line.split()
-                    for line in self.data[angle_start[1]+1:dih_start[1]]]
-        dih_fc = [line.split()
-                  for line in self.data[dih_start[1]+1:section_end[1]]]
+        # CNM decomposition, one 'MODE:|' block per ten modes -->
+        self.cnm_modes = []
+        contributions = {}
+        for countline in range(fc_start, len(self.data)):
+            if re.match(r'^\s+MODE:\|', self.data[countline]):
+                self.cnm_modes += [int(mode)
+                                   for mode in self.data[countline].split()[1:]]
+                for line in self.data[countline + 2:countline + 2 + n_internal]:
+                    tokens = line.split()
+                    contributions.setdefault(int(tokens[0]), []).extend(
+                        float(value) for value in tokens[2:])
+        self.cnm = pd.DataFrame([[number] + values
+                                 for number, values in contributions.items()])
         # <--
 
-        # Creation of Bonds dataframe -->
-        for bond in bonds:
-            bond[0] = int(bond[0])
-            bond[1] = int(bond[1])
-            bond[3] = int(bond[3])
-            bond[-2] = float(bond[-2])
-            cell_index = bond[5:-2]
-            bond[5] = ' '.join(cell_index)
-            del bond[6:-2]
-            bond.pop(-1)
-
-        for bond in bonds_fc:
-            for i, j in enumerate(bond):
-                bond[i] = float(j)
-            bond.pop(0)
-
-        for index, bond in enumerate(bonds):
-            bonds[index] = bond + bonds_fc[index]
-
-        self.bonds = pd.DataFrame(bonds, columns=['ic index',
-                                                  'Atom 1 label',
-                                                  'Atom 1',
-                                                  'Atom 2 label',
-                                                  'Atom 2',
-                                                  'Atom 2 cell index',
-                                                  'Bond Length',
-                                                  'k^a',
-                                                  'm^a',
-                                                  'w^a'])
+        # Cartesian coordinates of the primitive cell. get_geometry() cannot be
+        # used: the fractional coordinates it reads are wrapped into [-0.5, 0.5) -->
+        start = [index for index, line in enumerate(self.data)
+                 if re.match(r'\sCARTESIAN COORDINATES - PRIMITIVE CELL', line)][-1]
+        positions = []
+        for line in self.data[start + 4:]:
+            if line.split() == []:
+                break
+            positions.append(line.split()[3:6])
+        self.ic_positions = np.array(positions, dtype=float)
         # <--
 
-        # Creation of Angles dataframe -->
-        for ang in angle:
-            opening = [i for i, n in enumerate(ang) if n.startswith('(')]
-            ending = [i for i, n in enumerate(ang) if n.endswith(')')]
-            ang[0] = int(ang[0])
-            ang[1] = int(ang[1])
-            ang[3] = int(ang[3])
-            ang[ending[0]+1] = int(ang[ending[0]+1])
-            ang[-2] = float(ang[-2])
-            opening.sort(reverse=True)
-            ending.sort(reverse=True)
-            for i, j in enumerate(opening):
-                if j != ending[i]:
-                    cell_index = ' '.join(ang[j:ending[i]+1])
-                    ang[j] = cell_index
-                    del ang[j+1:ending[i]+1]
+        self._locmodes_symmetry(symmetry, symprec,
+                                fc_tol, bond_tol, value_tol)
+
+        return self
+
+    # LOCMODES extraction helpers -->
+    @staticmethod
+    def _locmodes_float(string):
+        """
+        Number printed by LOCMODES, NaN when it overflows its field ('*****').
+        """
+
+        try:
+            return float(string)
+        except ValueError:
+            return float('nan')
+
+    def _locmodes_symmetry(self, symmetry, symprec, fc_tol, bond_tol, value_tol):
+        """
+        Group the internal coordinates of get_locmodes() into symmetry independent
+        sets and sum their CNM contributions.
+
+        Internal coordinates are equivalent when a symmetry operation of the
+        crystal (from spglib) maps the atoms and cells of one onto the other and
+        their values match in absolute value. Within each group the force
+        constants must agree (k^a for bonds, k^a(d) for angles and dihedrals);
+        groups that do not are split by force constant. Without symmetry, every
+        internal coordinate is a group of its own.
+
+        Args:
+            self (crystal_io.Crystal_output): Crystal output object, with self.cnm, self.cnm_modes and self.ic_positions set by get_locmodes().
+            symmetry (bool): Whether to run the symmetry analysis.
+            symprec (float): Tolerance of the spglib symmetry search, in Angstrom.
+            fc_tol (float): Largest force constant difference within a group.
+            bond_tol (float): Largest difference [Angstrom] between printed and recomputed bond lengths.
+            value_tol (float): Largest difference between the absolute values of an internal coordinate and its symmetry image.
+
+        Returns:
+            self (crystal_io.Crystal_output): New attributes listed below
+                self.ic_groups (list[list[int]]): Internal coordinate numbers of each group, sorted; the first is the representative.
+                self.cnm_sym (pandas.DataFrame): CNM contributions [%] summed over each group. Index: mode numbers. Columns: representative and atomic labels, e.g. '1 NO'.
+                self.ic_spacegroup (str): Space group found by spglib, None without symmetry.
+                self.ic_nsymmops (int): Number of symmetry operations found by spglib, None without symmetry.
+                self.ic_fc_split (int): Number of symmetry groups split by the force constant check, None without symmetry.
+        """
+        import pandas as pd
+        import spglib
+
+        ics = self._locmodes_ics()
+        cnm = self.cnm.set_index(0)
+        if [ic['num'] for ic in ics] != list(cnm.index.astype(int)):
+            raise ValueError('Internal coordinates and CNM rows do not match.')
+        if len(self.cnm_modes) != cnm.shape[1]:
+            raise ValueError('%d mode numbers found for %d CNM columns.'
+                             % (len(self.cnm_modes), cnm.shape[1]))
+
+        if symmetry:
+            # Structure the cell indices refer to -->
+            lattice = self.get_lattice(initial=False)
+            frac = self.geometry.lattice.get_fractional_coords(
+                self.ic_positions)
+            numbers = list(self.atom_numbers)
+            self._check_bonds(ics, lattice, frac, bond_tol)
+            # <--
+
+            # Symmetry groups, split by force constant -->
+            found = spglib.get_symmetry(
+                (lattice, frac, numbers), symprec=symprec)
+            if found is None:
+                raise RuntimeError('spglib symmetry search failed.')
+            operations = self._symmetry_operations(lattice, frac, found)
+            groups = self._symmetry_groups(ics, operations, value_tol)
+            groups, self.ic_fc_split = self._fc_split(ics, groups, fc_tol)
+            self.ic_spacegroup = spglib.get_spacegroup((lattice, frac, numbers),
+                                                       symprec=symprec)
+            self.ic_nsymmops = len(operations)
+            # <--
+        else:
+            groups = [[k] for k in range(len(ics))]
+            self.ic_spacegroup = self.ic_nsymmops = self.ic_fc_split = None
+
+        # Contributions of each group summed into its lowest internal coordinate -->
+        groups = sorted((sorted(ics[k]['num'] for k in group) for group in groups),
+                        key=lambda group: group[0])
+        elements = {ic['num']: ''.join(ic['elements']) for ic in ics}
+        dec = pd.DataFrame(cnm.to_numpy(dtype=float).T, index=self.cnm_modes,
+                           columns=cnm.index.astype(int))
+        self.cnm_sym = pd.DataFrame({'%d %s' % (group[0], elements[group[0]]):
+                                     dec[group].sum(axis=1) for group in groups})
+        # <--
+
+        self.ic_groups = groups
+
+        return self
+
+    def _locmodes_ics(self):
+        """
+        Internal coordinates of get_locmodes() (self.bonds, self.angle,
+        self.dih), one dict each.
+
+        Returns:
+            list[dict]: Keys 'num' (int), 'kind' ('L', 'A' or 'D'), 'atoms' (list[int], 0-based), 'cells' (np.array, n x 3, the first point in cell 0 0 0), 'elements' (list[str]), 'value' (float, Angstrom or degrees) and 'fc' (float, k^a for bonds, k^a(d) otherwise).
+        """
+        import re
+
+        import numpy as np
+
+        # Cell indices are three fixed width fields, e.g. '( 0-1 0)' or '(-1-1-1)'
+        cell_find = re.compile(r'\(([ \-\d]{2})([ \-\d]{2})([ \-\d]{2})\)')
+
+        ics = []
+        for kind, df, n_points, value, fc in (('L', self.bonds, 2, 'Bond Length', 'k^a'),
+                                              ('A', self.angle, 3,
+                                               'Angle', 'k^a(d)'),
+                                              ('D', self.dih, 4, 'Angle', 'k^a(d)')):
+            for _, row in df.iterrows():
+                points = range(1, n_points + 1)
+                cells = [[0, 0, 0]]
+                for point in points[1:]:
+                    cell = row['Atom %d cell index' % point]
+                    match = cell_find.fullmatch(str(cell).strip())
+                    if match is None:
+                        raise ValueError('Cannot read the cell index %r of internal '
+                                         'coordinate %d.' % (cell, row['ic index']))
+                    cells.append([int(i) for i in match.groups()])
+
+                ics.append({'num': int(row['ic index']), 'kind': kind,
+                            'atoms': [int(row['Atom %d label' % point]) - 1 for point in points],
+                            'elements': [row['Atom %d' % point] for point in points],
+                            'cells': np.array(cells, dtype=int),
+                            'value': float(row[value]), 'fc': float(row[fc])})
+
+        return ics
+
+    @staticmethod
+    def _check_bonds(ics, lattice, frac, bond_tol):
+        """
+        Stop if the structure does not reproduce the bond lengths printed by
+        LOCMODES within bond_tol (Angstrom), i.e. atom numbering or cell indices
+        are not consistent with it.
+        """
+        import numpy as np
+
+        for ic in ics:
+            if ic['kind'] != 'L':
+                continue
+            (a, b), cells = ic['atoms'], ic['cells']
+            length = np.linalg.norm(
+                (frac[b] + cells[1] - frac[a] - cells[0]) @ lattice)
+            if abs(length - ic['value']) > bond_tol:
+                raise ValueError(
+                    'Bond %d is %.4f A in the output but %.6f A from the geometry, '
+                    '%.1e A apart, more than bond_tol=%g: atom numbering or cell '
+                    'indices are not consistent with the structure read.'
+                    % (ic['num'], ic['value'], length, abs(length - ic['value']), bond_tol))
+
+    @staticmethod
+    def _symmetry_operations(lattice, frac, symmetry):
+        """
+        Symmetry operations of spglib as (rotation, atom permutation, lattice
+        shift), such that R x_i + t = x_perm[i] + shift[i].
+        """
+        import numpy as np
+
+        operations = []
+        for rotation, translation in zip(symmetry['rotations'], symmetry['translations']):
+            perm, shift = [], []
+            for x in frac:
+                delta = rotation @ x + translation - frac
+                j = np.argmin(np.linalg.norm(
+                    (delta - np.rint(delta)) @ lattice, axis=1))
+                perm.append(j)
+                shift.append(np.rint(delta[j]).astype(int))
+            operations.append((rotation, perm, shift))
+
+        return operations
+
+    @staticmethod
+    def _canonical_key(atoms, cells):
+        """
+        Order independent key of an internal coordinate: (atom, cell relative to
+        the first point) for the forward and reversed sequence of points,
+        whichever is smaller.
+        """
+
+        keys = []
+        for order in (slice(None), slice(None, None, -1)):
+            a, c = atoms[order], cells[order]
+            keys.append(tuple((int(i),) + tuple(int(n) for n in cc - c[0])
+                              for i, cc in zip(a, c)))
+
+        return min(keys)
+
+    @staticmethod
+    def _symmetry_groups(ics, operations, value_tol):
+        """
+        Groups (lists of indices of ics) of symmetry equivalent internal
+        coordinates. The image of point (i, n) is (perm[i], shift[i] + R n), and
+        its absolute value must match within value_tol; images not present among
+        the internal coordinates are skipped.
+        """
+        from collections import defaultdict
+
+        import numpy as np
+
+        lookup = defaultdict(list)
+        for k, ic in enumerate(ics):
+            lookup[(ic['kind'], Crystal_output._canonical_key(
+                ic['atoms'], ic['cells']))].append(k)
+
+        parent = list(range(len(ics)))
+
+        def find(k):
+            while parent[k] != k:
+                parent[k] = parent[parent[k]]
+                k = parent[k]
+            return k
+
+        for k, ic in enumerate(ics):
+            for rotation, perm, shift in operations:
+                atoms = [perm[i] for i in ic['atoms']]
+                cells = np.array([shift[i] + rotation @ c
+                                  for i, c in zip(ic['atoms'], ic['cells'])])
+                # Equal atoms are not enough: e.g. the two components of a linear bending
+                for m in lookup.get((ic['kind'], Crystal_output._canonical_key(atoms, cells)), []):
+                    if abs(abs(ics[m]['value']) - abs(ic['value'])) < value_tol:
+                        parent[find(m)] = find(k)
+
+        groups = defaultdict(list)
+        for k in range(len(ics)):
+            groups[find(k)].append(k)
+
+        return list(groups.values())
+
+    @staticmethod
+    def _fc_split(ics, groups, fc_tol):
+        """
+        Split the groups whose force constants differ by more than fc_tol.
+
+        Returns:
+            list[list[int]]: The groups after the split.
+            int: Number of groups that were split.
+        """
+        import numpy as np
+
+        split_groups = []
+        n_split = 0
+        for group in groups:
+            if len(group) == 1:
+                split_groups.append(group)
+                continue
+            group = sorted(group, key=lambda k: (
+                np.isnan(ics[k]['fc']), ics[k]['fc']))
+            sub_groups = [[group[0]]]
+            for previous, k in zip(group, group[1:]):
+                if abs(ics[k]['fc'] - ics[previous]['fc']) <= fc_tol:
+                    sub_groups[-1].append(k)
                 else:
-                    ang.pop(j)
-            ang.pop(-1)
+                    sub_groups.append([k])
+            n_split += len(sub_groups) > 1
+            split_groups += sub_groups
 
-        for ang in angle_fc:
-            for i, j in enumerate(ang):
-                ang[i] = float(j)
-            ang.pop(0)
-
-        for index, ang in enumerate(angle):
-            angle[index] = ang + angle_fc[index]
-
-        self.angle = pd.DataFrame(angle, columns=['ic index',
-                                                  'Atom 1 label',
-                                                  'Atom 1',
-                                                  'Atom 2 label',
-                                                  'Atom 2',
-                                                  'Atom 2 cell index',
-                                                  'Atom 3 label',
-                                                  'Atom 3',
-                                                  'Atom 3 cell index',
-                                                  'Angle',
-                                                  'k^a',
-                                                  'k^a(d)',
-                                                  'm^a',
-                                                  'w^a'])
-        # <--
-
-        # Creation of Dihedrals dataframe -->
-        for d in dih:
-            opening = [i for i, n in enumerate(d) if n.startswith('(')]
-            ending = [i for i, n in enumerate(d) if n.endswith(')')]
-            d[0] = int(d[0])
-            d[1] = int(d[1])
-            d[3] = int(d[3])
-            d[ending[0]+1] = int(d[ending[0]+1])
-            d[ending[1]+1] = int(d[ending[1]+1])
-            d[-2] = float(d[-2])
-            opening.sort(reverse=True)
-            ending.sort(reverse=True)
-            for i, j in enumerate(opening):
-                if j != ending[i]:
-                    cell_index = ' '.join(d[j:ending[i]+1])
-                    d[j] = cell_index
-                    del d[j+1:ending[i]+1]
-                else:
-                    d.pop(j)
-            d.pop(-1)
-
-        for d in dih_fc:
-            for i, j in enumerate(d):
-                d[i] = float(j)
-            d.pop(0)
-
-        for index, d in enumerate(dih):
-            dih[index] = d + dih_fc[index]
-
-        self.dih = pd.DataFrame(dih, columns=['ic index',
-                                              'Atom 1 label',
-                                              'Atom 1',
-                                              'Atom 2 label',
-                                              'Atom 2',
-                                              'Atom 2 cell index',
-                                              'Atom 3 label',
-                                              'Atom 3',
-                                              'Atom 3 cell index',
-                                              'Atom 4 label',
-                                              'Atom 4',
-                                              'Atom 4 cell index',
-                                              'Angle',
-                                              'k^a',
-                                              'k^a(d)',
-                                              'm^a',
-                                              'w^a'])
-        # <--
-
-        # Extraction of CNM data -->
-        cnm = []
-        for index, i in enumerate(cnm_section_start):
-            cnm_tmp = [line.split()
-                       for line in self.data[i+2:i+internal_number+2]]
-            for k in cnm_tmp:
-                if index != 0:
-                    del k[0:2]
-                    for j, el in enumerate(k):
-                        k[j] = float(el)
-
-                else:
-                    k[0] = int(k[0])
-                    for j, el in enumerate(k):
-                        if j >= 2:
-                            k[j] = float(el)
-                    k.pop(1)
-
-            cnm += [cnm_tmp]
-
-        for index, section in enumerate(cnm):
-            if index > 0:
-                for idx, element in enumerate(section):
-                    cnm[0][idx] += element
-
-        self.cnm = pd.DataFrame(cnm[0])
-
-        return (self)
+        return split_groups, n_split
+    # <--
 
 
 class Properties_input:
