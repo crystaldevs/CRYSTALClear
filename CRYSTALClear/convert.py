@@ -9,7 +9,7 @@ def cry_ase2gui(structure, gui_file=None, vacuum=None, symmetry=True):
     """
     Transform an ASE Structure object into a Pymatgen structure object and then
     a CRYSTAL structure (gui) object. Vacuum layer is set to 500 Angstrom
-    as the default of CRYSTAL for low symmstry systems
+    as the default of CRYSTAL for low symmetry systems
 
     Args:
         structure (ASE Structure): ASE Structure object.
@@ -424,12 +424,12 @@ def cry_pmg2gui(structure, gui_file=None, pbc=None, vacuum=None, symmetry=True,
                 zconv=None, **kwargs):
     """
     Save a pymatgen Structure object into a CRYSTAL gui file. Vacuum layer is
-    set to 500 Angstrom as the default of CRYSTAL for low symmstry systems.
+    set to 500 Angstrom as the default of CRYSTAL for low symmetry systems.
 
     Args:
         structure (Structure | Molecule): Pymatgen Structure / Molecule object.
         gui_file (str): CRYSTAL gui / fort.34 file.
-        pbc (list): 1\*3 boolian list. Implements periodicity along x, y and z
+        pbc (list): 1\*3 boolean list. Implements periodicity along x, y and z
             directions. If none, the code will read it from input structure.
         vacuum (float): Vacuum distance. Unit: Angstrom. If none, set the
             length of non-periodic direction to 500 Angstrom. Low dimensional

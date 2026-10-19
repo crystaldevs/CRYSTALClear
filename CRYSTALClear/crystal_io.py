@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Objects of input / output files of CRYSTAL. Methods to edit or substract data
+Objects of input / output files of CRYSTAL. Methods to edit or subtract data
 from corresponding files are provided.
 """
 from CRYSTALClear import units
@@ -20,7 +20,7 @@ class Crystal_input(Crystal_inputBASE):
     def geom_from_cif(self, file, zconv=None, keyword='EXTERNAL',
                       pbc=[True, True, True], gui_name='fort.34', **kwargs):
         """
-        Read geometry from cif file and put infomation to geom block, either as
+        Read geometry from cif file and put information to geom block, either as
         "EXTERNAL" or "CRYSTAL". CIF files with a single geometry only.
 
         CIF with Symmetry is required.
@@ -63,7 +63,7 @@ class Crystal_input(Crystal_inputBASE):
     def geom_from_pmg(self, struc, zconv=None, keyword='EXTERNAL',
                       gui_name='fort.34', **kwargs):
         """
-        Read geometry defined by PyMatGen structure object and put infomation
+        Read geometry defined by PyMatGen structure object and put information
         into geom block, either as "EXTERNAL" or "CRYSTAL".
 
         See Crystal_input.geom_from_cif for definition of arguments.
@@ -620,7 +620,7 @@ class Crystal_output:
         Get the geometry.
 
         Args:
-            initial (bool): Read the initial or last gemetry. Useful in
+            initial (bool): Read the initial or last geometry. Useful in
                 case of geometry optimization.
             write_gui (bool): If True, write .gui file
             gui_name (str): Valid only if ``write_gui = True``. Gui file
@@ -997,11 +997,63 @@ class Crystal_output:
 
         return self.trans_matrix
 
+    def _in_phonon_order(self, pstruc, tolerance=0.01):
+        """
+        Reorder atoms in the supercell to match CRYSTAL's convention.
+
+        Args:
+            pstruc (Structure): The primitive cell from ``get_pcel``.
+            tolerance (float): How far, in Å, a site may be from the listed atom.
+        Returns:
+            Structure: ``pstruc``, reordered if it could be.
+        """
+        import numpy as np
+        from pymatgen.core.structure import Structure
+
+        lines = self.data[:self.eoo]
+        start = next((i for i, line in enumerate(lines)
+                      if 'SMALL CELL ON TOP' in line), None)
+        natom = pstruc.num_sites
+        if start is None or natom == 0:
+            return pstruc
+        listed = []
+        for line in lines[start + 1:]:
+            words = line.split()
+            if len(words) == 5 and words[0].isdigit() and words[1].isdigit():
+                listed.append((int(words[1]) % 100, np.array(words[2:], dtype=float)))
+                if len(listed) == natom:
+                    break
+            elif listed:
+                break
+        if len(listed) != natom:
+            return pstruc
+
+        lattice = pstruc.lattice.matrix
+        periodic = np.array(pstruc.lattice.pbc, dtype=bool)
+        numbers = [z % 100 for z in pstruc.atomic_numbers]
+        cart = pstruc.cart_coords
+
+        def apart(a, b):
+            delta = np.linalg.solve(lattice.T, a - b)
+            delta[periodic] -= np.round(delta[periodic])
+            return np.linalg.norm(delta @ lattice)
+
+        order = []
+        for number, position in listed:
+            found = [j for j in range(natom) if j not in order and numbers[j] == number
+                     and apart(cart[j], position) < tolerance]
+            if not found:
+                return pstruc
+            order.append(found[0])
+        if order == list(range(natom)):
+            return pstruc
+        return Structure.from_sites([pstruc[j] for j in order])
+
     def get_primitive_geometry(self, initial=True, write_gui=False, gui_name=None,
                                symmetry='pymatgen', **kwargs):
         """
         Get the primitive geometry, reduced by cell transformation matrix
-        inversed.
+        inverted.
 
         .. note::
             This is not the standard primitive cell. This method returns
@@ -1019,7 +1071,7 @@ class Crystal_output:
                 basename is the same as output file.
             symmetry (str): Valid only if ``write_gui = True``. "pymatgen"
                 to use symmetry info from a pymatgen SpacegroupAnalyzer;
-                "initial" to use symmstry information on output file. If
+                "initial" to use symmetry information on output file. If
                 None, no symmetry. Otherwise it is taken from the existing
                 gui file.
             **kwargs: Valid only if ``write_gui = True`` and
@@ -1051,6 +1103,7 @@ class Crystal_output:
 
         shrink_mx = np.linalg.inv(self.trans_matrix)
         pstruc = get_pcel(self.geometry, self.trans_matrix)
+        pstruc = self._in_phonon_order(pstruc)
 
         self.primitive_geometry = pstruc
         # Write gui files
@@ -1477,7 +1530,7 @@ class Crystal_output:
 
         Args:
             primitive (bool): Restore the primitive cell (multiply by the
-                cell transform matrix inversed)
+                cell transform matrix inverted)
             scf_history (bool): Read SCF history of each optimisation step.
                 Keyword "ONELOG" is needed. Please refer to
                 ``self.get_scf_convergence(all_cycles=True)`` method.
@@ -1753,7 +1806,7 @@ class Crystal_output:
                 of negative frequencies.
             eigvt_amplitude (float | str): Valid if ``read_eigvt = True``.
                 Amplitude of normalization, or "classical", "classical-rev",
-                classical amplitude and revmove classical amplitude.
+                classical amplitude and remove classical amplitude.
 
 
         .. note::
@@ -2215,8 +2268,8 @@ class Crystal_output:
         Returns:
             self (Crystal_output): New attributes listed below.
             self.PES_single(np.array): 2D array containing single-mode anharmonic force constants (col 1: mode; cols 2-3: cubic and quartic single-mode terms of the PES, respectively).
-            self.PES_couple(np.array): 2D array contaning anharmonic force constants coupling two phonon modes (col 1: mode I; col 2: mode J; cols 3-7: two-mode anharmonic force constants of type IIJ, IJJ, IIIJ, IJJJ and IIJJ, respectively.)
-            self.PES_triplet(np.array): 2D array contaning anharmonic force constant coupling three phonon modes (col 1: mode I; col 2: mode J; col 3: mode K; cols 4-7: three-mode anharmonic force constants of type IJK, IIJK, IJJK and IJKK, respectively)
+            self.PES_couple(np.array): 2D array containing anharmonic force constants coupling two phonon modes (col 1: mode I; col 2: mode J; cols 3-7: two-mode anharmonic force constants of type IIJ, IJJ, IIIJ, IJJJ and IIJJ, respectively.)
+            self.PES_triplet(np.array): 2D array containing anharmonic force constant coupling three phonon modes (col 1: mode I; col 2: mode J; col 3: mode K; cols 4-7: three-mode anharmonic force constants of type IJK, IIJK, IJJK and IJKK, respectively)
         """
 
         import re
@@ -3443,7 +3496,7 @@ class Crystal_output:
         '''
         import re
 
-        # Regex dfinition and use to extract amu -->
+        # Regex definition and use to extract amu -->
         check_freq = ' \* +F+\s+R+ +E+ +Q+(\s+(U\s+)+)E+(\s+(N\s+)+)C+(\s+(Y\s+)+)\*'
         amu_start = ' ATOMS ISOTOPIC MASS \(AMU\)'
         amu_end = ' \*+'
@@ -3906,9 +3959,7 @@ class Properties_input:
 
     def from_file(self, input_name):
         """
-        Read the prope
-        fo
-        forrrties input from a file.
+        Read the properties input from a file.
 
         Args:
             input_name (str): Name of the input file.
@@ -4828,7 +4879,7 @@ class Properties_output:
         return self
 
     def read_vecfield(self, properties_output, which_prop):
-        """Reads the fort.25 file to return data arrays containing one or more vectiorial density properties.
+        """Reads the fort.25 file to return data arrays containing one or more vectorial density properties.
 
         Args:
             properties_output (str): Properties output file.
@@ -5103,7 +5154,7 @@ class Properties_output:
     def read_topond_trho(self, properties_output):
         """Read the TOPOND TRHO run output file to create associated DataFrames:
          * Coordinates for the nuclei at the unitcell (nuclei_df)
-         * Data of the critical points (CP) discoverd (topo_df)
+         * Data of the critical points (CP) discovered (topo_df)
 
         Args:
             properties_output (str): Properties output file.
@@ -5335,7 +5386,7 @@ class Properties_output:
 
         if not hasattr(self, 'topo_df'):
             print(
-                'ERROR: You need first to succesfully run read_topond_trho() to use this.')
+                'ERROR: You need first to successfully run read_topond_trho() to use this.')
             sys.exit(1)
 
          # An ASE object is used as intermediate to generate different types of outputs
@@ -5425,7 +5476,7 @@ class Properties_output:
     def read_topond_tlap(self, properties_output):
         """Read the TOPOND TLAP run output file to create associated DataFrames:
          * Coordinates for the nuclei at the unitcell (nuclei_df)
-         * Data of the laplacian critical points (CP) discoverd (tlap_df)
+         * Data of the laplacian critical points (CP) discovered (tlap_df)
 
         Args:
             properties_output (str): Properties output file.
@@ -5677,7 +5728,7 @@ class Properties_output:
 
         if not hasattr(self, 'tlap_df'):
             print(
-                'ERROR: You need first to succesfully run read_topond_tlap() to use this.')
+                'ERROR: You need first to successfully run read_topond_tlap() to use this.')
             sys.exit(1)
 
          # An ASE object is used as intermediate to generate different types of outputs
@@ -6319,7 +6370,7 @@ def write_cry_density(fort98_name, new_p, new_fort98):
 class External_unit:
     # WORK IN PROGRESS
     # This class will generate an object from the CRYSTAL external units like: IRSPEC.DAT
-    # RAMSPEC.DAT tha can be plotted through the corresponding function in plot.py
+    # RAMSPEC.DAT that can be plotted through the corresponding function in plot.py
 
     def __init__(self):
 

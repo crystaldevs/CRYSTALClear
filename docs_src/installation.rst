@@ -1,62 +1,69 @@
 Installation
 ============
 
-You can install CRYSTALClear in two different ways: by downloading the source 
-code directly from its GitHub repository or by using the pip command from the 
-Python Package Index (PyPI). Follow the instructions below to get started.
+CRYSTALClear is on `PyPI <https://pypi.org/project/CRYSTALClear/>`_. It needs
+**Python 3**.
 
+It should be installed in an environment of its own rather than in the system
+Python. Either a conda environment or a virtual environment may be used; conda
+also provides the Python version, whereas a virtual environment uses the
+``python`` already installed.
 
-Installing via Pypi
-___________________
+.. tab-set::
 
-The easiest way to install CRYSTALClear is by using pip. This method 
-automatically handles all dependencies, ensuring a smooth installation process. 
-Open your terminal and run the following command:
+   .. tab-item:: conda
 
-.. code-block:: bash
+      .. code-block:: sh
 
-       pip install CRYSTALClear
+         conda create --name crystalclear python=3.9
+         conda activate crystalclear
+         pip install CRYSTALClear
 
-This will download and install the latest stable version of CRYSTALClear 
-available on PyPI.
+   .. tab-item:: venv
 
+      .. code-block:: sh
 
-Installing from GitHub Source Code
-__________________________________
+         python -m venv ~/.venvs/crystalclear
+         source ~/.venvs/crystalclear/bin/activate    # Windows: ~\.venvs\crystalclear\Scripts\activate
+         pip install CRYSTALClear
 
-If you prefer to work with the source code directly or want to contribute to the 
-development of CRYSTALClear, you can clone the repository from GitHub and 
-install it manually. Navigate to the directory where you want to store the 
-CRYSTALClear project, then run:
+Then import it:
 
-.. code-block:: bash
+.. code-block:: python
 
-        git clone https://github.com/crystaldevs/CRYSTALClear.git
+   import CRYSTALClear
+   print(CRYSTALClear.__version__)
 
-This method is particularly useful if you plan to modify the code or if you want 
-to ensure you are using the latest version that might not yet be published on 
-PyPI.
+:doc:`usage` shows how a calculation is read and plotted, and the
+:doc:`example notebooks <notebooks/index>` go through each kind of property.
 
+Dependencies
+------------
 
-Verification
-____________
+These are installed automatically if not already present:
 
-To verify that CRYSTALClear is installed correctly, you can try importing it in 
-a Python session:
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
 
-.. code-block:: bash
+   * - Package
+     - Why
+   * - pymatgen
+     - structures, lattices and symmetry; it brings numpy, scipy and matplotlib
+       with it, for the arithmetic and the plots
+   * - mendeleev
+     - element symbols from atomic numbers
+   * - ase
+     - ASE ``Atoms`` objects, built from TOPOND data
 
-        import CRYSTALClear
-        print(CRYSTALClear.__version__)
+Installation from source
+------------------------
 
+.. code-block:: sh
 
-If no errors occur and the version number is printed, you're ready to start 
-using CRYSTALClear!
+   git clone https://github.com/crystaldevs/CRYSTALClear.git
+   cd CRYSTALClear
+   pip install -e .
 
-
-
-
-
-
-
-
+``-e`` installs it in editable mode: changes to the source take effect without
+installing again.

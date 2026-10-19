@@ -129,11 +129,9 @@ def get_pcel(struc, smx):
     shrink_mx = np.linalg.inv(smx)
     scel_mx = struc.lattice.matrix
     all_species = list(struc.atomic_numbers)
-    # Shift origin to (0,0,0), consistent with CRYSTAL
-    all_coords = struc.cart_coords
-    for i in range(natom):
-        for j in range(ndimen):
-            all_coords[i, 0:ndimen] -= 0.5 * scel_mx[j, 0:ndimen]
+    frac = struc.frac_coords.copy()
+    frac -= np.floor(frac + 0.5)
+    all_coords = frac @ scel_mx
 
     pcel_mx = shrink_mx @ scel_mx
     pcel_latt = Lattice(pcel_mx, pbc=pbc)
