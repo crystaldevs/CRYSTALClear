@@ -4066,8 +4066,8 @@ def plot_cry_vci(co, states=None, frange=None, irrep=None, list_mode=None,
         matplotlib.axes.Axes
     """
 
-    import numpy as np
     import matplotlib.pyplot as plt
+    import numpy as np
 
     basis = _vci_basis(co, basis)
     sel, onvs, C = _vci_collect(co, states, frange, irrep, threshold, max_states)
@@ -4136,8 +4136,8 @@ def _vci_ribbon(ax, x0, x1, y0, h0, y1, h1, color, alpha):
     at (x0, y0) to a target band of height h1 starting at (x1, y1).
     """
 
-    from matplotlib.path import Path
     from matplotlib.patches import PathPatch
+    from matplotlib.path import Path
 
     xm = (x0 + x1) / 2
 
@@ -4201,8 +4201,8 @@ def plot_cry_vci_sankey(co, states=None, frange=None, irrep=None, list_mode=None
         matplotlib.axes.Axes
     """
 
-    import numpy as np
     import matplotlib.pyplot as plt
+    import numpy as np
     from matplotlib.patches import Rectangle
 
     if weight not in ('square', 'abs'):
@@ -5529,4 +5529,350 @@ def plot_cry_EOS(eos, formula_unit=[1], plot='VvsE', color='tab:blue', figsize=(
     # <--
 
     return fig, ax
+
+#-------------------------------LOCMODES---------------------------------------#
+
+def plot_cry_cnm(co, modes=None, threshold=1., xticks='freq', colors=None,
+                 legend_ncol=2, max_legend_rows=40, figsize=None, fontsize=10,
+                 ax=None):
+    """
+    Stacked bar plot of the characterization of normal modes (CNM): the
+    contribution [%] of each symmetry independent group of internal
+    coordinates to each normal mode.
+
+    Contributions below threshold are summed into 'Residues' (grey). Bars
+    are labelled with their contribution from 1% up, 'Residues' from 5% up.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_locmodes() has already been called and, for xticks='freq', get_phonon().
+        modes (list[int], optional): Modes to plot. Default is None, i.e. all the modes in the CNM.
+        threshold (float, optional): Contributions below this value [%] are summed into 'Residues'. Default is 1.
+        xticks (str, optional): Label the bars with the frequencies in cm^-1 ('freq') or with the mode numbers ('mode'). Default is 'freq'.
+        colors (dict, optional): Color of each internal coordinate group, keyed by its label, e.g. {'1 NO': 'xkcd:blue'}. Groups not in it get a random XKCD color. Default is None.
+        legend_ncol (int, optional): Minimum number of legend columns. Default is 2.
+        max_legend_rows (int, optional): Legend rows beyond which columns are added, so that the legend is not taller than the axes. Default is 40.
+        figsize (tuple, optional): Image dimensions corresponding to matplotlib figsize. Default is None, i.e. 0.5 inch per mode (at least 1) by 10.
+        fontsize (int, optional): Font size of the tick labels. Default is 10.
+        ax (matplotlib.axes.Axes, optional): Axes the plot is drawn on. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
+        dict: The colors used, i.e. colors with the new groups added.
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    from CRYSTALClear.units import thz_to_cm
+
+    if not hasattr(co, 'cnm_sym'):
+        raise AttributeError(
+            "No symmetry reduced CNM found: call get_locmodes() first.")
+    if xticks == 'freq' and not hasattr(co, 'frequency'):
+        raise AttributeError(
+            "No frequencies found: call Crystal_output.get_phonon() first, or set xticks='mode'.")
+
+    table = _cnm_table(co, modes, threshold)
+    totals = table.sum(axis=1).replace(0, np.nan)
+    percentage = table.div(totals, axis=0).fillna(0) * 100
+    colors, bar_colors = _cnm_colors(list(table.columns[:-1]), colors)
+
+    if ax is None:
+        if figsize is None:
+            figsize = (max(1, 0.5 * len(percentage.index)), 10)
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+
+    if xticks == 'freq':
+        frequency = thz_to_cm(co.frequency[0])
+        xticklabels = ['%.1f' % frequency[mode - 1]
+                       for mode in percentage.index]
+        xlabel = 'Normal Mode Frequencies [cm$^{-1}$]'
+    else:
+        xticklabels = None
+        xlabel = 'Normal Mode'
+
+    _cnm_bars(ax, percentage, bar_colors, xticklabels, xlabel, 90, fontsize,
+              legend_ncol, max_legend_rows)
+
+    return fig, ax, colors
+
+
+def plot_cry_cnm_pressure(cos, mode, labels=None, threshold=1., min_overlap=0.5,
+                          colors=None, xlabel='Pressure', legend_ncol=2,
+                          max_legend_rows=40, figsize=None, fontsize=10, ax=None):
+    """
+    CNM of one normal mode followed along a series of calculations, e.g. at
+    increasing pressure: one stacked bar per calculation.
+
+    The mode is followed with cry_track_modes(), by eigenvector overlap between
+    consecutive calculations, so the series should be fine enough for
+    neighbouring calculations to be alike. Once the overlap drops below
+    min_overlap the match is uncertain (mode mixing near a crossing): that bar
+    and the following ones are hatched and the lowest overlap so far is
+    printed above them.
+
+    LOCMODES may number and select the internal coordinates differently along
+    the series, so groups are matched with _align_groups(): they are labelled
+    as in the first calculation, and those with no counterpart there carry
+    the label of the calculation they first appear in, e.g. '712 HO (0.4)'.
+
+    Args:
+        cos (list[crystal_io.Crystal_output]): Crystal output objects in the order of the series, on each of which get_locmodes() and get_phonon(read_eigvt=True) have already been called.
+        mode (int): Mode to follow, numbered as in the first calculation.
+        labels (list, optional): Label of each calculation, e.g. the pressures. Default is None, i.e. 0, 1, 2...
+        threshold (float, optional): Contributions below this value [%] are summed into 'Residues'. Default is 1.
+        min_overlap (float, optional): Overlap below which a match is flagged. Default is 0.5.
+        colors (dict, optional): Color of each internal coordinate group, keyed by its label, e.g. {'1 NO': 'xkcd:blue'}. Groups not in it get a random XKCD color. Default is None.
+        xlabel (str, optional): Name of the quantity the labels refer to. Default is 'Pressure'.
+        legend_ncol (int, optional): Minimum number of legend columns. Default is 2.
+        max_legend_rows (int, optional): Legend rows beyond which columns are added. Default is 40.
+        figsize (tuple, optional): Image dimensions corresponding to matplotlib figsize. Default is None, i.e. 0.7 inch per calculation (at least 2) by 10.
+        fontsize (int, optional): Font size of the tick labels. Default is 10.
+        ax (matplotlib.axes.Axes, optional): Axes the plot is drawn on. Default is None, in which case a new figure is created.
+
+    Returns:
+        matplotlib.figure.Figure
+        matplotlib.axes.Axes
+        dict: The colors used, i.e. colors with the new groups added.
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+
+    from CRYSTALClear.calculate import cry_track_modes
+    from CRYSTALClear.units import thz_to_cm
+
+    for co in cos:
+        if not hasattr(co, 'cnm_sym'):
+            raise AttributeError(
+                "No symmetry reduced CNM found: call get_locmodes() first.")
+
+    if labels is None:
+        labels = list(range(len(cos)))
+    modes, overlaps = cry_track_modes(cos, labels)
+    if mode not in modes.index:
+        raise ValueError('Mode %s is not in the first calculation.' % mode)
+    chain = modes.loc[mode]
+    lowest = overlaps.loc[mode].cummin()
+
+    # One row per calculation, with the groups under their common labels:
+    # those of the first calculation by representative, then the new ones,
+    # 'Residues' last -->
+    aligned = _align_groups(cos, labels)
+    rows = []
+    for co, m, names in zip(cos, chain, aligned):
+        row = _cnm_table(co, [int(m)], threshold).rename(columns=names)
+        rows.append(row.T.groupby(level=0, sort=False).sum().T)
+    table = pd.concat(rows).fillna(0)
+    table.index = labels
+
+    first = set(aligned[0].values())
+    groups = sorted((column for column in table.columns if column in first),
+                    key=lambda column: int(column.split()[0]))
+    groups += [column for column in table.columns
+               if column not in first and column != 'Residues']
+    table = table[groups + ['Residues']]
+    # <--
+
+    totals = table.sum(axis=1).replace(0, np.nan)
+    percentage = table.div(totals, axis=0).fillna(0) * 100
+    colors, bar_colors = _cnm_colors(groups, colors)
+
+    if ax is None:
+        if figsize is None:
+            figsize = (max(2, 0.7 * len(cos)), 10)
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
+
+    xticklabels = ['%s\n%.1f' % (label, thz_to_cm(co.frequency[0][m - 1]))
+                   for label, co, m in zip(labels, cos, chain)]
+    _cnm_bars(ax, percentage, bar_colors, xticklabels,
+              '%s (frequency [cm$^{-1}$])' % xlabel, 0, fontsize, legend_ncol,
+              max_legend_rows)
+
+    # Uncertain matches: hatched bars, lowest overlap so far on top -->
+    flagged = [i for i, value in enumerate(lowest) if value < min_overlap]
+    for i in flagged:
+        for container in ax.containers:
+            container.patches[i].set_hatch('//')
+        ax.text(i, 100, '%.2f' % lowest.iloc[i], ha='center', va='bottom',
+                fontsize=9, clip_on=False)
+    # <--
+
+    ax.set_title('Mode %s at %s' % (mode, labels[0]), pad=18 if flagged else 6)
+
+    return fig, ax, colors
+
+# Helpers
+
+def _cnm_table(co, modes=None, threshold=1.):
+    """
+    Symmetry reduced CNM ready to be plotted.
+
+    Args:
+        co (crystal_io.Crystal_output): Crystal output object, on which get_locmodes() has already been called.
+        modes (list[int], optional): Modes to keep. Default is None, i.e. all of them.
+        threshold (float, optional): Contributions below this value [%] are summed into 'Residues'. Default is 1.
+
+    Returns:
+        pandas.DataFrame: Modes along the index, internal coordinate groups along the columns and 'Residues' last. Groups with no contribution left are dropped.
+    """
+
+    cnm = co.cnm_sym
+    if modes is not None:
+        cnm = cnm.loc[[mode for mode in cnm.index if mode in modes]]
+        if cnm.empty:
+            raise ValueError('None of the selected modes is in the CNM.')
+
+    small = cnm < threshold
+    residues = cnm.where(small, 0).sum(axis=1)
+    cnm = cnm.where(~small, 0)
+    cnm = cnm.loc[:, cnm.sum() > 0]
+
+    return cnm.assign(Residues=residues)
+
+
+def _cnm_text_color(color):
+    """
+    Black or white, whichever reads better on a bar of the given color.
+    """
+    from matplotlib.colors import to_rgb
+
+    r, g, b = to_rgb(color)
+    luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+    return 'white' if luminance <= 0.5 else 'black'
+
+
+def _align_groups(cos, labels):
+    """
+    Common labels of the internal coordinate groups along a series of
+    calculations, in which LOCMODES may number and select the internal
+    coordinates differently.
+
+    An internal coordinate is identified by its atoms and cells, corrected
+    for the atoms CRYSTAL stores one lattice vector away from where they are
+    in the first calculation; internal coordinates sharing atoms and cells
+    (e.g. the two components of a linear bending) are told apart by the rank
+    of their value. A group takes the label of the group of the first
+    calculation most of its internal coordinates belong to. A group with none
+    gets its own label followed by that of the calculation it first appears
+    in, e.g. '712 HO (0.4)', and keeps it along the rest of the series.
+
+    Args:
+        cos (list[crystal_io.Crystal_output]): Crystal output objects in the order of the series, on which get_locmodes() has already been called.
+        labels (list): Label of each calculation.
+
+    Returns:
+        list[dict]: For each calculation, the common label of each column of its co.cnm_sym.
+    """
+    from collections import Counter, defaultdict
+
+    import numpy as np
+
+    key_label = {}  # internal coordinate key -> common label
+    aligned = []
+    for co, label in zip(cos, labels):
+        co.get_lattice(initial=False)
+        frac = co.geometry.lattice.get_fractional_coords(co.ic_positions)
+        if not aligned:
+            reference = frac
+        shift = np.rint(frac - reference).astype(int)
+
+        # Key of each internal coordinate -->
+        by_key = defaultdict(list)
+        for ic in co._locmodes_ics():
+            cells = ic['cells'] + shift[ic['atoms']]
+            by_key[(ic['kind'], co._canonical_key(ic['atoms'], cells))].append(ic)
+        ic_key = {}
+        for key, same in by_key.items():
+            for rank, ic in enumerate(sorted(same, key=lambda ic: ic['value'])):
+                ic_key[ic['num']] = key + (rank,)
+        # <--
+
+        # Label of each group, from its internal coordinates -->
+        own = {int(column.split()[0]): column for column in co.cnm_sym.columns}
+        names = {}
+        for group in co.ic_groups:
+            column = own[group[0]]
+            keys = [ic_key[num] for num in group if num in ic_key]
+            hits = Counter(key_label[key] for key in keys if key in key_label)
+            if hits:
+                names[column] = hits.most_common(1)[0][0]
+            elif not aligned:
+                names[column] = column
+            else:
+                names[column] = '%s (%s)' % (column, label)
+            for key in keys:
+                key_label.setdefault(key, names[column])
+        # <--
+        aligned.append(names)
+
+    return aligned
+
+
+def _cnm_colors(groups, colors=None):
+    """
+    Colors of the internal coordinate groups: those in colors, random unused
+    XKCD colors for the others.
+
+    Returns:
+        dict: colors with the new groups added.
+        list: Color of each group, then 'dimgray' for 'Residues'.
+    """
+    import random
+
+    import matplotlib.colors as mcolors
+
+    colors = {} if colors is None else dict(colors)
+    used = {colors[group] for group in groups if group in colors}
+    available = [color for color in mcolors.XKCD_COLORS if color not in used]
+    new_colors = iter(random.sample(
+        available, sum(group not in colors for group in groups)))
+    for group in groups:
+        if group not in colors:
+            colors[group] = next(new_colors)
+
+    return colors, [colors[group] for group in groups] + ['dimgray']
+
+
+def _cnm_bars(ax, percentage, bar_colors, xticklabels, xlabel, rotation,
+              fontsize, legend_ncol, max_legend_rows):
+    """
+    Stacked bars of the CNM percentages, one per row, labelled with their
+    values (from 1%, 'Residues' from 5%), with the legend on the right.
+    """
+    import math
+
+    percentage.plot.bar(ax=ax, stacked=True, color=bar_colors, linewidth=1.5,
+                        edgecolor='black', width=0.9, fontsize=fontsize)
+
+    ax.set_ylim((0, 100))
+    for spine in ax.spines.values():
+        spine.set_linewidth(1.5)
+    ax.set_ylabel('Local Mode Contribution [%]', fontsize=14)
+
+    if xticklabels is not None:
+        ax.set_xticklabels(xticklabels, rotation=rotation)
+    ax.set_xlabel(xlabel, fontsize=14)
+
+    # Value of each bar, in its middle -->
+    for i in range(len(percentage.index)):
+        cumulative = 0
+        for j, column in enumerate(percentage.columns):
+            value = percentage.iloc[i, j]
+            cumulative += value
+            if value >= 1 and (column != 'Residues' or value > 5):
+                ax.text(i, cumulative - value / 2, '%d' % value, ha='center',
+                        va='center', fontsize=12,
+                        color=_cnm_text_color(bar_colors[j]))
+    # <--
+
+    ncol = max(legend_ncol, math.ceil(
+        len(percentage.columns) / max_legend_rows))
+    ax.legend(ncol=ncol, loc='center left', bbox_to_anchor=(1, 0.5),
+              prop={'size': 9}, frameon=True, framealpha=0.8)
 
