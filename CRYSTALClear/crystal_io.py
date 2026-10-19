@@ -997,6 +997,58 @@ class Crystal_output:
 
         return self.trans_matrix
 
+    def _in_phonon_order(self, pstruc, tolerance=0.01):
+        """
+        Reorder atoms in the supercell to match CRYSTAL's convention.
+
+        Args:
+            pstruc (Structure): The primitive cell from ``get_pcel``.
+            tolerance (float): How far, in Å, a site may be from the listed atom.
+        Returns:
+            Structure: ``pstruc``, reordered if it could be.
+        """
+        import numpy as np
+        from pymatgen.core.structure import Structure
+
+        lines = self.data[:self.eoo]
+        start = next((i for i, line in enumerate(lines)
+                      if 'SMALL CELL ON TOP' in line), None)
+        natom = pstruc.num_sites
+        if start is None or natom == 0:
+            return pstruc
+        listed = []
+        for line in lines[start + 1:]:
+            words = line.split()
+            if len(words) == 5 and words[0].isdigit() and words[1].isdigit():
+                listed.append((int(words[1]) % 100, np.array(words[2:], dtype=float)))
+                if len(listed) == natom:
+                    break
+            elif listed:
+                break
+        if len(listed) != natom:
+            return pstruc
+
+        lattice = pstruc.lattice.matrix
+        periodic = np.array(pstruc.lattice.pbc, dtype=bool)
+        numbers = [z % 100 for z in pstruc.atomic_numbers]
+        cart = pstruc.cart_coords
+
+        def apart(a, b):
+            delta = np.linalg.solve(lattice.T, a - b)
+            delta[periodic] -= np.round(delta[periodic])
+            return np.linalg.norm(delta @ lattice)
+
+        order = []
+        for number, position in listed:
+            found = [j for j in range(natom) if j not in order and numbers[j] == number
+                     and apart(cart[j], position) < tolerance]
+            if not found:
+                return pstruc
+            order.append(found[0])
+        if order == list(range(natom)):
+            return pstruc
+        return Structure.from_sites([pstruc[j] for j in order])
+
     def get_primitive_geometry(self, initial=True, write_gui=False, gui_name=None,
                                symmetry='pymatgen', **kwargs):
         """
@@ -1051,6 +1103,7 @@ class Crystal_output:
 
         shrink_mx = np.linalg.inv(self.trans_matrix)
         pstruc = get_pcel(self.geometry, self.trans_matrix)
+        pstruc = self._in_phonon_order(pstruc)
 
         self.primitive_geometry = pstruc
         # Write gui files
