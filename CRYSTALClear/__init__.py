@@ -1,4 +1,3 @@
-from CRYSTALClear import adsorb
 from CRYSTALClear import base
 from CRYSTALClear import calculate
 from CRYSTALClear import convert
@@ -15,6 +14,5 @@ if sys.version_info >= (3, 8):
 else:
     from importlib_metadata import metadata
 
-__author__ = "CRYSTALClear Development Team"
-__email__ = "crystalunito@gmail.com"
+__author__ = "CRYSTAL devs"
 __version__ = metadata.version('CRYSTALClear')
