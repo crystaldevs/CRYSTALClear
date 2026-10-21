@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs_src/_static/CRYSTAL_logo.png" alt="CRYSTALClear" width="440">
+  <img src="https://raw.githubusercontent.com/crystaldevs/CRYSTALClear/main/docs_src/_static/CRYSTAL_logo.png" alt="CRYSTALClear" width="440">
 </p>
 
 <p align="center">
@@ -14,7 +14,7 @@
 <p align="center">
   <a href="https://pypi.org/project/CRYSTALClear/"><img src="https://img.shields.io/pypi/v/CRYSTALClear" alt="PyPI version"></a>
   <a href="https://github.com/crystaldevs/CRYSTALClear/actions/workflows/documentation.yml"><img src="https://github.com/crystaldevs/CRYSTALClear/actions/workflows/documentation.yml/badge.svg" alt="Documentation build"></a>
-  <img src="https://img.shields.io/badge/python-3-blue" alt="Python 3">
+  <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/plots-matplotlib-11557c" alt="matplotlib">
   <img src="https://img.shields.io/badge/structures-pymatgen-orange" alt="pymatgen">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
@@ -25,7 +25,7 @@
 Public releases are distributed through PyPI. In an environment of its own:
 
 ```sh
-conda create --name crystalclear python=3.9 && conda activate crystalclear
+conda create --name crystalclear python=3.12 && conda activate crystalclear
 pip install CRYSTALClear
 ```
 
@@ -89,7 +89,7 @@ appreciated**.
 
 ## License
 
-Distributed under the MIT License. See [LICENSE.txt](LICENSE.txt).
+Distributed under the MIT License. See [LICENSE.txt](https://github.com/crystaldevs/CRYSTALClear/blob/main/LICENSE.txt).
 
 ## Acknowledgements
 

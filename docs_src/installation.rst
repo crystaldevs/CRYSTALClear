@@ -2,7 +2,7 @@ Installation
 ============
 
 CRYSTALClear is on `PyPI <https://pypi.org/project/CRYSTALClear/>`_. It needs
-**Python 3**.
+**Python 3.9** or later.
 
 It should be installed in an environment of its own rather than in the system
 Python. Either a conda environment or a virtual environment may be used; conda
@@ -15,7 +15,7 @@ also provides the Python version, whereas a virtual environment uses the
 
       .. code-block:: sh
 
-         conda create --name crystalclear python=3.9
+         conda create --name crystalclear python=3.12
          conda activate crystalclear
          pip install CRYSTALClear
 

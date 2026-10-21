@@ -3501,8 +3501,6 @@ def plot_cry_ela_2D(co, choose, ndeg=200, planes=("xy", "xz", "yz")):
     # <--
 
     return fig_list, ax_list
-# <-- Claude
-
 
 
 ##############################################################################

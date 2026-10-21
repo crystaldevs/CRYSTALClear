@@ -1,16 +1,21 @@
+import pathlib
+
 import setuptools
 
-long_description = 'Python framework for the <a href="https://www.crystal.unito.it/index.php">CRYSTAL code</a>. Forked from <a href="https://github.com/crystal-code-tools/CRYSTALpytools">CRYSTALpytools</a>.'
+# PyPI shows the README as the project page.
+long_description = (pathlib.Path(__file__).parent / "README.md").read_text(encoding="utf-8")
 
 setuptools.setup(
     name="CRYSTALClear",
-    version="0.2.17",
+    version="0.2.18",
+    author="CRYSTAL devs",
     author_email="crystalunito@gmail.com",
     description="Python framework for the CRYSTAL code.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/crystaldevs/CRYSTALClear",
     project_urls={
+        "Documentation": "https://crystaldevs.github.io/CRYSTALClear/",
         "Bug Tracker": "https://github.com/crystaldevs/CRYSTALClear/issues",
     },
     classifiers=[
@@ -20,7 +25,7 @@ setuptools.setup(
     ],
     packages=setuptools.find_packages(
         include=['CRYSTALClear', 'CRYSTALClear.*']),
-    # python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "pymatgen",
         "mendeleev",
