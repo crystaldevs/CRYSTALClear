@@ -1,0 +1,654 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Usage &#8212; CRYSTALClear</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=cb5b8e6c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=c207c184"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'usage';</script>
+    <link rel="canonical" href="https://crystaldevs.github.io/CRYSTALClear/usage.html" />
+    <link rel="icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example Notebooks" href="notebooks/index.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="_static/CRYSTAL_logo.png" class="logo__image only-light" alt="CRYSTALClear - Home"/>
+    <script>document.write(`<img src="_static/CRYSTAL_logo-dark.png" class="logo__image only-dark" alt="CRYSTALClear - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Usage</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="notebooks/index.html">Example Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Electronic_Structure/Electronic_Structure_CRYSTALClear.html">Electronic Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Equation_Of_State/EOS.html">Equation of State and Phase Transition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/elastic_properties/elastic_properties_tutorial.html">Elastic Properties: A Quick Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/electron_transport_properties/tutorial_electron_transport_properties.html">Transport properties plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/vibrational_spectra/vibrational_spectra_tutorial.html">Simulating Vibrational Spectra</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="cite.html">How to Cite CRYSTALClear</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="convert.html">CRYSTALClear.convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crystal_io.html">CRYSTALClear.crystal_io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execute.html">CRYSTALClear.execute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flatmaps.html">CRYSTALClear.flatmaps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">CRYSTALClear.plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="units.html">CRYSTALClear.units</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/crystaldevs/CRYSTALClear" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crystaldevs/CRYSTALClear/edit/main/docs_src/usage.rst" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/crystaldevs/CRYSTALClear/issues/new?title=Issue%20on%20page%20%2Fusage.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/usage.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Usage</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#files-to-try-it-on">Files to try it on</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-a-file">Read a file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-what-you-need">Extract what you need</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-it">Plot it</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-complete-example">A complete example</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <p><span class="math notranslate nohighlight">\(\newcommand{\AA}{\text{Å}}\)</span></p>
+<section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h1>
+<p class="cc-lead">Every use of CRYSTALClear follows the same path: read a file, extract what you
+need from it, and plot it.</p>
+<div class="cc-flow">
+  <div class="cc-step"><span class="cc-step-label">1 · Read</span>
+    a file into an object of <code>crystal_io</code></div>
+  <div class="cc-arrow" aria-hidden="true"></div>
+  <div class="cc-step"><span class="cc-step-label">2 · Extract</span>
+    a property with one of its methods</div>
+  <div class="cc-arrow" aria-hidden="true"></div>
+  <div class="cc-step"><span class="cc-step-label">3 · Plot</span>
+    it with a function of <code>plot</code></div>
+  <div class="cc-arrow" aria-hidden="true"></div>
+  <div class="cc-step"><span class="cc-step-label">Then</span>
+    restyle and save it as any matplotlib figure</div>
+</div><section id="files-to-try-it-on">
+<h2>Files to try it on<a class="headerlink" href="#files-to-try-it-on" title="Link to this heading">#</a></h2>
+<p>If you have no CRYSTAL calculation to hand, take these:
+<a class="reference download internal" download="" href="_downloads/6b1a8202a2198d0bccacd19bf88734e7/crystalclear-examples.zip"><code class="xref download docutils literal notranslate"><span class="pre">crystalclear-examples.zip</span></code></a>
+(76 kB), real calculations from the example notebooks:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">spectra/</span></code>: a frequency calculation of thiourea, with IR intensities;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">electronic/</span></code>: the band structure and density of states of MgO, written
+by PROPERTIES;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">elastic/</span></code>: an elastic constants calculation of coesite.</p></li>
+</ul>
+<p>Unpack it and start Python in <code class="docutils literal notranslate"><span class="pre">crystalclear-examples/</span></code>: every example on this
+page then runs as it is written, and the last one ends with the figure of MgO’s
+bands beside its density of states. For coesite, <code class="docutils literal notranslate"><span class="pre">plot_cry_ela</span></code> draws the
+directional Young’s modulus:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.crystal_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Crystal_output</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">CRYSTALClear.plot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">CCplt</span>
+
+<span class="n">co</span> <span class="o">=</span> <span class="n">Crystal_output</span><span class="p">(</span><span class="s2">"elastic/coesite_ela.out"</span><span class="p">)</span>
+<span class="n">co</span><span class="o">.</span><span class="n">get_elatensor</span><span class="p">()</span>
+<span class="n">CCplt</span><span class="o">.</span><span class="n">plot_cry_ela</span><span class="p">(</span><span class="n">co</span><span class="p">,</span> <span class="s2">"young"</span><span class="p">,</span> <span class="n">ndeg</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="read-a-file">
+<h2>Read a file<a class="headerlink" href="#read-a-file" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">crystal_io</span></code> module has one class for each kind of file CRYSTAL reads or
+writes:</p>
+<div class="pst-scrollable-table-container"><table class="cc-classes table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Reads</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Crystal_input</span></code></p></td>
+<td><p>a CRYSTAL input deck (<code class="docutils literal notranslate"><span class="pre">.d12</span></code>), to read, edit and write</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Crystal_output</span></code></p></td>
+<td><p>a CRYSTAL output (<code class="docutils literal notranslate"><span class="pre">.out</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Properties_input</span></code></p></td>
+<td><p>a PROPERTIES input deck (<code class="docutils literal notranslate"><span class="pre">.d3</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Properties_output</span></code></p></td>
+<td><p>the data files a PROPERTIES run writes (<code class="docutils literal notranslate"><span class="pre">.DAT</span></code>, <code class="docutils literal notranslate"><span class="pre">.f25</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Crystal_gui</span></code></p></td>
+<td><p>a geometry file (<code class="docutils literal notranslate"><span class="pre">.gui</span></code>, <code class="docutils literal notranslate"><span class="pre">fort.34</span></code>), to read or to write</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Crystal_density</span></code></p></td>
+<td><p>a density matrix (<code class="docutils literal notranslate"><span class="pre">.f98</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">External_unit</span></code></p></td>
+<td><p>other files CRYSTAL writes: <code class="docutils literal notranslate"><span class="pre">IRSPEC.DAT</span></code>, <code class="docutils literal notranslate"><span class="pre">RAMSPEC.DAT</span></code>, phonon bands
+and densities of states</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>An object is made by passing it the path of the file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.crystal_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Crystal_output</span>
+
+<span class="n">co</span> <span class="o">=</span> <span class="n">Crystal_output</span><span class="p">(</span><span class="s2">"spectra/thiourea_pbed3_Ahlrichs-pVTZ_freqcalc.out"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extract-what-you-need">
+<h2>Extract what you need<a class="headerlink" href="#extract-what-you-need" title="Link to this heading">#</a></h2>
+<p>Its methods read one property each, and keep it on the object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">co</span><span class="o">.</span><span class="n">get_IR</span><span class="p">()</span>          <span class="c1"># the IR intensities of a frequency calculation</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">co</span><span class="o">.</span><span class="n">IR_HO_0K</span><span class="p">)</span>   <span class="c1"># ...now an attribute of the object</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-it">
+<h2>Plot it<a class="headerlink" href="#plot-it" title="Link to this heading">#</a></h2>
+<p>The functions of the <code class="docutils literal notranslate"><span class="pre">plot</span></code> module draw it, and return the matplotlib
+<code class="docutils literal notranslate"><span class="pre">fig</span></code> and <code class="docutils literal notranslate"><span class="pre">ax</span></code>, to be adjusted with the usual matplotlib commands:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_cry_spec</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_cry_spec</span><span class="p">(</span><span class="n">co</span><span class="o">.</span><span class="n">IR_HO_0K</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Infrared spectrum"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">2500</span><span class="p">)</span>                 <span class="c1"># cm⁻¹</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"IR_1200-2500.png"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="a-complete-example">
+<h2>A complete example<a class="headerlink" href="#a-complete-example" title="Link to this heading">#</a></h2>
+<p>The band structure of MgO beside its density of states, from the files
+PROPERTIES writes to a saved figure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.crystal_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">Properties_output</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">CRYSTALClear.plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_electron_banddos</span>
+
+<span class="c1"># 1 · Read and 2 · Extract: one method each, for the two files</span>
+<span class="n">bands</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_electron_band</span><span class="p">(</span><span class="s2">"electronic/mgo_band.BAND"</span><span class="p">)</span>
+<span class="n">doss</span> <span class="o">=</span> <span class="n">Properties_output</span><span class="p">()</span><span class="o">.</span><span class="n">read_electron_dos</span><span class="p">(</span><span class="s2">"electronic/mgo_doss_totalao.DOSS"</span><span class="p">)</span>
+
+<span class="c1"># 3 · Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_electron_banddos</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="n">doss</span><span class="p">,</span>
+                                <span class="n">k_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"Gamma"</span><span class="p">,</span> <span class="s2">"X"</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">,</span> <span class="s2">"L"</span><span class="p">,</span> <span class="s2">"Gamma"</span><span class="p">],</span>
+                                <span class="n">energy_range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>
+
+<span class="c1"># Then save</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"mgo_bands_dos.png"</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="installation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Installation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="notebooks/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Example Notebooks</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#files-to-try-it-on">Files to try it on</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-a-file">Read a file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extract-what-you-need">Extract what you need</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-it">Plot it</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-complete-example">A complete example</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CRYSTAL devs
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026, CRYSTAL devs.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
