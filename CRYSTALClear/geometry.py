@@ -12,11 +12,11 @@ def rotate_lattice(struc, rot):
     :math:`\mathbf{R}` is the rotation matrix.
 
     Args:
-        struc (Structure): Pymatgen structure
-        rot (array): 3\*3 numpy array, rotation matrix.
+        struc (pymatgen.core.Structure): Pymatgen structure
+        rot (numpy.ndarray): Rotation matrix, shape (3, 3).
 
     Returns:
-        struc_new (Structure): Pymatgen structure
+        struc_new (pymatgen.core.Structure): Pymatgen structure
     """
     from pymatgen.core.lattice import Lattice
     from pymatgen.core.structure import Structure
@@ -37,15 +37,15 @@ def refine_geometry(struc, **kwargs):
     one. 3D only.
 
     Args:
-        struc (Structure): Pymatgen structure
+        struc (pymatgen.core.Structure): Pymatgen structure
         **kwargs: Passed to Pymatgen `SpacegroupAnalyzer <https://pymatgen.org/pymatgen.symmetry.html#pymatgen.symmetry.analyzer.SpacegroupAnalyzer>`_ object.
     Returns:
         sg (int): Space group number
-        struc5 (Structure): Irrducible structure that is consistent with
+        struc5 (pymatgen.core.Structure): Irrducible structure that is consistent with
             International Crystallographic Table
         latt (list): minimal set of crystallographic cell parameters
         natom_irr (int): number of irrducible atoms
-        atom (list): natom\*4 array. 1st element: atomic number; 2-4:
+        atom (list): Shape (natom, 4). 1st element: atomic number; 2-4:
             fractional coordinates
     """
     from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -110,10 +110,10 @@ def get_pcel(struc, smx):
     middle of lattice to utilize symmetry (as the default of CRYSTAL).
 
     Args:
-        struc (Structure): Pymatgen structure of supercell
-        smx (array): 3\*3 array of supercell expansion matrix
+        struc (pymatgen.core.Structure): Pymatgen structure of supercell
+        smx (numpy.ndarray): Supercell expansion matrix, shape (3, 3)
     Returns:
-        pcel (Structure): Pymatgen structure of primitive cell
+        pcel (pymatgen.core.Structure): Pymatgen structure of primitive cell
     """
     from pymatgen.core.structure import Structure
     from pymatgen.core.lattice import Lattice
@@ -158,10 +158,10 @@ def get_scel(struc, smx):
     middle of lattice to utilize symmetry (as the default of CRYSTAL).
 
     Args:
-        struc (Structure): Pymatgen structure of supercell
-        smx (array): 3\*3 array of supercell expansion matrix
+        struc (pymatgen.core.Structure): Pymatgen structure of supercell
+        smx (numpy.ndarray): Supercell expansion matrix, shape (3, 3)
     Returns:
-        scel (Structure): Pymatgen structure of supercell
+        scel (pymatgen.core.Structure): Pymatgen structure of supercell
     """
     from pymatgen.core.structure import Structure
     from pymatgen.core.lattice import Lattice
@@ -193,12 +193,12 @@ def get_sg_symmops(struc, **kwargs):
     is suggested.
 
     Args:
-        struc (Structure): Pymatgen Structure object.
+        struc (pymatgen.core.Structure): Pymatgen Structure object.
         **kwargs: Passed to Pymatgen SpacegroupAnalyzer object.
     Returns:
         sg (int): Space group number
         n_symmops (int): number of symmetry operations
-        symmops (array): n_symmops\*4\*3 array of symmetry operations
+        symmops (numpy.ndarray): Symmetry operations, shape (n_symmops, 4, 3)
     """
     from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
     import numpy as np
@@ -248,12 +248,12 @@ def Miller_norm(struc, miller, d=1.0):
     Find the norm vector of a specified Miller plane
 
     Args:
-        struc (Structure): Pymatgen Structure object.
-        miller (array | list): 3\*1 list of Miller index
-        d (fload): Length of norm vector
+        struc (pymatgen.core.Structure): Pymatgen Structure object.
+        miller (numpy.ndarray | list): Miller index, 3 integers
+        d (float): Length of norm vector
 
     Returns:
-        vec (array): 3\*1 norm vector, normalized to 1.
+        vec (numpy.ndarray): Norm vector, normalized to 1, shape (3,).
     """
     import numpy as np
 

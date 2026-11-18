@@ -100,7 +100,7 @@ class BS_Atom():
 
     Args:
         z (int): Convential atomic number Z.
-        info (list(str)): String in Crystal BS format
+        info (list[str]): String in Crystal BS format
     """
 
     def __init__(self, z, info):
@@ -164,7 +164,7 @@ class BS_Atom():
         be converted to general BS definitions.
 
         Args:
-            info (list(str)): String in Crystal BS format
+            info (list[str]): String in Crystal BS format
         """
         import warnings
         import copy
@@ -289,7 +289,7 @@ class BasisSetBASE():
         Define basis set from a string.
 
         Args:
-            bs_str (str)
+            bs_str (str): The basis set.
             fmt (str): Format string. Consistent with BSE python API.
         """
         import re
@@ -377,7 +377,7 @@ class BasisSetBASE():
         Print formatted data into a text file.
 
         Args:
-            file (str)
+            file (str): Name of the file.
             fmt (str): Output format
         """
         import os
