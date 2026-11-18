@@ -22,7 +22,8 @@ class GeomBASE():
 
         Returns:
             countline (int): Line number of output file.
-            struc (Pymatgen Structure | Molecule)
+            struc (pymatgen.core.Structure | pymatgen.core.Molecule): The
+                geometry read.
         """
         import re
 
@@ -98,7 +99,7 @@ class GeomBASE():
 
         Returns:
             countline (int): Line number of output file.
-            conv_z (array): Int array of conventional atom numbers
+            conv_z (numpy.ndarray): Int array of conventional atom numbers
         """
         import re
 
@@ -137,11 +138,11 @@ class SCFBASE():
         Read SCF convergence.
 
         Returns:
-            countline (int)
+            countline (int): Line number of output file.
             ncyc (int): Number of cycles
             endflag (str): 'terminated', 'converged', 'too many cycles' and 'unknown'
-            e (array): nCYC\*1 array of SCF energy. Unit: eV
-            de (array): nCYC\*1 array of SCF energy difference. Unit: eV
+            e (numpy.ndarray): SCF energy, shape (ncyc,). Unit: eV
+            de (numpy.ndarray): SCF energy difference, shape (ncyc,). Unit: eV
         """
         import re
         import warnings
@@ -192,9 +193,9 @@ class SCFBASE():
             history (bool): Whether to read e fermi of all steps
 
         Returns:
-            countline (int)
+            countline (int): Line number of output file.
             spin (bool): Whether the system is spin-polarised.
-            efermi (float | array): Fermi energy. Unit: eV
+            efermi (float | numpy.ndarray): Fermi energy. Unit: eV
         """
         import re
         import warnings
@@ -270,9 +271,9 @@ class SCFBASE():
             history (bool): Whether to read band gap of all steps
 
         Returns:
-            countline (int)
+            countline (int): Line number of output file.
             spin (bool): Whether the system is spin-polarised.
-            gap (float | array): Band gap. Unit: eV
+            gap (float | numpy.ndarray): Band gap. Unit: eV
         """
         import re
         import warnings
@@ -351,16 +352,16 @@ class OptBASE():
             countline (int): Line number of output file.
             ncyc (int): Number of cycles
             endflag (str): 'terminated', 'converged', 'failed' and 'unknown'
-            e (array): nCYC\*1 array of total energy. Unit: eV
-            de (array): nCYC\*1 array of total energy difference. Unit: eV
-            struc (list[Structure]): nCYC\*1 list of pymatgen structures
-            maxg (array): nCYC\*1 array of max energy gradient convergence.
-                Unit: Hartree / Bohr
-            rmsg (array): nCYC\*1 array of RMS energy gradient convergence.
-                Unit: Hartree / Bohr
-            maxd (array): nCYC\*1 array of max displacement convergence.
+            e (numpy.ndarray): Total energy, shape (ncyc,). Unit: eV
+            de (numpy.ndarray): Total energy difference, shape (ncyc,). Unit: eV
+            struc (list[pymatgen.core.Structure]): One structure per cycle.
+            maxg (numpy.ndarray): Max energy gradient convergence, shape
+                (ncyc,). Unit: Hartree / Bohr
+            rmsg (numpy.ndarray): RMS energy gradient convergence, shape
+                (ncyc,). Unit: Hartree / Bohr
+            maxd (numpy.ndarray): Max displacement convergence, shape (ncyc,).
                 Unit: Bohr
-            rmsd (array): nCYC\*1 array of RMS displacement convergence.
+            rmsd (numpy.ndarray): RMS displacement convergence, shape (ncyc,).
                 Unit: Bohr
         """
         import re
@@ -450,10 +451,11 @@ class PhononBASE():
 
         Returns:
             countline (int): Line number of output file.
-            frequency (array[float]): nmode \* 1
-            intens (array[float]): nmode \* 1
-            IR (array[bool]): nmode \* 1
-            Raman (array[bool]): nmode \* 1
+            frequency (numpy.ndarray): Frequencies, shape (nmode,).
+            intens (numpy.ndarray): IR intensities, shape (nmode,).
+            IR (numpy.ndarray): Whether each mode is IR active, shape (nmode,).
+            Raman (numpy.ndarray): Whether each mode is Raman active, shape
+                (nmode,).
         """
         import re
 
@@ -504,11 +506,19 @@ class PhononBASE():
 
         Returns:
             countline (int): Line number of output file.
-            eigvt (np.array): 3D array containing normal modes for each Q point (Q point; normal mode; components).
+            eigvt (numpy.ndarray): 3D array containing normal modes for each Q point (Q point; normal mode; components).
         """
         import re
 
         import numpy as np
+
+        # A row of a block: the atom and the axis in the first 13 columns,
+        # then one number per mode of the block. Anything else that ends up in
+        # a block -- the reduced masses some builds print after it, compiler
+        # notes, the output of a patched build -- is not a row, and is skipped.
+        row = re.compile(r'^\s*AT\.\s+\d+\s+[A-Za-z]{1,2}\s+X\s*$|^\s+[YZ]\s*$')
+        number = re.compile(r'\-*[\d\.]+[E\d\-\+]*')
+        header = re.compile(r'^\s+FREQ\(CM\*\*\-1\)')
 
         # Read the eigenvector region as its original shape
         total_data = []
@@ -516,20 +526,21 @@ class PhononBASE():
         while countline < len(data):
             line = data[countline]
             # Found a block
-            if re.match(r'^\s+FREQ\(CM\*\*\-1\)', line):
+            if header.match(line):
+                nblock = len(number.findall(line[13:]))
                 countline += 2
                 block_data = []
-                while data[countline].strip() != '':
-                    # Trim annotation part (12 characters)
-                    line_data = re.findall(r'\-*[\d\.]+[E\d\-\+]*',
-                                           data[countline][13:])
-                    if line_data:
-                        block_data.append(line_data)
+                while (countline < len(data) and data[countline].strip() != ''
+                       and not header.match(data[countline])):
+                    values = number.findall(data[countline][13:])
+                    if row.match(data[countline][:13]) and len(values) == nblock:
+                        block_data.append(values)
                     countline += 1
 
-                nmode += len(line_data)
+                nmode += nblock
                 total_data.append(block_data)
-                countline += 1
+                if countline < len(data) and data[countline].strip() == '':
+                    countline += 1
                 continue
             # Empty lines
             elif line.strip() == '':
@@ -555,11 +566,13 @@ class PhononBASE():
             x = \sqrt{\frac{\hbar}{\mu\omega}}
 
         Args:
-            struc (Structure): Pymatgen structure
-            freq (float | array): Frequency. Unit: THz
+            struc (pymatgen.core.Structure): Pymatgen structure
+            freq (float | numpy.ndarray): Frequency. Unit: THz
+
         Returns:
-            classic_a (array): nfreq\*3natom\*3natom array, or 3natom\*3natom
-                if ``freq`` is float. The diagonal matrix of classical amplitude.
+            classic_a (numpy.ndarray): The diagonal matrix of classical
+                amplitude, shape (nfreq, 3natom, 3natom), or (3natom, 3natom)
+                if ``freq`` is float.
         """
         import numpy as np
 
@@ -595,10 +608,12 @@ class PhononBASE():
         Normalize the mode of eigenvectors.
 
         Args:
-            eigvt (array[complex]): nmode\*natom\*3 array.
+            eigvt (numpy.ndarray): Complex eigenvectors, shape (nmode,
+                3natom).
             amplitude (float): Amplitude of normalization
+
         Returns:
-            eigvt (array[complex]): Normalized eigenvector.
+            eigvt (numpy.ndarray): Normalized eigenvector.
         """
         import numpy as np
 
@@ -679,6 +694,10 @@ class PhononBASE():
 
         import numpy as np
 
+        # The intensities and the IR/Raman activities are those of the Gamma
+        # set alone: the first q point at the origin.
+        gamma = next((q for q, (coord, _weight) in enumerate(crysout.qpoint)
+                      if not np.any(coord)), None)
         for q, freq in enumerate(crysout.frequency):
             if np.isnan(freq[0]) or freq[0] > threshold:
                 continue
@@ -689,15 +708,13 @@ class PhononBASE():
             neg_rank = np.where(freq <= threshold)[0]
             crysout.frequency[q, neg_rank] = np.nan
 
-            if len(crysout.eigenvector) != 0:
-                natom = int(crysout.nmode[q] / 3)
-                nan_eigvt = np.full([natom, 3], np.nan)
-                crysout.eigenvector[q, neg_rank] = nan_eigvt
+            if q < len(crysout.eigenvector):
+                crysout.eigenvector[q, neg_rank] = np.nan
 
-            if len(crysout.intens) != 0:
-                crysout.intens[q, neg_rank] = np.nan
+            if q == gamma and len(crysout.intens) != 0:
+                crysout.intens[neg_rank] = np.nan
                 for n in neg_rank:
-                    crysout.IR[q][n] = False
-                    crysout.Raman[q][n] = False
+                    crysout.IR[n] = False
+                    crysout.Raman[n] = False
 
         return crysout

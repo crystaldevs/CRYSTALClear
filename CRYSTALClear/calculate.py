@@ -12,9 +12,9 @@ def cry_ads_energy(e_full_system, e_substrate, e_adsorbate):
         e_adsorbate (float): Energy of the adsorbate.
 
     Returns:
-        float: Adsorption energy calculated as the difference between the
-               total energy of the full system and the sum of the energies
-               of the substrate and adsorbate.
+        energy (float): Adsorption energy calculated as the difference between the
+            total energy of the full system and the sum of the energies
+            of the substrate and adsorbate.
     """
     return e_full_system-(e_substrate+e_adsorbate)
 
@@ -24,11 +24,11 @@ def cry_shrink(structure, spacing=0.2):
     Determine the number of unit cells needed to achieve a desired spacing.
 
     Args:
-        structure (pymatgen.core.structure.Structure): The input structure.
+        structure (pymatgen.core.Structure): The input structure.
         spacing (float): The desired spacing between unit cells. Default is 0.2.
 
     Returns:
-        int: The number of unit cells (rounded up) needed to achieve the desired spacing.
+        shrink (int): The number of unit cells (rounded up) needed to achieve the desired spacing.
     """
 
     import numpy as np
@@ -53,12 +53,12 @@ def cry_track_modes(cos, labels=None):
     too, but their overlaps are only meaningful summed over the degenerate set.
 
     Args:
-        cos (list[crystal_io.Crystal_output]): Crystal output objects in the order of the series, on each of which get_phonon(read_eigvt=True) has already been called.
+        cos (list[Crystal_output]): Crystal output objects in the order of the series, on each of which get_phonon(read_eigvt=True) has already been called.
         labels (list, optional): Label of each calculation, e.g. the pressures. Default is None, i.e. 0, 1, 2...
 
     Returns:
-        pandas.DataFrame: Mode number in each calculation (columns) of every mode of the first one (index).
-        pandas.DataFrame: Overlap of the step that reached each calculation, 1 for the first one.
+        modes (pandas.DataFrame): Mode number in each calculation (columns) of every mode of the first one (index).
+        overlaps (pandas.DataFrame): Overlap of the step that reached each calculation, 1 for the first one.
     """
     import numpy as np
     import pandas as pd

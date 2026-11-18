@@ -32,7 +32,7 @@ class OutBASE():
         Args:
             filename (str): Properties output file name.
         Returns:
-            struc (Structure): Pymatgen structure
+            struc (pymatgen.core.Structure): Pymatgen structure
         """
         import re
 
@@ -87,7 +87,7 @@ class OutBASE():
         Args:
             filename (str): Properties output file name.
         Returns:
-            matrix (array): 3\*3 lattice matrix
+            matrix (numpy.ndarray): Lattice matrix, shape (3, 3).
         """
         from CRYSTALClear.base.propout import OutBASE
 
@@ -103,7 +103,7 @@ class OutBASE():
         Args:
             filename (str): Properties output file name.
         Returns:
-            matrix (array): 3\*3 reciprocal lattice matrix
+            matrix (numpy.ndarray): Reciprocal lattice matrix, shape (3, 3).
         """
         from CRYSTALClear.base.propout import OutBASE
 
@@ -119,9 +119,10 @@ class OutBASE():
         Args:
             filename (str): Properties output file name.
         Returns:
-            tick_pos3d (array): ntick\*3 array of fractional coordinates of
-                high symmetry k points
-            k_pos3d(array): nkpoint\*3 fractional coordinates of k points
+            tick_pos3d (numpy.ndarray): Fractional coordinates of high symmetry
+                k points, shape (ntick, 3).
+            k_pos3d (numpy.ndarray): Fractional coordinates of k points, shape
+                (nkpoint, 3).
         """
         import re
 
@@ -175,7 +176,7 @@ class DOSBASE():
         n_proj (int): Number of projections
         spin (int): 1 or 2, restricted or open shell calculations
         efermi (float): Fermi energy. Unit: eV / THz
-        doss (array[float]): n_energy\*(n_proj+1)\*spin array of data.
+        doss (numpy.ndarray): Data, shape (n_energy, n_proj+1, spin).
             The first entry of 2nd dimension is energy / frequency axis.
             Unit: eV / THz. Other entries are data in states / eV or states / THz.
     """
@@ -336,19 +337,24 @@ class BandsBASE():
     Args:
         spin (int): 1 or 2. Closed or open shell calculation
         n_tick (int): Number of high symmetric k points
-        tick_position (array): n_tick\*1, 1D coordinates of k points along the path
+        tick_position (numpy.ndarray): 1D coordinates of k points along the
+            path, shape (n_tick,).
         tick_label (list[str]): Label of k points
-        efermi (str): Fermi energy
+        efermi (float): Fermi energy
         n_bands (int): Number of bands
-        bands (array): n_bands\*n_kpoints\*spin array of band data. Unit: eV / THz
+        bands (numpy.ndarray): Band data, shape (n_bands, n_kpoints, spin).
+            Unit: eV / THz
         n_kpoints (int): Number of k points along the path
-        k_point_plot (float): 1D k coordinates along the path
+        k_point_plot (numpy.ndarray): 1D k coordinates along the path
 
-    **Uninitialized attributes**
-    * ``self.geometry``: Pymatgen structure  
-    * ``self.reciprocal_latt``: array, matrix of reciprocal lattice  
-    * ``self.tick_pos3d``: array, 3D fractional coordinates of tick labels in reciprocal space  
-    * ``self.k_point_pos3d``: array, 3D fractional coordinates of k points in reciprocal space  
+    Attributes:
+        geometry (pymatgen.core.Structure | None): Pymatgen structure. None until set.
+        reciprocal_latt (numpy.ndarray | None): Matrix of reciprocal lattice, shape (3, 3).
+            None until set.
+        tick_pos3d (numpy.ndarray | None): 3D fractional coordinates of tick labels in
+            reciprocal space, shape (n_tick, 3). None until set.
+        k_point_pos3d (numpy.ndarray | None): 3D fractional coordinates of k points in
+            reciprocal space, shape (n_kpoints, 3). None until set.
     """
 
     def __init__(self, spin, n_tick, tick_position, tick_label, efermi,

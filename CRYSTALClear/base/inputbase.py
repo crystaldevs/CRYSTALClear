@@ -113,8 +113,9 @@ class BlockBASE():
         known dimensions. Such as atom coordinate list.
 
         Args:
-            \*args : ``''``, Clean data; ``None``, Return keyword only; 
+            \*args: ``''``, Clean data; ``None``, Return keyword only;
                 ``int, list``, int for length of the list, list for list data
+
         Returns:
             shape (list): 1 + length 1D list or []
             args (list): Flattened list, [] or ''

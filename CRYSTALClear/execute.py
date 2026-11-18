@@ -5,66 +5,81 @@
 """
 
 
+def _settings_path():
+    """
+    The file the executable paths are kept in, in the user's home directory,
+    so that they outlast the session and are shared by every installation.
+
+    Returns:
+        path (str): ``~/.config/CRYSTALClear/settings.json``, expanded.
+    """
+    import os
+
+    return os.path.join(os.path.expanduser('~'), '.config', 'CRYSTALClear',
+                        'settings.json')
+
+
+def _read_settings():
+    """
+    Read the saved settings.
+
+    Returns:
+        settings (dict): The saved settings, empty if there are none.
+    """
+    import json
+
+    try:
+        with open(_settings_path(), 'r') as file:
+            settings = json.load(file)
+    except (OSError, ValueError):
+        return {}
+    return settings if isinstance(settings, dict) else {}
+
+
+def _save_setting(key, value):
+    """
+    Save one setting, keeping the others.
+
+    Args:
+        key (str): Name of the setting.
+        value (str): Its value.
+    """
+    import json
+    import os
+
+    settings = _read_settings()
+    settings[key] = value
+    os.makedirs(os.path.dirname(_settings_path()), exist_ok=True)
+    with open(_settings_path(), 'w') as file:
+        json.dump(settings, file, indent=4)
+
+
 def set_runcry_path(path):
     """
     Set the path for the Runcry executable.
 
+    The path is saved in ``~/.config/CRYSTALClear/settings.json`` and used by
+    every later call of :func:`runcry`. An empty path leaves it unchanged.
+
     Args:
         path (str): The path to the Runcry executable.
-
-    Returns:
-        None
     """
-    import os
-    import re
-
-    this_file = os.path.realpath(__file__)
-    # Read the current settings file
-    file = open(this_file, 'r')
-    lines = file.readlines()
-    file.close()
-
-    for i, line in enumerate(lines):
-        if re.match(r'    runcry_path', line) != None:
-            if len(path) > 0:
-                lines[i] = '    runcry_path = \'%s\'\n' % (path)
-
-    # Write the newly defined variables to the settings file
-    file = open(this_file, 'w')
-    for line in lines:
-        file.writelines(line)
-    file.close()
+    if len(path) > 0:
+        _save_setting('runcry_path', path)
 
 
 def set_runprop_path(path):
     """
     Set the path for the Runprop executable.
 
+    The path is saved in ``~/.config/CRYSTALClear/settings.json`` and used by
+    every later call of :func:`runprop`. An empty path leaves it unchanged.
+
     Args:
         path (str): The path to the Runprop executable.
-
-    Returns:
-        None
     """
-    import os
-    import re
-
-    this_file = os.path.realpath(__file__)
-    # Read the current settings file
-    file = open(this_file, 'r')
-    lines = file.readlines()
-    file.close()
-
-    for i, line in enumerate(lines):
-        if re.match(r'    runprop_path', line) != None:
-            if len(path) > 0:
-                lines[i] = '    runprop_path = \'%s\'\n' % (path)
-
-    # Write the newly defined variables to the settings file
-    file = open(this_file, 'w')
-    for line in lines:
-        file.writelines(line)
-    file.close()
+    if len(path) > 0:
+        _save_setting('runprop_path', path)
 
 
 def runcry(file_name, guessp=None):
@@ -76,9 +91,9 @@ def runcry(file_name, guessp=None):
         guessp (str, optional): The guessp parameter. Default is None.
 
     Returns:
-        str: The result of the calculation or an error message.
+        message (str | None): The result of the calculation or an error message.
     """
-    runcry_path = '/Users/brunocamino/crystal/runcry17'
+    runcry_path = _read_settings().get('runcry_path')
     if runcry_path is None:
         return 'Please set the runcry path before calling this function'
 
@@ -125,9 +140,9 @@ def runprop(prop_name, wf_file):
         wf_file (str): The name of the wavefunction file.
 
     Returns:
-        str: The result of the calculation or an error message.
+        message (str | None): The result of the calculation or an error message.
     """
-    runprop_path = '/Users/brunocamino/crystal/runprop17'
+    runprop_path = _read_settings().get('runprop_path')
     if runprop_path is None:
         return ('Please set the runprop path before calling it')
 

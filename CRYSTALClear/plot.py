@@ -84,7 +84,7 @@ def set_font(family=None, size=None):
         size (float, optional): Base font size in points. Everything else (tick labels, titles) is sized relative to it, except where a plot takes an explicit fontsize argument. Default is None, i.e. leave the size alone.
 
     Returns:
-        dict: The rcParams that were applied, which is what to keep in order to
+        applied (dict): The rcParams that were applied, which is what to keep in order to
             restore them later.
     """
 
@@ -125,15 +125,15 @@ def plot_dens_ECHG(obj_echg, levels=150, xticks=5,
 
     Args: 
         obj_echg (crystal_io.Properties_output): Properties output object.
-        levels (int or array-like, optional): Determines the number and positions of the contour lines/regions. Default is 150.
+        levels (int | array_like, optional): Determines the number and positions of the contour lines/regions. Default is 150.
         xticks (int, optional): Number of ticks in the x direction. Default is 5.
         yticks (int, optional): Number of ticks in the y direction. Default is 5.
         cmap_max(float, optional): Maximum value used for the colormap. Default is None.
         cmap_min(float, optional): Minimum value used for the colormap. Default is None.
 
    Returns:
-        matplotlib.figure.Figure
-        matplotlib.axes.Axes
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -194,10 +194,10 @@ def plot_vecfield2D_m(header, dens, quivscale, levels=150):
         header (list): List containing information about the fort.25 header.
         dens (numpy.ndarray): Array containing the vector field data.
         quivscale (float): Scale factor for the quiver plot.
-        levels (int or array-like, optional): Determines the number and positions of the contour lines/regions.
+        levels (int | array_like, optional): Determines the number and positions of the contour lines/regions.
 
     Returns:
-        matplotlib.figure.Figure
+        m (matplotlib.figure.Figure): The figure.
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -276,17 +276,17 @@ def plot_vecfield2D_m(header, dens, quivscale, levels=150):
                                                                 np.cross(np.array([dens[int(i*step_nrow), int(j*step_ncol), 0], dens[int(i*step_nrow), int(j*step_ncol), 1],
                                                                                    dens[int(i*step_nrow), int(j*step_ncol), 2]]), ABC_normal)), v2)
             projy_m[i, j] = np.dot((1/(mod_normal**2))*np.cross(ABC_normal,
-                                                                np.cross(np.array([dens[int(i*step_nrow), int(j*step_ncol, 0)], dens[int(i*step_nrow), int(j*step_ncol), 1],
+                                                                np.cross(np.array([dens[int(i*step_nrow), int(j*step_ncol), 0], dens[int(i*step_nrow), int(j*step_ncol), 1],
                                                                                    dens[int(i*step_nrow), int(j*step_ncol), 2]]), ABC_normal)), v1)
 
     # Plotting
 
     m = plt.figure()
-    m = plt.contourf(mesh_x, mesh_y, mod_m, levels, cmap='cool')
-    m = plt.colorbar(mappable=m)
-    m = plt.quiver(mesh_projx, mesh_projy, projx_m, projy_m, scale=quivscale)
-    m = plt.xlabel('$\AA$')
-    m = plt.ylabel('$\AA$')
+    contour = plt.contourf(mesh_x, mesh_y, mod_m, levels, cmap='cool')
+    plt.colorbar(mappable=contour)
+    plt.quiver(mesh_projx, mesh_projy, projx_m, projy_m, scale=quivscale)
+    plt.xlabel('$\AA$')
+    plt.ylabel('$\AA$')
 
     return m
 
@@ -299,10 +299,10 @@ def plot_vecfield2D_j(header, dens, quivscale, levels=150):
         header (list): List containing information about the fort.25 header.
         dens (numpy.ndarray): Array representing the vector field.
         quivscale (float): Scale factor for the quiver plot.
-        levels (int or array-like, optional): Determines the number and positions of the contour lines/regions.
+        levels (int | array_like, optional): Determines the number and positions of the contour lines/regions.
 
     Returns:
-        matplotlib.figure.Figure
+        j (matplotlib.figure.Figure): The figure.
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -385,11 +385,11 @@ def plot_vecfield2D_j(header, dens, quivscale, levels=150):
                                                                                    dens[int(i*step_nrow), int(j*step_ncol), 2]]), ABC_normal)), v1)
 
     j = plt.figure()
-    j = plt.contourf(mesh_x, mesh_y, mod_j, levels, cmap='winter')
-    j = plt.colorbar(mappable=j)
-    j = plt.quiver(mesh_projx, mesh_projy, projx_j, projy_j, scale=quivscale)
-    j = plt.xlabel('$\AA$')
-    j = plt.ylabel('$\AA$')
+    contour = plt.contourf(mesh_x, mesh_y, mod_j, levels, cmap='winter')
+    plt.colorbar(mappable=contour)
+    plt.quiver(mesh_projx, mesh_projy, projx_j, projy_j, scale=quivscale)
+    plt.xlabel('$\AA$')
+    plt.ylabel('$\AA$')
 
     return j
 
@@ -403,13 +403,13 @@ def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, levels=150):
         dens_JX (numpy.ndarray): Array representing the X-component of the spin current density.
         dens_JY (numpy.ndarray): Array representing the Y-component of the spin current density.
         dens_JZ (numpy.ndarray): Array representing the Z-component of the spin current density.
-        quivscale: Scale factor for the quiver plot.
-        levels (int or array-like, optional): Determines the number and positions of the contour lines/regions.
+        quivscale (float): Scale factor for the quiver plot.
+        levels (int | array_like, optional): Determines the number and positions of the contour lines/regions.
 
     Returns:
-        JX (matplotlib.figure.Figure)
-        JY (matplotlib.figure.Figure)
-        JZ (matplotlib.figure.Figure)
+        JX (matplotlib.figure.Figure): The figure of the X component.
+        JY (matplotlib.figure.Figure): The figure of the Y component.
+        JZ (matplotlib.figure.Figure): The figure of the Z component.
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -516,28 +516,25 @@ def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, levels=150):
     # Plotting
 
     JX = plt.figure()
-    JX = plt.contourf(mesh_x, mesh_y, mod_JX, levels, cmap='summer')
-    JX = plt.colorbar(mappable=JX)
-    JX = plt.quiver(mesh_projx, mesh_projy, projx_JX,
-                    projy_JX, scale=quivscale)
-    JX = plt.xlabel('$\AA$')
-    JX = plt.ylabel('$\AA$')
+    contour = plt.contourf(mesh_x, mesh_y, mod_JX, levels, cmap='summer')
+    plt.colorbar(mappable=contour)
+    plt.quiver(mesh_projx, mesh_projy, projx_JX, projy_JX, scale=quivscale)
+    plt.xlabel('$\AA$')
+    plt.ylabel('$\AA$')
 
     JY = plt.figure()
-    JY = plt.contourf(mesh_x, mesh_y, mod_JY, levels, cmap='summer')
-    JY = plt.colorbar(mappable=JY)
-    JY = plt.quiver(mesh_projx, mesh_projy, projx_JY,
-                    projy_JY, scale=quivscale)
-    JY = plt.xlabel('$\AA$')
-    JY = plt.ylabel('$\AA$')
+    contour = plt.contourf(mesh_x, mesh_y, mod_JY, levels, cmap='summer')
+    plt.colorbar(mappable=contour)
+    plt.quiver(mesh_projx, mesh_projy, projx_JY, projy_JY, scale=quivscale)
+    plt.xlabel('$\AA$')
+    plt.ylabel('$\AA$')
 
     JZ = plt.figure()
-    JZ = plt.contourf(mesh_x, mesh_y, mod_JZ, levels, cmap='summer')
-    JZ = plt.colorbar(mappable=JZ)
-    JZ = plt.quiver(mesh_projx, mesh_projy, projx_JZ,
-                    projy_JZ, scale=quivscale)
-    JZ = plt.xlabel('$\AA$')
-    JZ = plt.ylabel('$\AA$')
+    contour = plt.contourf(mesh_x, mesh_y, mod_JZ, levels, cmap='summer')
+    plt.colorbar(mappable=contour)
+    plt.quiver(mesh_projx, mesh_projy, projx_JZ, projy_JZ, scale=quivscale)
+    plt.xlabel('$\AA$')
+    plt.ylabel('$\AA$')
 
     return JX, JY, JZ
 
@@ -553,30 +550,32 @@ def plot_phonon_band(bands, unit='cm-1', k_labels=None, mode='single',
     A wrapper of plot_cry_bands for phonon band structure.
 
     Args:
-        bands (BandsBASE|list): Bands object generated by `CRYSTALClear.crystal_io.Crystal_output.read_pband` or
+        bands (BandsBASE | list): Bands object generated by `CRYSTALClear.crystal_io.Crystal_output.read_pband` or
             a list of BandsBASE objects.
         unit (str): The unit of frequency. Can be 'cm-1' or 'THz'.
         k_labels (list): A list of high-symmetric k point labels. Greek alphabets should be, for example, 'Gamma'.
         mode (str): The plotting mode. Possible values are 'single', 'multi', and 'compare'.
         not_scaled (bool): Whether to scale the x-axis for different volumes.
-        energy_range (array): A 2x1 array specifying the energy range.
-        k_range (array): A 2x1 array specifying the k-range.
-        color (str|list): Color of plot lines. Should be consistent with bands.
-        labels (str|list): Plot legend. Should be consistent with bands.
-        linestl (str|list): Linestyle string. Should be consistent with bands.
+        energy_range (numpy.ndarray): A 2x1 array specifying the energy range.
+        k_range (numpy.ndarray): A 2x1 array specifying the k-range.
+        color (str | list): Color of plot lines. Should be consistent with bands.
+        labels (str | list): Plot legend. Should be consistent with bands.
+        linestl (str | list): Linestyle string. Should be consistent with bands.
         linewidth (float): The width of the plot lines.
         line_freq0 (str): The color of the frequency=0 line.
         title (str): The title of the plot.
         figsize (list): The figure size specified as [width, height].
-        scheme (list|tuple): The layout of subplots.
+        scheme (list | tuple): The layout of subplots.
         sharex (bool): Whether to share the x-axis among subplots.
         sharey (bool): Whether to share the y-axis among subplots.
         dpi (int): Dots per inch resolution of the saved file.
         fontsize (int): Fontsize of the axis labels.            
-        transparency(bool): Background transparency of the saved file,
+        transparency (bool): Background transparency of the saved file,
 
     Returns:
-        Matplotlib object
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes | numpy.ndarray): The axes, or an array of them when there
+            are several panels.
 
     Raises:
         ValueError: If the specified unit is unknown.
@@ -637,32 +636,34 @@ def plot_electron_band(bands, unit='eV', k_labels=None, mode='single',
     A wrapper of plot_cry_bands for electron band structure.
 
     Args:
-        bands (BandsBASE|list): Bands object generated by `CRYSTALClear.crystal_io.Properties_output.read_bands` or
+        bands (BandsBASE | list): Bands object generated by `CRYSTALClear.crystal_io.Properties_output.read_bands` or
             a list of BandsBASE objects.
         unit (str): The unit of energy. Can be 'eV' or 'Hartree'.
         k_labels (list): A list of high-symmetric k point labels. Greek alphabets should be, for example, 'Gamma'.
         mode (str): The plotting mode. Possible values are 'single', 'multi', and 'compare'.
         not_scaled (bool): Whether to scale the x-axis for different volumes.
-        energy_range (array): A 2x1 array specifying the energy range.
-        k_range (array): A 2x1 array specifying the k-range.
-        color (str|list): Color of plot lines. Should be consistent with bands.
-        labels (str|list): Plot legend. Should be consistent with bands.
-        linestl (str|list): Linestyle string. Should be consistent with bands.
+        energy_range (numpy.ndarray): A 2x1 array specifying the energy range.
+        k_range (numpy.ndarray): A 2x1 array specifying the k-range.
+        color (str | list): Color of plot lines. Should be consistent with bands.
+        labels (str | list): Plot legend. Should be consistent with bands.
+        linestl (str | list): Linestyle string. Should be consistent with bands.
         linewidth (float): The width of the plot lines.
         fermi (str): The color of the Fermi level line.
         fermiwidth (float): The width of the fermi line.
         fermialpha (float): Opacity of the fermi level 0-1.
         title (str): The title of the plot.
         figsize (list): The figure size specified as [width, height].
-        scheme (list|tuple): The layout of subplots.
+        scheme (list | tuple): The layout of subplots.
         sharex (bool): Whether to share the x-axis among subplots.
         sharey (bool): Whether to share the y-axis among subplots.
         dpi (int): Dots per inch resolution of the saved file.
         fontsize (int): Fontsize of the axis labels 
-        transparency: Background Transparency of the saved file.
+        transparency (bool): Background Transparency of the saved file.
 
     Returns:
-        Matplolib object
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes | numpy.ndarray): The axes, or an array of them when there
+            are several panels.
 
     Raises:
         ValueError: If the specified unit is unknown.
@@ -727,21 +728,23 @@ def plot_electron_dos(doss, unit='eV', beta='up', overlap=False, prj=None,
         overlap (bool): Plotting multiple lines into the same figure
         prj (list): Index of selected projection. Consistent with the
             index of the 2nd dimension of :code:`doss.doss`
-        energy_range (list[float]): 2*1 list of energy range
-        dos_range (list[float]): 2*1 list of DOS range
+        energy_range (list[float]): Energy range, [min, max]
+        dos_range (list[float]): DOS range, [min, max]
         color (str | list[str]): Color of plot lines. *Should be
             consistent with number of projections.*
         labels (str | list[str]): Plot legend. *Should be consistent with
             number of projections.*
         linestl (str | list[str]): linestyle string. *Should be consistent
             with number of projections.*
-        linewidth (float)
+        linewidth (float): Width of the plot lines.
         fermi (str): Color of Fermi level line.
-        title (str)
-        figsize (list[float])
+        title (str): Title of the plot.
+        figsize (list[float]): Figure size, [width, height].
 
     Returns:
-        Matplotlib object
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes | numpy.ndarray): The axes, or an array of them when there
+            are several panels.
     """
     import re
 
@@ -802,21 +805,23 @@ def plot_phonon_dos(doss, unit='cm-1', overlap=False, prj=None,
         overlap (bool): Plotting multiple lines into the same figure
         prj (list): Index of selected projection. Consistent with the
             index of the 2nd dimension of :code:`doss.doss`
-        freq_range (list[float]): 2*1 list of frequency range
-        dos_range (list[float]): 2*1 list of DOS range
+        freq_range (list[float]): Frequency range, [min, max]
+        dos_range (list[float]): DOS range, [min, max]
         color (str | list[str]): Color of plot lines. *Should be
             consistent with number of projections.*
         labels (str | list[str]): Plot legend. *Should be consistent with
             number of projections.*
         linestl (str | list[str]): linestyle string. *Should be consistent
             with number of projections.*
-        linewidth (float)
+        linewidth (float): Width of the plot lines.
         line_freq0 (str): Color of frequency = 0 line.
-        title (str)
-        figsize (list[float])
+        title (str): Title of the plot.
+        figsize (list[float]): Figure size, [width, height].
 
     Returns:
-        Matplotlib object
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes | numpy.ndarray): The axes, or an array of them when there
+            are several panels.
     """
     import re
 
@@ -879,7 +884,7 @@ def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down'
     A wrapper of plot_cry_es for electron band structure + dos. For spin-polarized cases, beta state.
 
     Args:
-        bands (BandsBASE|list): Bands object generated by CRYSTALClear.crystal_io.Properties_output.read_bands
+        bands (BandsBASE | list): Bands object generated by CRYSTALClear.crystal_io.Properties_output.read_bands
             or a list of BandsBASE objects.
         doss (DOSBASE): DOS object generated by CRYSTALClear.crystal_io.Properties_output.read_doss
             or a list of DOSBASE objects.
@@ -904,7 +909,8 @@ def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down'
         legend (bool): Enables or disables the legend of the density of states (DOS).
 
     Returns:
-        Matplotlib object
+        fig (matplotlib.figure.Figure): The figure.
+        ax (numpy.ndarray): The two axes, bands then density of states.
 
     Raises:
         ValueError: If the unit parameter is unknown.
@@ -963,7 +969,7 @@ def plot_phonon_banddos(bands, doss, unit='cm-1', k_labels=None, dos_prj=None,
     A wrapper of plot_cry_es for phonon band structure + dos. Only one pair is permitted.
 
     Args:
-        bands (BandsBASE|list): Bands object generated by CRYSTALClear.crystal_io.Properties_output.read_bands
+        bands (BandsBASE | list): Bands object generated by CRYSTALClear.crystal_io.Properties_output.read_bands
             or a list of BandsBASE objects.
         doss (DOSBASE): DOS object generated by CRYSTALClear.crystal_io.Properties_output.read_doss
             or a list of DOSBASE objects.
@@ -985,7 +991,8 @@ def plot_phonon_banddos(bands, doss, unit='cm-1', k_labels=None, dos_prj=None,
         figsize (list[float]): Size of the figure in inches (width, height).
 
     Returns:
-        Matplotlib object
+        fig (matplotlib.figure.Figure): The figure.
+        ax (numpy.ndarray): The two axes, bands then density of states.
 
     Raises:
         ValueError: If the unit parameter is unknown.
@@ -1052,10 +1059,7 @@ def plot_cry_contour(contour_obj):
     Plot a contour plot.
 
     Args:
-        contour_obj (object): Contour object representing the contour plot.
-
-    Returns:
-        None
+        contour_obj (Properties_output): Contour object representing the contour plot.
 
     Notes:
         - Plots a contour plot based on the data in the contour object.
@@ -1127,11 +1131,8 @@ def plot_cry_contour_differences(contour_obj, contour_obj_ref):
     Plot the differences between two contour plots.
 
     Args:
-        contour_obj (object): Contour object representing the original contour plot.
-        contour_obj_ref (object): Contour object representing the reference contour plot.
-
-    Returns:
-        None
+        contour_obj (Properties_output): Contour object representing the original contour plot.
+        contour_obj_ref (Properties_output): Contour object representing the reference contour plot.
 
     Notes:
         - Plots the differences between two contour plots.
@@ -1226,10 +1227,7 @@ def plot_cry_xrd(xrd_obj):
     Plot the X-ray diffraction pattern.
 
     Args:
-        xrd_obj (object): XRD object containing the data for the X-ray diffraction pattern.
-
-    Returns:
-        None
+        xrd_obj (Properties_output): XRD object containing the data for the X-ray diffraction pattern.
 
     Notes:
         - Plots the X-ray diffraction pattern.
@@ -1260,18 +1258,15 @@ def plot_cry_xrd(xrd_obj):
 
 
 def plot_cry_rholine(rholine_obj):
-    """
+    r"""
     Plot the resistivity as a function of distance.
 
     Args:
-        rholine_obj (object): Rholine object containing the data for the resistivity.
-
-    Returns:
-        None
+        rholine_obj (Properties_output): Rholine object containing the data for the resistivity.
 
     Notes:
         - Plots the resistivity as a function of distance.
-        - Sets the x-axis label as 'd  [$\AA$]' and the y-axis label as r'$\rho$  [$\frac{e}{\AA^3}$]'.
+        - Sets the x-axis label as ``'d  [$\AA$]'`` and the y-axis label as ``r'$\rho$  [$\frac{e}{\AA^3}$]'``.
         - Saves the plot to a file named 'figure_rholine_YYYY-MM-DD_HHMMSS.jpg' in the current directory.
     """
     import os
@@ -1299,10 +1294,7 @@ def plot_cry_lapl_profile(lapl_obj):
     Plot the Laplacian profile of a crystal.
 
     Args:
-        lapl_obj (object): Laplacian object containing the data for the Laplacian profile.
-
-    Returns:
-        None
+        lapl_obj (Properties_output): Laplacian object containing the data for the Laplacian profile.
 
     Notes:
         - Plots the Laplacian profile using the data from the Laplacian object.
@@ -1338,10 +1330,7 @@ def plot_cry_density_profile(lapl_obj):
     Plot the density profile of a crystal.
 
     Args:
-        lapl_obj (object): Laplacian object containing the data for the density profile.
-
-    Returns:
-        None
+        lapl_obj (Properties_output): Laplacian object containing the data for the density profile.
 
     Notes:
         - Plots the density profile using the data from the Laplacian object.
@@ -1373,12 +1362,12 @@ def plot_cry_seebeck_potential(seebeck_obj, direction, temperature):
     Plot the Seebeck coefficient as a function of chemical potential.
 
     Args:
-        seebeck_obj (object): Seebeck object containing the data for the Seebeck coefficient.
+        seebeck_obj (Properties_output): Seebeck object containing the data for the Seebeck coefficient.
         direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
-        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
+        temperature (float | str): choose the temperature to be considered or 'all' to consider them all together
 
     Returns:
-        Figure object
+        fig (matplotlib.figure.Figure): The figure.
 
     Notes:
         - Plots the Seebeck coefficient as a function of chemical potential for each temperature.
@@ -1521,12 +1510,12 @@ def plot_cry_seebeck_carrier(seebeck_obj, direction, temperature):
     Plot the Seebeck coefficient as a function of charge carrier concentration.
 
     Args:
-        seebeck_obj: Seebeck object containing the data for the Seebeck coefficient.
+        seebeck_obj (Properties_output): Seebeck object containing the data for the Seebeck coefficient.
         direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
-        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
+        temperature (float | str): choose the temperature to be considered or 'all' to consider them all together
 
     Returns:
-        Figure object
+        fig (matplotlib.figure.Figure): The figure.
 
     Notes:
         - Plots the Seebeck coefficient as a function of charge carrier concentration for each temperature, distinguishing between n-type and p-type conduction.
@@ -1668,13 +1657,13 @@ def plot_cry_multiseebeck(direction, temperature, minpot, maxpot, *seebeck):
 
     Args:
         direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
-        temperature (value): choose the temperature to be considered 
-        minpot (value): lower value of chemical potential you want to plot in eV  
-        maxpot (value): higher value of chemical potential you want to plot in eV 
-        *seebeck (obj): Variable number of seebeck objects containing the data for the Seebeck coefficient.
+        temperature (float): choose the temperature to be considered 
+        minpot (float): lower value of chemical potential you want to plot in eV  
+        maxpot (float): higher value of chemical potential you want to plot in eV 
+        *seebeck (Properties_output): Variable number of seebeck objects containing the data for the Seebeck coefficient.
 
     Returns:
-        Figure object
+        fig (matplotlib.figure.Figure): The figure.
 
     Notes:
         - Plots the seebeck coefficient for each seebeck object.
@@ -1809,12 +1798,12 @@ def plot_cry_sigma_potential(sigma_obj, direction, temperature):
     Plot the electrical conductivity as a function of chemical potential.
 
     Args:
-        sigma_obj (object): Sigma object containing the data for electrical conductivity.
+        sigma_obj (Properties_output): Sigma object containing the data for electrical conductivity.
         direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
-        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
+        temperature (float | str): choose the temperature to be considered or 'all' to consider them all together
 
     Returns:
-        Returns figure object
+        fig (matplotlib.figure.Figure): The figure.
 
     Notes:
         - Plots the electrical conductivity as a function of chemical potential the selected temperature.
@@ -1956,13 +1945,13 @@ def plot_cry_sigma_carrier(sigma_obj, direction, temperature):
     Plot the electrical conductivity as a function of charge carrier concentration.
 
    Args:
-        sigma_obj (object): Sigma object containing the data for electrical conductivity.
+        sigma_obj (Properties_output): Sigma object containing the data for electrical conductivity.
         direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
-        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
+        temperature (float | str): choose the temperature to be considered or 'all' to consider them all together
 
 
     Returns:
-        Returns Figure object
+        fig (matplotlib.figure.Figure): The figure.
 
     Notes:
         - Plots the electrical conductivity as a function of charge carrier concentration the selected temperature.
@@ -2097,13 +2086,13 @@ def plot_cry_multisigma(direction, temperature, minpot, maxpot, *sigma):
 
     Args:
         direction (str): choose the direction to plot among 'S_xx', 'S_xy', 'S_xz', 'S_yx', 'S_yy', 'S_yz', 'S_yz', 'S_zx', 'S_zy', 'S_zz'.
-        temperature (value): choose the temperature to be considered 
-        minpot (value): lower value of chemical potential you want to plot in eV  
-        maxpot (value): higher value of chemical potential you want to plot in eV 
-        *seebeck (obj): Variable number of seebeck objects containing the data for the electron conductivity (sigma).
+        temperature (float): choose the temperature to be considered 
+        minpot (float): lower value of chemical potential you want to plot in eV  
+        maxpot (float): higher value of chemical potential you want to plot in eV 
+        *seebeck (Properties_output): Variable number of seebeck objects containing the data for the electron conductivity (sigma).
 
     Returns:
-        Figure object
+        fig (matplotlib.figure.Figure): The figure.
 
     Notes:
         - Plots the electron conductivity for each sigma object.
@@ -2222,13 +2211,13 @@ def plot_cry_powerfactor_potential(seebeck_obj, sigma_obj, direction, temperatur
     Plot the power factor for different potentials.
 
     Args:
-        seebeck_obj (obj): Seebeck object containing the data for the Seebeck coefficient.
-        sigma_obj (obj): Sigma object containing the data for the electrical conductivity.
+        seebeck_obj (Properties_output): Seebeck object containing the data for the Seebeck coefficient.
+        sigma_obj (Properties_output): Sigma object containing the data for the electrical conductivity.
         direction (str): choose the direction to plot among 'PF_xx', 'PF_xy', 'PF_xz', 'PF_yx', 'PF_yy', 'PF_yz', 'PF_yz', 'PF_zx', 'PF_zy', 'PF_zz'.
-        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
+        temperature (float | str): choose the temperature to be considered or 'all' to consider them all together
 
     Returns:
-        Figure object
+        fig (matplotlib.figure.Figure): The figure.
 
     Notes:
         - Calculates the power factor using the Seebeck coefficient and electrical conductivity data for each temperature.
@@ -2447,13 +2436,13 @@ def plot_cry_powerfactor_carrier(seebeck_obj, sigma_obj, direction, temperature)
     Plot the power factor for different charge carrier concentrations.
 
     Args:
-        seebeck_obj (obj): Seebeck object containing the data for the Seebeck coefficient.
-        sigma_obj (obj): Sigma object containing the data for the electrical conductivity.
+        seebeck_obj (Properties_output): Seebeck object containing the data for the Seebeck coefficient.
+        sigma_obj (Properties_output): Sigma object containing the data for the electrical conductivity.
         direction (str): choose the direction to plot among 'PF_xx', 'PF_xy', 'PF_xz', 'PF_yx', 'PF_yy', 'PF_yz', 'PF_yz', 'PF_zx', 'PF_zy', 'PF_zz'.
-        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
+        temperature (float | str): choose the temperature to be considered or 'all' to consider them all together
 
     Returns:
-        Figure object
+        fig (matplotlib.figure.Figure): The figure.
 
     Notes:
         - Calculates the power factor using the Seebeck coefficient and electrical conductivity data for each temperature.
@@ -2679,14 +2668,14 @@ def plot_cry_zt(seebeck_obj, sigma_obj, direction, temperature, ktot):
     Plot the ZT value for different temperatures.
 
     Args:
-        seebeck_obj (obj): Seebeck object containing the data for the Seebeck coefficient.
-        sigma_obj (obj): Sigma object containing the data for the electrical conductivity.
+        seebeck_obj (Properties_output): Seebeck object containing the data for the Seebeck coefficient.
+        sigma_obj (Properties_output): Sigma object containing the data for the electrical conductivity.
         direction (str): choose the direction to plot among 'ZT_xx', 'ZT_xy', 'ZT_xz', 'ZT_yx', 'ZT_yy', 'ZT_yz', 'ZT_yz', 'ZT_zx', 'ZT_zy', 'ZT_zz'.
-        temperature (value/str): choose the temperature to be considered or 'all' to consider them all together
-        ktot (value): Value of the total thermal conductivity (ktot) in W-1K-1m-1
+        temperature (float | str): choose the temperature to be considered or 'all' to consider them all together
+        ktot (float): Value of the total thermal conductivity (ktot) in W-1K-1m-1
 
     Returns:
-        Figure object
+        fig (matplotlib.figure.Figure): The figure.
 
     Notes:
         - Calculates the ZT value using the Seebeck coefficient and electrical conductivity data.
@@ -2833,7 +2822,7 @@ def plot_cry_young(theta, phi, S):
         S (numpy.ndarray): Compliance matrix.
 
     Returns:
-        float: Young's modulus values.
+        E (float): Young's modulus values.
 
     Notes:
         - This function is intended to be called by cry_ela_plot
@@ -2899,7 +2888,7 @@ def plot_cry_comp(theta, phi, S):
         S (numpy.ndarray): Compliance matrix.
 
     Returns:
-        float: Linear compressibility values.
+        B (float): Linear compressibility values.
 
     Notes:
         - This function is intended to be called by cry_ela_plot
@@ -2959,7 +2948,7 @@ def plot_cry_shear(theta_1D, phi_1D, S, ndeg, shear_choice):
         shear_choice (str): Type of shear property to plot. Options: "avg", "min", "max".
 
     Returns:
-        numpy.ndarray: Shear property array.
+        shear (numpy.ndarray): Shear property array.
 
     Notes:
         - This function is intended to be called by cry_ela_plot
@@ -3047,7 +3036,7 @@ def plot_cry_poisson(theta_1D, phi_1D, S, ndeg, poisson_choice):
         poisson_choice (str): Type of Poisson's ratio to plot. Options: "avg", "min", "max".
 
     Returns:
-        numpy.ndarray: Poisson's ratio array.
+        poisson (numpy.ndarray): Poisson's ratio array.
 
     Notes:
         - This function is intended to be called by cry_ela_plot
@@ -3138,12 +3127,9 @@ def plot_cry_ela(co, choose, ndeg=200):
         ndeg (int): Angular resolution (default is 200).
 
     Returns:
-        fig_list: list of matplotlib.figure.Figure
-            A list containing matplotlib Figure objects for each plot.
-        ax_list: list of matplotlib.axes._axes.Axes
-            A list containing the Axes objects associated with each plot.
-        plt_list: list of matplotlib.pyplot
-            A list of the pyplot objects for each plot, representing the actual plot.
+        fig_list (list[matplotlib.figure.Figure]): A list containing matplotlib Figure objects for each plot.
+        ax_list (list[matplotlib.axes.Axes]): A list containing the Axes objects associated with each plot.
+        plt_list (list): A list of the pyplot objects for each plot, representing the actual plot.
     """
 
     import matplotlib.pyplot as plt
@@ -3267,7 +3253,8 @@ def _ela_plane_angles(plane, alpha):
         alpha (numpy.ndarray): 1D array of sweep angles.
 
     Returns:
-        tuple(numpy.ndarray, numpy.ndarray): (theta_1D, phi_1D) of same shape.
+        theta (numpy.ndarray): theta_1D, the shape of ``alpha``.
+        phi (numpy.ndarray): phi_1D, the shape of ``alpha``.
     """
     import numpy as np
 
@@ -3299,7 +3286,7 @@ def plot_cry_shear_2D(theta_1D, phi_1D, S, ndeg, shear_choice):
         shear_choice (str): "avg", "min" or "max".
 
     Returns:
-        numpy.ndarray: Shear property, one value per in-plane direction.
+        shear (numpy.ndarray): Shear property, one value per in-plane direction.
     """
     import numpy as np
 
@@ -3362,7 +3349,7 @@ def plot_cry_poisson_2D(theta_1D, phi_1D, S, ndeg, poisson_choice):
         poisson_choice (str): "avg", "min" or "max".
 
     Returns:
-        numpy.ndarray: Poisson's ratio, one value per in-plane direction.
+        poisson (numpy.ndarray): Poisson's ratio, one value per in-plane direction.
     """
     import numpy as np
 
@@ -3422,7 +3409,7 @@ def plot_cry_ela_2D(co, choose, ndeg=200, planes=("xy", "xz", "yz")):
     polar axes with a fixed radial scale shared across all figures.
 
     Args:
-        co: A CRYSTALClear object (or list thereof) with the ``elatensor``
+        co (Crystal_output | list[Crystal_output]): A CRYSTALClear object (or list thereof) with the ``elatensor``
             attribute set by ``Crystal_output.get_elatensor``.
         choose (str): Property to plot. One of "young", "comp",
             "shear avg", "shear min", "shear max",
@@ -3431,7 +3418,8 @@ def plot_cry_ela_2D(co, choose, ndeg=200, planes=("xy", "xz", "yz")):
         planes (tuple[str]): Subset of ("xy", "xz", "yz") to draw.
 
     Returns:
-        tuple(list, list): (fig_list, ax_list) of matplotlib Figure / polar Axes.
+        fig_list (list[matplotlib.figure.Figure]): The figures.
+        ax_list (list[matplotlib.axes.Axes]): Their polar axes.
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -3518,15 +3506,15 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
     """Generates the IR spectra for the IRSPEC.DAT file produced by an IRSPEC calculation
 
     Args:
-        irspec (External_unit object): Object (or a list of) generated by the read_cry_irspec function necessary for the plot
+        irspec (External_unit): Object (or a list of) generated by the read_cry_irspec function necessary for the plot
         x_unit (str, optional): Unit measure of the x axes. Avalilable: 'cm-1' and 'nm'. Defaults to 'cm-1'.
         y_mode (str, optional): Peak broadening modality in absorbance and reflectance. 
                                 Available: 'LG'(Lorentzian-Gaussian broadening), 'V' (Voigt broadening), 'RS' (Rayleigh spherical particles), 'RE' (Rayleigh with ellipsoid particles), 'REFL' (Reflectance)
                                 Defaults to 'LG'.
         figsize (tuple, optional): Image dimensions corresponding to matplotlib figsize. Defaults to None.
-        linestyle (str/list[str], optional): linestyle corresponding to the matplotlib one it can be a list for a multiplot. Defaults to '-'.
-        linewidth (float/list[float], optional): linewidth corresponding to the matplotlib one it can be a list for a multiplot. Defaults to 1.5.
-        color (str/list[str], optional): Color of the spectra it can accept all matplotlib colors it can be a list for multiplots. Defaults to 'tab:blue'.
+        linestyle (str | list[str], optional): linestyle corresponding to the matplotlib one it can be a list for a multiplot. Defaults to '-'.
+        linewidth (float | list[float], optional): linewidth corresponding to the matplotlib one it can be a list for a multiplot. Defaults to 1.5.
+        color (str | list[str], optional): Color of the spectra it can accept all matplotlib colors it can be a list for multiplots. Defaults to 'tab:blue'.
         freq_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given frequency window. Defaults to None.
         int_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given intensity window. Defaults to None.
         label (list[str], optional): List of labels for the legend of a multiplot. Defaults to None.
@@ -3535,7 +3523,8 @@ def plot_cry_irspec(irspec, x_unit='cm-1', y_mode='LG', figsize=None, linestyle=
 
 
     Returns:
-        Matplotlib object
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     Raises:
         ValueError: The function raises an error when the object to be plotted does not have the required y_mode  
     """
@@ -3700,21 +3689,22 @@ def plot_cry_ramspec(ramspec,  y_mode='total', figsize=None, linestyle='-',
     """Generates the RAMAN spectra for the RAMSPEC.DAT file produced by an RAMSPEC calculation
 
     Args:
-        ramspec (External_unit object): Object (or a list of) generated by the read_cry_ramspec function necessary for the plot
+        ramspec (External_unit): Object (or a list of) generated by the read_cry_ramspec function necessary for the plot
         y_mode (str, optional): Polarization of the spectra for the simulated compound
                                 Available: 'total', 'parallel', 'perpendicular' (for powders), 'xx', 'xy', 'xz', 'yy', 'yz', 'zz' (for single crystals)
                                 Defaults to 'LG'.
         figsize (tuple, optional): Image dimensions corresponding to matplotlib figsize. Defaults to None.
-        linestyle (str/list[str], optional): linestyle corresponding to the matplotlib one it can be a list for a multiplot. Defaults to '-'.
-        linewidth (float/list[float], optional): linewidth corresponding to the matplotlib one it can be a list for a multiplot. Defaults to 1.5.
-        color (str/list[str], optional): Color of the spectra it can accept all matplotlib colors it can be a list for multiplots. Defaults to 'tab:blue'.
+        linestyle (str | list[str], optional): linestyle corresponding to the matplotlib one it can be a list for a multiplot. Defaults to '-'.
+        linewidth (float | list[float], optional): linewidth corresponding to the matplotlib one it can be a list for a multiplot. Defaults to 1.5.
+        color (str | list[str], optional): Color of the spectra it can accept all matplotlib colors it can be a list for multiplots. Defaults to 'tab:blue'.
         freq_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given frequency window. Defaults to None.
         int_range (list, optional): Two element list [min, max], that allows to visualize the spectra in a given intensity window. Defaults to None.
         label (list[str], optional): List of labels for the legend of a multiplot. Defaults to None.
         dpi (int, optional): Resolution of the saved file. Defaults to 300.
         offset (float): Allows the user to define an offset between different spectra in a multi plot
     Returns:
-        Matplotlib object
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     """
 
     import sys
@@ -3881,7 +3871,7 @@ def _vci_collect(co, states=None, frange=None, irrep=None, threshold=0.,
     Gather the contributions CRYSTAL prints for a selection of VCI states.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object, on which get_vci() has already been called.
+        co (Crystal_output): Crystal output object, on which get_vci() has already been called.
         states (list[int], optional): VCI states to be collected, given as positional indices into co.VCI_energy. Takes precedence over frange. Default is None.
         frange (list[float], optional): Wavenumber window [min, max] the states are taken from, in cm^-1 and relative to the ZPE. Default is None, i.e. every state of the run.
         irrep (int, optional): Restrict the selection to the states of one irrep of the block-diagonalised VCI matrix. Default is None, i.e. all of them.
@@ -3889,9 +3879,9 @@ def _vci_collect(co, states=None, frange=None, irrep=None, threshold=0.,
         max_states (int, optional): Refuse to collect more states than this. A window spanning a whole run holds thousands of them, which makes for an unreadable figure rather than a useful one. Default is None, i.e. no limit.
 
     Returns:
-        sel (np.array): Indices into co.VCI_energy of the selected states, sorted by increasing energy.
+        sel (numpy.ndarray): Indices into co.VCI_energy of the selected states, sorted by increasing energy.
         onvs (list): Occupation number vector of each contributing configuration.
-        C (np.array): 2D array of the signed VCI coefficients $A_{n,s}$, configurations along axis 0 and selected states along axis 1, zero where a configuration does not contribute.
+        C (numpy.ndarray): 2D array of the signed VCI coefficients $A_{n,s}$, configurations along axis 0 and selected states along axis 1, zero where a configuration does not contribute.
     """
 
     import numpy as np
@@ -3985,12 +3975,12 @@ def _vci_conf_label(onv, list_mode=None, basis='HO'):
     number vector.
 
     Args:
-        onv (array-like): Occupation number vector, one entry per VCI-active mode.
+        onv (array_like): Occupation number vector, one entry per VCI-active mode.
         list_mode (list[int], optional): CRYSTAL mode index of each VCI-active mode. Default is None, in which case modes are numbered from 1.
         basis (str): Zeroth-order basis, 'HO' or 'VSCF'. Harmonic quanta are denoted by nu, VSCF ones by nu with a tilde.
 
     Returns:
-        str: A matplotlib mathtext label, e.g. '$2\\nu_{3}+\\nu_{12}$'.
+        label (str): A matplotlib mathtext label, e.g. '$2\\nu_{3}+\\nu_{12}$'.
     """
 
     sym = r'\tilde{\nu}' if basis == 'VSCF' else r'\nu'
@@ -4041,7 +4031,7 @@ def plot_cry_vci(co, states=None, frange=None, irrep=None, list_mode=None,
     one and configurations left out of every selected state are not shown.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object, on which get_vci() has already been called.
+        co (Crystal_output): Crystal output object, on which get_vci() has already been called.
         states (list[int], optional): VCI states to be displayed, given as positional indices into co.VCI_energy. Note that the label CRYSTAL prints restarts from 1 in every symmetry block and is therefore not used here. Takes precedence over frange. Default is None.
         frange (list[float], optional): Wavenumber window [min, max] the states are taken from, in cm^-1 and relative to the ZPE. Default is None, i.e. every state of the run, which max_states then caps.
         irrep (int, optional): Restrict the map to the states of one irrep of the block-diagonalised VCI matrix. Default is None, i.e. all of them.
@@ -4060,8 +4050,8 @@ def plot_cry_vci(co, states=None, frange=None, irrep=None, list_mode=None,
         ax (matplotlib.axes.Axes, optional): Axes the map is drawn on. Default is None, in which case a new figure is created.
 
     Returns:
-        matplotlib.figure.Figure
-        matplotlib.axes.Axes
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     """
 
     import matplotlib.pyplot as plt
@@ -4174,7 +4164,7 @@ def plot_cry_vci_sankey(co, states=None, frange=None, irrep=None, list_mode=None
     slightly less than one.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object, on which get_vci() has already been called.
+        co (Crystal_output): Crystal output object, on which get_vci() has already been called.
         states (list[int], optional): VCI states to be displayed, given as positional indices into co.VCI_energy. Note that the label CRYSTAL prints restarts from 1 in every symmetry block and is therefore not used here. Takes precedence over frange. Default is None.
         frange (list[float], optional): Wavenumber window [min, max] the states are taken from, in cm^-1 and relative to the ZPE. Default is None, i.e. every state of the run, which max_states then caps.
         irrep (int, optional): Restrict the diagram to the states of one irrep of the block-diagonalised VCI matrix. Default is None, i.e. all of them.
@@ -4195,8 +4185,8 @@ def plot_cry_vci_sankey(co, states=None, frange=None, irrep=None, list_mode=None
         ax (matplotlib.axes.Axes, optional): Axes the diagram is drawn on. Default is None, in which case a new figure is created.
 
     Returns:
-        matplotlib.figure.Figure
-        matplotlib.axes.Axes
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     """
 
     import matplotlib.pyplot as plt
@@ -4377,12 +4367,12 @@ def plot_cry_spec(transitions, typeS="lorentz", components=False, bwidth=5,
         linewidth (float, optional): Linewidth (default is 2.0).
         padd (float, optional): left- and right- hand side padding expressed in the same unit of the quantity reported in x-axis (default is 100).
         style (str, optional): String specifying Matplotlib style. 
-        compstyle (list[string], optional): List containing Matplotlib styles to plot each component. 
+        compstyle (list[str], optional): List containing Matplotlib styles to plot each component. 
         figsize (list[real], optional): List of two numbers specifying the aspect ratio of the figure (default is [16, 6]).
 
     Returns:
-        matplotlib.figure.Figure
-        matplotlib.axes.Axes
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     """
 
     import math
@@ -4571,8 +4561,8 @@ def plot_cry_spec_multi(files, typeS="lorentz", components=False, bwidth=5,
         offset (float, optional) : Offset along the y axis (default is 0). 
 
     Returns:
-        matplotlib.figure.Figure
-        matplotlib.axes.Axes
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     """
 
     import matplotlib.pyplot as plt
@@ -4638,11 +4628,11 @@ def _ho_eigenfunctions(xi, nbasis):
     overflow well before the ~100 basis functions an ANSCAN run uses.
 
     Args:
-        xi (np.array): Coordinates the functions are evaluated on.
+        xi (numpy.ndarray): Coordinates the functions are evaluated on.
         nbasis (int): Number of functions, i.e. quantum numbers 0 to nbasis-1.
 
     Returns:
-        np.array: (len(xi), nbasis) array of eigenfunctions.
+        psi (numpy.ndarray): Eigenfunctions, shape (len(xi), nbasis).
     """
 
     import numpy as np
@@ -4666,11 +4656,11 @@ def _pes_frequency(co, mode):
     in the frequency array of the Gamma point plus one.
 
     Args:
-        co (crystal_io.Crystal_output): Output on which get_phonon() has run.
+        co (Crystal_output): Output on which get_phonon() has run.
         mode (int): CRYSTAL index of the mode.
 
     Returns:
-        float: The frequency in cm^-1.
+        frequency (float): The frequency in cm^-1.
     """
 
     from CRYSTALClear import units
@@ -4691,12 +4681,12 @@ def _pes_single(co, mode):
     ``(omega, eta3, eta4)`` of one mode, in cm^-1, w.r.t. the dimensionless xi.
 
     Args:
-        co (crystal_io.Crystal_output): Output on which get_anh_const() and
+        co (Crystal_output): Output on which get_anh_const() and
             get_phonon() have run.
         mode (int): CRYSTAL index of the mode.
 
     Returns:
-        tuple: The harmonic frequency and the cubic and quartic derivatives.
+        derivatives (tuple[float, float, float]): The harmonic frequency and the cubic and quartic derivatives.
     """
 
     import numpy as np
@@ -4720,11 +4710,11 @@ def _pes_couple(co, modei, modej):
     that are not symmetric in I and J.
 
     Args:
-        co (crystal_io.Crystal_output): Output on which get_anh_const() has run.
+        co (Crystal_output): Output on which get_anh_const() has run.
         modei, modej (int): CRYSTAL indices of the two modes.
 
     Returns:
-        tuple: The five derivatives, ordered for (modei, modej) as given.
+        derivatives (tuple[float, ...]): The five derivatives, ordered for (modei, modej) as given.
     """
 
     import numpy as np
@@ -4757,12 +4747,12 @@ def _pes_potential_1d(xi, omega, eta3, eta4):
                   + \\frac{1}{24}\\eta_4\\xi^4
 
     Args:
-        xi (np.array): Coordinates, in classical ground state amplitudes.
+        xi (numpy.ndarray): Coordinates, in classical ground state amplitudes.
         omega (float): Harmonic frequency, cm^-1.
         eta3, eta4 (float): Cubic and quartic derivatives, cm^-1.
 
     Returns:
-        np.array: The potential on ``xi``.
+        potential (numpy.ndarray): The potential on ``xi``.
     """
 
     return omega/2 * xi**2 + eta3/6 * xi**3 + eta4/24 * xi**4
@@ -4782,8 +4772,10 @@ def _pes_potential_2d(xi, xj, omegai, omegaj, single_i, single_j, couple):
         couple (tuple): ``(IIJ, IJJ, IIIJ, IJJJ, IIJJ)``.
 
     Returns:
-        tuple: ``(harmonic, diagonal, coupling)`` contributions, so that a
-        caller can draw their sum or any part of it.
+        harmonic (numpy.ndarray): The harmonic contribution.
+        diagonal (numpy.ndarray): The anharmonic terms of each mode alone.
+        coupling (numpy.ndarray): The coupling terms. Kept apart so that a
+            caller can draw their sum or any part of it.
     """
 
     iij, ijj, iiij, ijjj, iijj = couple
@@ -4823,8 +4815,8 @@ def _pes_solve_1d(omega, eta3, eta4, nbasis=60):
         nbasis (int, optional): Harmonic functions kept. Default is 60.
 
     Returns:
-        np.array: Eigenvalues in cm^-1, ascending.
-        np.array: (nbasis, nbasis) eigenvectors, one state per column.
+        energy (numpy.ndarray): Eigenvalues in cm^-1, ascending.
+        vector (numpy.ndarray): Eigenvectors, shape (nbasis, nbasis), one state per column.
     """
 
     import numpy as np
@@ -4862,7 +4854,7 @@ def _pes_turning_points(omega, eta3, eta4, energy, reach=6.):
         reach (float, optional): Widest coordinate considered. Default is 6.
 
     Returns:
-        list[float]: ``[left, right]``, clamped to +/- ``reach``.
+        points (list[float]): ``[left, right]``, clamped to +/- ``reach``.
     """
 
     import numpy as np
@@ -4894,7 +4886,7 @@ def plot_cry_pes_1D(co, mode, xlim=None, npts=500, harmonic=True,
     the modes and lands elsewhere.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
+        co (Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
         mode (int): CRYSTAL index of the mode to draw.
         xlim (list[float], optional): Bounds of the abscissa, in units of $\\xi$. Default is None, i.e. [-2, 2]. Whatever it is, `levels` widens it far enough to hold the states being drawn, since a state cut off at the edge of the window says less than the extrapolation needed to contain it.
         npts (int, optional): Number of points the potential is sampled on. Default is 500.
@@ -4909,8 +4901,8 @@ def plot_cry_pes_1D(co, mode, xlim=None, npts=500, harmonic=True,
         ax (matplotlib.axes.Axes, optional): Axes the curves are drawn on. Default is None, in which case a new figure is created.
 
     Returns:
-        matplotlib.figure.Figure
-        matplotlib.axes.Axes
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     """
 
     import matplotlib.pyplot as plt
@@ -4976,17 +4968,18 @@ def _pes_grid(co, modei, modej, quantity, xlim, ylim, npts):
     The two-mode surface a PES figure draws, on its grid.
 
     Args:
-        co (crystal_io.Crystal_output): Output carrying the PES constants.
+        co (Crystal_output): Output carrying the PES constants.
         modei, modej (int): CRYSTAL indices of the two modes.
         quantity (str): 'anharmonic', 'coupling' or 'total'.
         xlim, ylim (list[float]): Bounds of the two coordinates.
         npts (int): Grid points along each axis.
 
     Returns:
-        np.array, np.array: The coordinate grids.
-        np.array: The surface, cm^-1.
-        str: Axis label for it.
-        bool: Whether it changes sign, i.e. has to be read against zero.
+        xi (numpy.ndarray): The grid of the first coordinate.
+        xj (numpy.ndarray): The grid of the second coordinate.
+        surface (numpy.ndarray): The surface, cm^-1.
+        label (str): Axis label for it.
+        signed (bool): Whether it changes sign, i.e. has to be read against zero.
     """
 
     import numpy as np
@@ -5015,12 +5008,12 @@ def _pes_bounds(surface, nlevels, signed):
     Contour levels for a PES surface, centred on zero when it changes sign.
 
     Args:
-        surface (np.array): The surface.
+        surface (numpy.ndarray): The surface.
         nlevels (int): Number of levels.
         signed (bool): Whether zero is the reference.
 
     Returns:
-        np.array: The levels, ascending.
+        levels (numpy.ndarray): The levels, ascending.
     """
 
     import numpy as np
@@ -5044,7 +5037,7 @@ def plot_cry_pes_3D(co, modei, modej, quantity='anharmonic', xlim=[-2., 2.],
     anharmonic constants add, and a surface of the total is a paraboloid.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
+        co (Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
         modei, modej (int): CRYSTAL indices of the two modes, in either order.
         quantity (str, optional): 'anharmonic' for the surface with the harmonic part subtracted, 'coupling' for the two-mode terms alone, 'total' for the surface itself. Default is 'anharmonic'.
         xlim (list[float], optional): Bounds of the first mode's coordinate. Default is [-2, 2].
@@ -5061,8 +5054,8 @@ def plot_cry_pes_3D(co, modei, modej, quantity='anharmonic', xlim=[-2., 2.],
         ax (mpl_toolkits.mplot3d.axes3d.Axes3D, optional): Axes the surface is drawn on, which have to have been created with a 3D projection. Default is None, in which case a new figure is created.
 
     Returns:
-        matplotlib.figure.Figure
-        mpl_toolkits.mplot3d.axes3d.Axes3D
+        fig (matplotlib.figure.Figure): The figure.
+        ax (mpl_toolkits.mplot3d.axes3d.Axes3D): The 3D axes.
     """
 
     import matplotlib.pyplot as plt
@@ -5132,7 +5125,7 @@ def plot_cry_pes_2D(co, modei, modej, quantity='anharmonic', xlim=[-2., 2.],
     cubic and quartic terms are worth.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
+        co (Crystal_output): Crystal output object, on which get_anh_const() and get_phonon() have already been called.
         modei, modej (int): CRYSTAL indices of the two modes, in either order.
         quantity (str, optional): 'anharmonic' for the surface with the harmonic part subtracted, 'coupling' for the two-mode terms alone, 'total' for the surface itself. Default is 'anharmonic'.
         xlim (list[float], optional): Bounds of the first mode's coordinate. Default is [-2, 2].
@@ -5146,8 +5139,8 @@ def plot_cry_pes_2D(co, modei, modej, quantity='anharmonic', xlim=[-2., 2.],
         ax (matplotlib.axes.Axes, optional): Axes the map is drawn on. Default is None, in which case a new figure is created.
 
     Returns:
-        matplotlib.figure.Figure
-        matplotlib.axes.Axes
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     """
 
     import matplotlib.pyplot as plt
@@ -5200,7 +5193,7 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
     to ANSCANWF.DAT, ten of them in a standard run.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object, on which get_anscan() has already been called.
+        co (Crystal_output): Crystal output object, on which get_anscan() has already been called.
         scale_wf (float, optional): Scaling factor of the wavefunctions, which are drawn on top of the level they belong to. Default is None, i.e. no wavefunction is drawn.
         scale_prob (float, optional): Scaling factor of the probability densities, which are filled between the level they belong to and the density itself. Default is None, i.e. no density is drawn.
         harmpot (bool, optional): Whether to draw the harmonic potential of the mode. Default is `False`.
@@ -5214,8 +5207,8 @@ def plot_cry_anscan(co, scale_wf=None, scale_prob=None, harmpot=False,
         ax (matplotlib.axes.Axes, optional): Axes the curves are drawn on. Default is None, in which case a new figure is created.
 
     Returns:
-        matplotlib.figure.Figure
-        matplotlib.axes.Axes
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     """
 
     import math
@@ -5324,19 +5317,20 @@ def plot_cry_EOS(eos, formula_unit=[1], plot='VvsE', color='tab:blue', figsize=(
     This function provides a tool to plot quantities extracted from the EOS module
 
     Args:
-        eos[obj/list]: CRYSTAL object or list of two CRYSTAL objects containing quantities extracted 
-                       from the EOS module generated by the get_EOS() function
-        formula_unit[list]: List containing the formula unit associated with each CRYSTAL object,
-                            the order should be the same as in the eos list (default:None)
-        plot[str]: String identifying the Equation of State/Computed data the user wants to plot (default:VvsE, available: VvsE, Murnaghan, Birch-Murnaghan, Poirier-Tarantola, and Vinet) 
-        color[str/list]: String or list of defining the colors of the plotted series of data requested (default:'tab:blue')
-        figsize[tuple]: Tuple of floats defining the size of the figure (default:(5,5))
-        dpi[int]: Integer defining the resolution of the figure (default:72)
-        fontsize[int]: Integer defining the fontsize of the text (default:12)
-        legend[list]: List of strings that will be used as legend in the plot (default:None)
+        eos (Crystal_output | list[Crystal_output]): CRYSTAL object or list of two CRYSTAL objects containing quantities extracted
+            from the EOS module generated by the get_EOS() function
+        formula_unit (list[int]): List containing the formula unit associated with each CRYSTAL object,
+            the order should be the same as in the eos list (default:None)
+        plot (str): String identifying the Equation of State/Computed data the user wants to plot (default:VvsE, available: VvsE, Murnaghan, Birch-Murnaghan, Poirier-Tarantola, and Vinet) 
+        color (str | list[str]): String or list of defining the colors of the plotted series of data requested (default:'tab:blue')
+        figsize (tuple): Tuple of floats defining the size of the figure (default:(5,5))
+        dpi (int): Integer defining the resolution of the figure (default:72)
+        fontsize (int): Integer defining the fontsize of the text (default:12)
+        legend (list[str] | None): List of strings that will be used as legend in the plot (default:None)
 
     Returns:
-        Matplotlib object
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -5542,7 +5536,7 @@ def plot_cry_cnm(co, modes=None, threshold=1., xticks='freq', colors=None,
     are labelled with their contribution from 1% up, 'Residues' from 5% up.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object, on which get_locmodes() has already been called and, for xticks='freq', get_phonon().
+        co (Crystal_output): Crystal output object, on which get_locmodes() has already been called and, for xticks='freq', get_phonon().
         modes (list[int], optional): Modes to plot. Default is None, i.e. all the modes in the CNM.
         threshold (float, optional): Contributions below this value [%] are summed into 'Residues'. Default is 1.
         xticks (str, optional): Label the bars with the frequencies in cm^-1 ('freq') or with the mode numbers ('mode'). Default is 'freq'.
@@ -5554,9 +5548,9 @@ def plot_cry_cnm(co, modes=None, threshold=1., xticks='freq', colors=None,
         ax (matplotlib.axes.Axes, optional): Axes the plot is drawn on. Default is None, in which case a new figure is created.
 
     Returns:
-        matplotlib.figure.Figure
-        matplotlib.axes.Axes
-        dict: The colors used, i.e. colors with the new groups added.
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
+        colors (dict): The colors used, i.e. colors with the new groups added.
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -5617,7 +5611,7 @@ def plot_cry_cnm_pressure(cos, mode, labels=None, threshold=1., min_overlap=0.5,
     the label of the calculation they first appear in, e.g. '712 HO (0.4)'.
 
     Args:
-        cos (list[crystal_io.Crystal_output]): Crystal output objects in the order of the series, on each of which get_locmodes() and get_phonon(read_eigvt=True) have already been called.
+        cos (list[Crystal_output]): Crystal output objects in the order of the series, on each of which get_locmodes() and get_phonon(read_eigvt=True) have already been called.
         mode (int): Mode to follow, numbered as in the first calculation.
         labels (list, optional): Label of each calculation, e.g. the pressures. Default is None, i.e. 0, 1, 2...
         threshold (float, optional): Contributions below this value [%] are summed into 'Residues'. Default is 1.
@@ -5631,9 +5625,9 @@ def plot_cry_cnm_pressure(cos, mode, labels=None, threshold=1., min_overlap=0.5,
         ax (matplotlib.axes.Axes, optional): Axes the plot is drawn on. Default is None, in which case a new figure is created.
 
     Returns:
-        matplotlib.figure.Figure
-        matplotlib.axes.Axes
-        dict: The colors used, i.e. colors with the new groups added.
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes): The axes.
+        colors (dict): The colors used, i.e. colors with the new groups added.
     """
     import matplotlib.pyplot as plt
     import numpy as np
@@ -5711,12 +5705,12 @@ def _cnm_table(co, modes=None, threshold=1.):
     Symmetry reduced CNM ready to be plotted.
 
     Args:
-        co (crystal_io.Crystal_output): Crystal output object, on which get_locmodes() has already been called.
+        co (Crystal_output): Crystal output object, on which get_locmodes() has already been called.
         modes (list[int], optional): Modes to keep. Default is None, i.e. all of them.
         threshold (float, optional): Contributions below this value [%] are summed into 'Residues'. Default is 1.
 
     Returns:
-        pandas.DataFrame: Modes along the index, internal coordinate groups along the columns and 'Residues' last. Groups with no contribution left are dropped.
+        cnm (pandas.DataFrame): Modes along the index, internal coordinate groups along the columns and 'Residues' last. Groups with no contribution left are dropped.
     """
 
     cnm = co.cnm_sym
@@ -5761,11 +5755,11 @@ def _align_groups(cos, labels):
     in, e.g. '712 HO (0.4)', and keeps it along the rest of the series.
 
     Args:
-        cos (list[crystal_io.Crystal_output]): Crystal output objects in the order of the series, on which get_locmodes() has already been called.
+        cos (list[Crystal_output]): Crystal output objects in the order of the series, on which get_locmodes() has already been called.
         labels (list): Label of each calculation.
 
     Returns:
-        list[dict]: For each calculation, the common label of each column of its co.cnm_sym.
+        aligned (list[dict]): For each calculation, the common label of each column of its co.cnm_sym.
     """
     from collections import Counter, defaultdict
 
@@ -5818,8 +5812,8 @@ def _cnm_colors(groups, colors=None):
     XKCD colors for the others.
 
     Returns:
-        dict: colors with the new groups added.
-        list: Color of each group, then 'dimgray' for 'Residues'.
+        colors (dict): colors with the new groups added.
+        bar_colors (list[str]): Color of each group, then 'dimgray' for 'Residues'.
     """
     import random
 

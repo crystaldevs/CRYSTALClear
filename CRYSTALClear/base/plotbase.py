@@ -12,32 +12,34 @@ def plot_cry_bands(bands, k_labels, energy_range, title, not_scaled, mode, lines
     The base function to plot electron  phonon density of states.
 
     Args:
-        bands (Union[List, object]): List of band objects or a single band object.
-        k_labels (Union[List[str], None]): List of strings specifying the labels for high symmetry points along the path.
-        energy_range (Union[List[Union[int, float]], None]): List of two integers or floats specifying the energy range (min, max).
-        title (Union[str, None]): Title of the plot.
+        bands (list | object): List of band objects or a single band object.
+        k_labels (list[str] | None): List of strings specifying the labels for high symmetry points along the path.
+        energy_range (list[int | float] | None): List of two integers or floats specifying the energy range (min, max).
+        title (str | None): Title of the plot.
         not_scaled (bool): Flag indicating whether to scale the band structure for comparison.
         mode (str): Mode of the plot ('single', 'multi', 'compare').
-        linestl (Union[str, List[str]]): Line style or list of line styles for the bands.
-        linewidth (Union[int, List[int]]): Line width or list of line widths for the bands.
-        color (Union[str, List[str]]): Color or list of colors for the bands.
+        linestl (str | list[str]): Line style or list of line styles for the bands.
+        linewidth (int | list[int]): Line width or list of line widths for the bands.
+        color (str | list[str]): Color or list of colors for the bands.
         fermi (str): Color of the Fermi level.
         fermiwidth (float): Thickness of the Fermi level
         fermialpha (float): Opacity of the Fermi level
-        k_range (Union[List[str], None]): List of two strings specifying the range of k points to plot.
-        labels (Union[List[str], None]): List of labels for the bands in multi-mode.
-        figsize (Union[Tuple[int, int], None]): Figure size.
-        scheme (Union[List[int], Tuple[int, int], None]): Subplot scheme in compare-mode (number of rows, number of columns).
-        sharex (Union[bool, str]): Flag or 'row' or 'col' specifying sharing of x-axis.
-        sharey (Union[bool, str]): Flag or 'row' or 'col' specifying sharing of y-axis.
-        fermialpha(float): Opacity of the fermi level 0-1
-        fermiwidth(float): Width of the fermi level
+        k_range (list[str] | None): List of two strings specifying the range of k points to plot.
+        labels (list[str] | None): List of labels for the bands in multi-mode.
+        figsize (tuple[int, int] | None): Figure size.
+        scheme (list[int] | tuple[int, int] | None): Subplot scheme in compare-mode (number of rows, number of columns).
+        sharex (bool | str): Flag or 'row' or 'col' specifying sharing of x-axis.
+        sharey (bool | str): Flag or 'row' or 'col' specifying sharing of y-axis.
+        fermialpha (float): Opacity of the fermi level 0-1
+        fermiwidth (float): Width of the fermi level
 
     Raises:
         ValueError: If an invalid mode flag is specified or if there are errors in the input parameters.
 
     Returns:
-        None
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes | numpy.ndarray): The axes, or an array of them when there
+            are several panels.
     """
     import sys
     import warnings
@@ -611,22 +613,24 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
     The base function to plot electron / phonon density of states.
 
     Args:
-        doss (object): The density of states object.
-        color (str or list): The color(s) of the plot(s).
+        doss (DOSBASE): The density of states object.
+        color (str | list): The color(s) of the plot(s).
         fermi (str): The color of the Fermi level line.
         overlap (bool): True if the projections should overlap, False otherwise.
-        labels (str or list): The label(s) for the plot(s).
+        labels (str | list): The label(s) for the plot(s).
         figsize (tuple): The figure size (width, height) in inches.
-        linestl (str or list): The line style(s) for the plot(s).
+        linestl (str | list): The line style(s) for the plot(s).
         linewidth (float): The width of the line(s) in points.
         title (str): The title of the plot.
         beta (str): The beta value ('up' or 'down').
         energy_range (tuple): The energy range (xmin, xmax) for the x-axis.
         dos_range (tuple): The density of states range (ymin, ymax) for the y-axis.
-        prj (None or list): The projection(s) to plot.
+        prj (list | None): The projection(s) to plot.
 
     Returns:
-        None
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes | numpy.ndarray): The axes, or an array of them when there
+            are several panels.
     """
     import sys
     import warnings
@@ -1000,26 +1004,27 @@ def plot_cry_es(bands, doss, k_labels, color_bd, color_doss, fermi, energy_range
     The base function to plot electron / phonon band structure + DOS
 
     Args:
-        bands (object): Object containing band structure data
-        doss (object): Object containing density of states data
-        k_labels (list or None): List of labels for high symmetry points along the path
+        bands (BandsBASE): Object containing band structure data
+        doss (DOSBASE): Object containing density of states data
+        k_labels (list | None): List of labels for high symmetry points along the path
         color_bd (str): Color for the band structure plot
-        color_doss (str or list or tuple): Color(s) for the density of states plot
+        color_doss (str | list | tuple): Color(s) for the density of states plot
         fermi (str): Color for the Fermi level lines
-        energy_range (list or None): Range of energy values for the y-axis
+        energy_range (list | None): Range of energy values for the y-axis
         linestl_bd (str): Linestyle for the band structure plot
-        linestl_doss (str or list or tuple or None): Linestyle(s) for the density of states plot
+        linestl_doss (str | list | tuple | None): Linestyle(s) for the density of states plot
         linewidth (float): Width of the lines
-        prj (list or None): List of projection indices for plotting specific projections
+        prj (list | None): List of projection indices for plotting specific projections
         figsize (tuple): Figure size (width, height)
-        labels (str or list or tuple or None): Labels for the density of states plot
-        dos_range (list or None): Range of the density of states plot
-        title (str or None): Title of the figure
+        labels (str | list | tuple | None): Labels for the density of states plot
+        dos_range (list | None): Range of the density of states plot
+        title (str | None): Title of the figure
         dos_beta (str): Beta state for the density of states plot ('up' or 'down')
         legend (bool): Enables or disables the legend
 
     Returns:
-        fig (object): Figure object containing the plotted data
+        fig (matplotlib.figure.Figure): Figure object containing the plotted data
+        ax (numpy.ndarray): The two axes, bands then density of states.
     """
     import warnings
     from os import path
