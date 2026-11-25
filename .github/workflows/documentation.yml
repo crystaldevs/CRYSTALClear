@@ -45,6 +45,10 @@ jobs:
           sudo apt-get install -y pandoc
           pip install -r requirements.txt
       - name: Build HTML
+        # The release notes page is read from the GitHub API as the site is
+        # built (docs_src/conf.py); the job's own token lifts the rate limit.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd docs_src/
           make html

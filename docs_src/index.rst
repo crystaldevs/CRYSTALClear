@@ -11,6 +11,7 @@
    usage
    notebooks/index
    cite
+   release-notes
 
 .. toctree::
    :hidden:
