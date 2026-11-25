@@ -32,14 +32,13 @@ class Crystal_input(Crystal_inputBASE):
         Args:
             file (str): CIF file.
             keyword (str): "EXTERNAL" or "CRYSTAL".
-            zconv (list[list[int, int]]): 1st element: The **index** of atom;
+            zconv (list[list[int]]): 1st element: The **index** of atom;
                 2nd element: The new conventional atomic number. Atoms of the
                 irreducible unit is required.
             pbc (list[bool]): Valid only if ``keyword = EXTERNAL``. Force to remove
                 periodic boundary conditions along x, y, z axis.
             gui_name (str): Valid only if ``keyword = EXTERNAL``. Gui file's name.
-            #pymatgen.symmetry.analyzer.SpacegroupAnalyzer>`_ object.
-            **kwargs: Passed to Pymatgen `SpacegroupAnalyzer <https://pymatgen.org/pymatgen.symmetry.html
+            **kwargs: Passed to Pymatgen `SpacegroupAnalyzer <https://pymatgen.org/pymatgen.symmetry.html#pymatgen.symmetry.analyzer.SpacegroupAnalyzer>`_ object.
         """
         import re
 
@@ -121,7 +120,7 @@ class Crystal_input(Crystal_inputBASE):
         Define basis set from a string. A wrapper of BasisSetBASE.from_string.
 
         Args:
-            bs_str (str)
+            bs_str (str): The basis set.
             fmt (str): Format string. Consistent with BSE python API.
         """
         from CRYSTALClear.base.basisset import BasisSetBASE
@@ -157,7 +156,7 @@ class Crystal_output:
         Args:
             output_name (str): Name of the output file.
         Returns:
-            self (Crystal_output)
+            self (Crystal_output): The output, read.
         """
         import re
         import sys
@@ -247,8 +246,8 @@ class Crystal_output:
         Returns:
             self.code_version (dict): New attribute. Keys:
 
-                * 'code' (str|None): e.g. 'CRYSTAL23'.
-                * 'version' (str|None): the release line under the banner, e.g.
+                * 'code' (str | None): e.g. 'CRYSTAL23'.
+                * 'version' (str | None): the release line under the banner, e.g.
                   'public : 1.0.1 - Feb 1st, 2017'.
         """
         import re
@@ -280,15 +279,15 @@ class Crystal_output:
         Returns:
             self.hamiltonian (dict): New attribute. Keys:
 
-                * 'method' (str|None): 'DFT' or 'Hartree-Fock'.
-                * 'exchange' (str|None): exchange functional, e.g.
+                * 'method' (str | None): 'DFT' or 'Hartree-Fock'.
+                * 'exchange' (str | None): exchange functional, e.g.
                   'PERDEW-BURKE-ERNZERHOF'. None for Hartree-Fock.
-                * 'correlation' (str|None): correlation functional.
-                * 'hybrid_exchange' (float|None): percentage of Fock exchange,
+                * 'correlation' (str | None): correlation functional.
+                * 'hybrid_exchange' (float | None): percentage of Fock exchange,
                   for hybrid functionals only.
-                * 'shell_type' (str|None): e.g. 'RESTRICTED CLOSED SHELL'.
+                * 'shell_type' (str | None): e.g. 'RESTRICTED CLOSED SHELL'.
                 * 'spin_polarized' (bool): whether the run is unrestricted.
-                * 'dispersion' (str|None): dispersion correction, e.g.
+                * 'dispersion' (str | None): dispersion correction, e.g.
                   'DFT-D3(BJ)'.
         """
         import re
@@ -350,11 +349,11 @@ class Crystal_output:
         Returns:
             self.kpoint_info (dict): New attribute. Keys:
 
-                * 'shrink' (list[int]|None): Monkhorst-Pack shrinking factors.
-                * 'n_kpoints_ibz' (int|None): k points in the irreducible
+                * 'shrink' (list[int] | None): Monkhorst-Pack shrinking factors.
+                * 'n_kpoints_ibz' (int | None): k points in the irreducible
                   Brillouin zone.
-                * 'gilat_shrink' (int|None): shrinking factor of the Gilat net.
-                * 'n_kpoints_gilat' (int|None): k points of the Gilat net.
+                * 'gilat_shrink' (int | None): shrinking factor of the Gilat net.
+                * 'n_kpoints_gilat' (int | None): k points of the Gilat net.
 
                 All None for a molecule, which has no k point sampling.
         """
@@ -392,8 +391,8 @@ class Crystal_output:
 
         Returns:
             self.basis_info (dict): New attribute, with None for anything the
-            output does not report. Keys: 'n_atoms', 'n_shells', 'n_ao',
-            'n_electrons', 'n_core_electrons', 'n_symmops' (all int|None).
+                output does not report. Keys: 'n_atoms', 'n_shells', 'n_ao',
+                'n_electrons', 'n_core_electrons', 'n_symmops' (all int | None).
         """
         import re
 
@@ -430,13 +429,13 @@ class Crystal_output:
         Returns:
             self.scf_settings (dict): New attribute. Keys:
 
-                * 'max_cycles' (int|None): SCF cycle limit.
-                * 'toldee' (int|None): n in the 10**-n energy convergence
+                * 'max_cycles' (int | None): SCF cycle limit.
+                * 'toldee' (int | None): n in the 10**-n energy convergence
                   threshold.
-                * 'tolinteg' (list[int]|None): the five truncation tolerances
+                * 'tolinteg' (list[int] | None): the five truncation tolerances
                   T1-T5, as positive exponents (CRYSTAL prints them 10**-n but
                   signs the columns inconsistently).
-                * 'grid_points' (int|None): points in the DFT integration grid.
+                * 'grid_points' (int | None): points in the DFT integration grid.
                   None for Hartree-Fock.
         """
         import re
@@ -490,9 +489,9 @@ class Crystal_output:
 
         Returns:
             self.run_type (list[str]): New attribute, in the order the tasks
-            run rather than the order they appear in the file. Any of
-            'OPTGEOM', 'EOS', 'ELASTCON', 'FREQCALC', 'DISPERSI', 'QHA',
-            'SCANMODE', 'ANHARM', 'ANHAPES', 'VSCF', 'VCI', 'VPT2', 'CPHF'.
+                run rather than the order they appear in the file. Any of
+                'OPTGEOM', 'EOS', 'ELASTCON', 'FREQCALC', 'DISPERSI', 'QHA',
+                'SCANMODE', 'ANHARM', 'ANHAPES', 'VSCF', 'VCI', 'VPT2', 'CPHF'.
         """
         import re
 
@@ -543,8 +542,8 @@ class Crystal_output:
 
         Returns:
             self.calculation_info (dict): New attribute. The union of the keys
-            documented by those methods, plus 'code', 'version', 'run_type'
-            and 'terminated' (bool, whether the run ended normally).
+                documented by those methods, plus 'code', 'version', 'run_type'
+                and 'terminated' (bool, whether the run ended normally).
         """
         info = {'terminated': self.terminated}
 
@@ -636,7 +635,7 @@ class Crystal_output:
                 SpacegroupAnalyzer object.
 
         Returns:
-            self.geometry (Structure | Molecule): A pymatgen Structure or
+            self.geometry (pymatgen.core.Structure | pymatgen.core.Molecule): A pymatgen Structure or
                 molecule object.
         """
         import os
@@ -744,11 +743,15 @@ class Crystal_output:
         return self.geometry
 
     def get_last_geom(self, write_gui_file=False, symm_info='initial'):
-        """ Return the last optimised geometry.
+        """
+        Return the last optimised geometry.
 
         Returns:
-            self.last_geom (list): To be documented.
-
+            self.last_geom (list): For a periodic system, the cell lengths, the
+                cell angles, the volume, the lattice matrix, the conventional
+                atomic numbers and the Cartesian coordinates of the atoms. For
+                a molecule, a formal 500 Å cubic lattice matrix, the atomic
+                numbers and the coordinates.
         """
         struc = self.get_geometry(
             initial=False, write_gui=write_gui_file, symmetry=symm_info)
@@ -774,7 +777,7 @@ class Crystal_output:
             initial (bool): Read the initial or last lattice. Useful in
                 case of geometry optimization.
         Returns:
-            self.lattice (np.ndarray): Lattice of the system.
+            self.lattice (numpy.ndarray): Lattice of the system.
         """
         import re
         import warnings
@@ -801,7 +804,7 @@ class Crystal_output:
             initial (bool): Read the initial or last lattice. Useful in
                 case of geometry optimization.
         Returns:
-            self.reciprocal_lattice (np.ndarray): Lattice of the system.
+            self.reciprocal_lattice (numpy.ndarray): Lattice of the system.
         """
         import warnings
 
@@ -976,8 +979,8 @@ class Crystal_output:
         Get cell transformation matrix
 
         Returns:
-            self.trans_matrix (np.ndarray): 3\*3 array of supercell
-                expansion matrix
+            self.trans_matrix (numpy.ndarray): Supercell expansion matrix, shape
+                (3, 3).
         """
         import re
 
@@ -1002,10 +1005,10 @@ class Crystal_output:
         Reorder atoms in the supercell to match CRYSTAL's convention.
 
         Args:
-            pstruc (Structure): The primitive cell from ``get_pcel``.
+            pstruc (pymatgen.core.Structure): The primitive cell from ``get_pcel``.
             tolerance (float): How far, in Å, a site may be from the listed atom.
         Returns:
-            Structure: ``pstruc``, reordered if it could be.
+            pstruc (pymatgen.core.Structure): ``pstruc``, reordered if it could be.
         """
         import numpy as np
         from pymatgen.core.structure import Structure
@@ -1079,7 +1082,7 @@ class Crystal_output:
                 SpacegroupAnalyzer object.
 
         Returns:
-            self.primitive_geometry (Structure | Molecule): A pymatgen
+            self.primitive_geometry (pymatgen.core.Structure | pymatgen.core.Molecule): A pymatgen
                 Structure or molecule object.
         """
         import os
@@ -1146,7 +1149,7 @@ class Crystal_output:
             initial (bool): Read the initial or last lattice. Useful in
                 case of geometry optimization.
         Returns:
-            self.primitive_lattice (np.ndarray): Lattice of the system.
+            self.primitive_lattice (numpy.ndarray): Lattice of the system.
         """
         import warnings
 
@@ -1170,7 +1173,7 @@ class Crystal_output:
             initial (bool): Read the initial or last lattice. Useful in
                 case of geometry optimization.
         Returns:
-            self.primitive_reciprocal_lattice (np.ndarray): Lattice of the system.
+            self.primitive_reciprocal_lattice (numpy.ndarray): Lattice of the system.
         """
         import warnings
 
@@ -1191,9 +1194,10 @@ class Crystal_output:
 
         Args:
             return_multiplicity (bool, optional): Return multiplicity
-            information (default is False).
+                information (default is False).
+
         Returns:
-            list or str: Configuration analysis if available, or a warning message
+            analysis (list | str): Configuration analysis if available, or a warning message
         """
         import re
 
@@ -1284,8 +1288,8 @@ class Crystal_output:
                 (energy,gradient, displacement) / SCF is returned.
 
         Returns:
-            self (Crystal_output): New attributes listed below
-            self.final_energy (float) The converged energy of SCF / Opt. Unit: eV
+            self (Crystal_output): New attributes listed below.
+            self.final_energy (float): The converged energy of SCF / Opt. Unit: eV
 
         For other attributes, see ``get_scf_convergence`` and
         ``get_opt_convergence`` methods on the same page.
@@ -1347,13 +1351,13 @@ class Crystal_output:
                 opt. The "ONELOG'" CRYSTAL keyword is needed.
 
         Returns:
-            self (Crystal_output): New attributes listed below
-            self.scf_cycles (int | array): Number of cycles. Array if
+            self (Crystal_output): New attributes listed below.
+            self.scf_cycles (int | numpy.ndarray): Number of cycles. Array if
                 ``all_cycles=True``.
             self.scf_status (str | list): "terminated", "converged",
                 "too many cycles" and "unknown". List if ``all_cycles=True``.
-            self.scf_energy (array): SCF energy convergence. Unit: eV
-            self.scf_deltae (array): Energy difference. Unit: eV
+            self.scf_energy (numpy.ndarray): SCF energy convergence. Unit: eV
+            self.scf_deltae (numpy.ndarray): Energy difference. Unit: eV
         """
         import numpy as np
 
@@ -1397,9 +1401,9 @@ class Crystal_output:
             history (bool): Whether to read the convergence history of Fermi energy.
 
         Returns:
-            self.fermi_energy (float | array): Fermi energy of the system. For
-                spin-polarized insulating systems, ``self.fermi_energy`` would
-                be either a 2\*1 array (``history=False``) or a nCYC\*2 array
+            self.fermi_energy (float | numpy.ndarray): Fermi energy of the system. For
+                spin-polarized insulating systems, ``self.fermi_energy`` is an
+                array of shape (2,) (``history=False``) or (ncyc, 2)
                 (``history=True``).
         """
         from CRYSTALClear.base.crysout import SCFBASE
@@ -1419,10 +1423,9 @@ class Crystal_output:
             history (bool): Whether to read the convergence history of band gap.
 
         Returns:
-            self.band_gap (float | array): Band gap of the system. For
-                spin-polarized systems, ``self.band_gap`` would be either a
-                2\*1 array (``history=False``) or a nCYC\*2 array
-                (``history=True``).
+            self.band_gap (float | numpy.ndarray): Band gap of the system. For
+                spin-polarized systems, ``self.band_gap`` is an array of shape
+                (2,) (``history=False``) or (ncyc, 2) (``history=True``).
         """
         from CRYSTALClear.base.crysout import SCFBASE
 
@@ -1438,8 +1441,9 @@ class Crystal_output:
         Return the atomic Mulliken charges (PPAN keyword in input).
 
         Returns:
-            self.mulliken_charges (array): natom\*1 for non spin-polarised systems.
-                natom\*3 for spin-polarised systems. [total, :math:`alpha`, :math:`beta`].
+            self.mulliken_charges (numpy.ndarray): Shape (natom,) for non
+                spin-polarised systems, (natom, 3) for spin-polarised ones:
+                [total, :math:`alpha`, :math:`beta`].
         """
         import re
         import warnings
@@ -1512,7 +1516,7 @@ class Crystal_output:
         """Deprecated. Returns the energy for each opt step.
 
         Returns:
-            self.opt_energy (array): Energy for each optimization step.
+            self.opt_energy (numpy.ndarray): Energy for each optimization step.
         """
         import warnings
 
@@ -1548,17 +1552,18 @@ class Crystal_output:
                 SpacegroupAnalyzer object.
 
         Returns:
-            self (Crystal_output): New attributes listed below
+            self (Crystal_output): New attributes listed below.
             self.opt_cycles (int): Number of cycles.
             self.opt_status (str): "terminated", "converged", "failed" and
-            "unknown"
-            self.opt_energy (array): Total energy convergence. Unit: eV
-            self.opt_deltae (array): Total energy difference. Unit: eV
-            self.opt_geometry (list): Pymatgen structure at each step.
-            self.opt_maxgrad (array): Maximum gradient convergence. Unit: Hartree/Bohr
-            self.opt_rmsgrad (array): RMS gradient convergence. Unit: Hartree/Bohr
-            self.opt_maxdisp (array): Maximum displacement convergence. Unit: Bohr
-            self.opt_rmsdisp (array): RMS displacement convergence. Unit: Bohr
+                "unknown"
+            self.opt_energy (numpy.ndarray): Total energy convergence. Unit: eV
+            self.opt_deltae (numpy.ndarray): Total energy difference. Unit: eV
+            self.opt_geometry (list[pymatgen.core.Structure]): Pymatgen
+                structure at each step.
+            self.opt_maxgrad (numpy.ndarray): Maximum gradient convergence. Unit: Hartree/Bohr
+            self.opt_rmsgrad (numpy.ndarray): RMS gradient convergence. Unit: Hartree/Bohr
+            self.opt_maxdisp (numpy.ndarray): Maximum displacement convergence. Unit: Bohr
+            self.opt_rmsdisp (numpy.ndarray): RMS displacement convergence. Unit: Bohr
         """
         import os
         import re
@@ -1736,11 +1741,13 @@ class Crystal_output:
                 only.
 
         Returns:
-            self (Crystal_output): New attributes listed below
-            self.forces_atoms (array): natom\*3 array. Atomic forces. Unit: Hartree/Bohr
-            self.forces_cell (array): 3\*3 array. Cell forces, 3D only. Unit: Hartree/Bohr
-            self.opt_maxgrad (array): Maximum gradient convergence. Unit: Hartree/Bohr
-            self.opt_rmsgrad (array): RMS gradient convergence. Unit: Hartree/Bohr
+            self (Crystal_output): New attributes listed below.
+            self.forces_atoms (numpy.ndarray): Atomic forces, shape (natom, 3).
+                Unit: Hartree/Bohr
+            self.forces_cell (numpy.ndarray): Cell forces, shape (3, 3), 3D
+                only. Unit: Hartree/Bohr
+            self.opt_maxgrad (numpy.ndarray): Maximum gradient convergence. Unit: Hartree/Bohr
+            self.opt_rmsgrad (numpy.ndarray): RMS gradient convergence. Unit: Hartree/Bohr
         """
         import re
         import warnings
@@ -1816,24 +1823,30 @@ class Crystal_output:
             space.
 
         Returns:
-            self (Crystal_output): New attributes listed below
-            self.edft (np.array): :math:`E_{0}` Energy with empirical
+            self (Crystal_output): New attributes listed below.
+            self.edft (numpy.ndarray): :math:`E_{0}` Energy with empirical
                 correction. Unit: kJ/mol.
             self.nqpoint (int): Number of Q points.
-            self.qpoint (list[list[array[float], float]]): A nqpoint\*1 list of
-                2\*1 list whose first element is a 3\*1 array of fractional
-                coordinates and the second is its weight.
+            self.qpoint (list): One [coordinates, weight] pair per set of
+                frequencies, in the same order, Gamma included: the fractional
+                coordinates as a numpy.ndarray of shape (3,), the weight as a
+                float.
+            self.qpath (list): For a dispersion along a path (BANDS), one
+                [start, end, denominator] triple per segment of it: its start
+                and its end as integer numpy.ndarrays of shape (3,), in units
+                of the denominator, an int. Empty otherwise.
             self.nmodes (int): Number of vibrational modes.
-            self.frequency (np.array): nqpoint\*nmode array of harmonic vibrational
-                frequency. Unit: THz.
-            self.intens (np.array): Harmonic intensity. Unit: km/mol.
-            self.IR (np.array): Boolean values specifying whether the mode is
-                IR active.
-            self.Raman (np.array): Boolean values specifying whether the mode is
-                Raman active.
-            self.eigenvector (np.array): Valid if ``read_eigvt = True``. 3D
-                array containing normal modes for each Q point (Q point; normal
-                mode; components). Normalized to 1.
+            self.frequency (numpy.ndarray): Harmonic vibrational frequencies,
+                shape (nqpoint, nmode). Unit: THz.
+            self.intens (numpy.ndarray): Harmonic intensities of the Gamma
+                modes, shape (nmode,). Unit: km/mol.
+            self.IR (list[bool]): Whether each Gamma mode is IR active.
+            self.Raman (list[bool]): Whether each Gamma mode is Raman active.
+            self.eigenvector (numpy.ndarray): Normal modes, complex, shape
+                (nqpoint, nmode, 3natom). Normalized to 1. Valid if
+                ``read_eigvt = True`` and the output prints them (a dispersion
+                along a path does only with the MODES keyword); empty
+                otherwise.
         """
 
         import re
@@ -1846,9 +1859,18 @@ class Crystal_output:
         is_freq = False
         is_gamma = True
         found_anti = True
+        shrink = np.ones(3)
+        q_header = re.compile(
+            r'DISPERSION K POINT NUMBER\s+\d+\s+COORD:\s*[A-Z]?\(\s*(-?\d+)\s+(-?\d+)\s+(-?\d+)\s*\)'
+            r'\s+WEIGHT:\s*(\S+)')
+        mode_start = re.compile(r'^\s+MODES\s+EIGV\s+FREQUENCIES\s+IRREP|^\s*\d+-\s*\d+\s')
+        segment = re.compile(
+            r'FROM K\s*\(\s*(-?\d+)\s+(-?\d+)\s+(-?\d+)\s*\)\s*TO K\s*\(\s*(-?\d+)\s+(-?\d+)\s+(-?\d+)'
+            r'\s*\)\s*WITH DENOMINATOR\s+(\d+)')
         self.edft = []
         self.nqpoint = 0
         self.qpoint = []
+        self.qpath = []
         self.frequency = []
         self.intens = []
         self.IR = []
@@ -1866,8 +1888,12 @@ class Crystal_output:
                 countline += 1
                 continue
 
+            # One shrinking factor per direction: a SCELPHONO supercell need
+            # not be cubic.
             if re.search(r'\*.*WITH SHRINKING FACTORS:', line):
-                shrink = int(line.strip().split()[6])
+                factors = re.findall(r'IS\d\s*=\s*(\d+)', line)
+                if len(factors) == 3:
+                    shrink = np.array(factors, dtype=float)
                 countline += 1
                 continue
 
@@ -1878,31 +1904,46 @@ class Crystal_output:
                 countline += 1
                 continue
 
-            # Q point info + frequency
-            # Dispersion
-            elif re.match(r'^.+EXPRESSED IN UNITS\s+OF DENOMINATOR', line):
-                shrink = int(line.strip().split()[-1])
+            # A segment of a dispersion along a path
+            elif 'WITH DENOMINATOR' in line and segment.search(line):
+                numbers = [int(n) for n in segment.search(line).groups()]
+                self.qpath.append([np.array(numbers[:3]), np.array(numbers[3:6]), numbers[6]])
                 countline += 1
                 continue
 
-            elif (re.match(r'\s+DISPERSION K POINT NUMBER', line) and
-                  (self.data[countline].split()[7:10] != ['0', '0', '0'])):
+            # Q point info + frequency
+            # Dispersion
+            elif re.match(r'^.+EXPRESSED IN UNITS\s+OF DENOMINATOR', line):
+                shrink = np.full(3, float(line.strip().split()[-1]))
+                countline += 1
+                continue
 
-                coord = np.array(line.strip().split()[7:10], dtype=float)
-                weight = float(line.strip().split()[-1])
-                self.qpoint.append([coord / shrink, weight])
+            # Every sampled q, Gamma included. Its frequencies follow the
+            # header: at once along a path (BANDS), after a banner at the Gamma
+            # of a SCELPHONO run, where they come with IR and Raman activities.
+            elif re.match(r'\s+DISPERSION K POINT NUMBER', line) and q_header.search(line):
+                header = q_header.search(line)
+                coord = np.array(header.groups()[:3], dtype=float)
+                self.qpoint.append([coord / shrink, float(header.group(4))])
                 self.nqpoint += 1
-                countline += 2
-                # Read phonons
+                countline += 1
+                while countline < self.eoo and not mode_start.match(self.data[countline]):
+                    countline += 1
                 phonon = PhononBASE.readmode_basic(
                     self.data[:self.eoo], countline)
                 countline = phonon[0]
                 self.frequency.append(phonon[1])
+                if not np.any(coord) and is_gamma:
+                    self.intens = np.array(phonon[2])
+                    self.IR = phonon[3]
+                    self.Raman = phonon[4]
+                    is_gamma = False
 
             # Gamma point
             elif re.match(r'^\s+MODES\s+EIGV\s+FREQUENCIES\s+IRREP', line) and is_gamma:
 
                 countline += 2
+                self.qpoint.append([np.zeros(3), 1.])
                 self.nqpoint += 1
                 # Read phonons
                 phonon = PhononBASE.readmode_basic(
@@ -1984,9 +2025,10 @@ class Crystal_output:
         elif str(eigvt_amplitude).lower() == 'classical-rev':
             struc = self.get_geometry(initial=False, write_gui=False)
 
-        # To a specific value
+        # To a specific value, for the eigenvectors there are: none when they
+        # were not read, or not printed.
         else:
-            for idx_q in range(self.nqpoint):
+            for idx_q in range(len(self.eigenvector)):
                 self.eigenvector[idx_q] = PhononBASE.normalize_eigenvector(
                     self.eigenvector[idx_q],
                     amplitude=float(eigvt_amplitude),
@@ -2024,7 +2066,9 @@ class Crystal_output:
         Extract harmonic IR spectrum from CRYSTAL output.
 
         Returns:
-            self.IR_HO_0K (np.array): 2D array containing harmonic IR frequency and intensities computed at 0 K.
+            self (Crystal_output): New attributes listed below.
+            self.IR_HO_0K (numpy.ndarray): Harmonic IR frequency and intensity
+                of each mode, computed at 0 K, shape (nmode, 2).
         """
 
         import numpy as np
@@ -2042,10 +2086,17 @@ class Crystal_output:
 
         Returns:
             self (Crystal_output): New attributes listed below.
-            self.Ram_HO_0K_tot (np.array): 2D array containing harmonic Raman frequency and intensities (total) computed at 0 K.
-            self.Ram_HO_0K_par (np.array): 2D array containing harmonic Raman frequency and intensities (parallel) computed at 0 K.
-            self.Ram_HO_0K_per (np.array): 2D array containing harmonic Raman frequency and intensities (perpendicular) computed at 0 K.
-            self.Ram_HO_0K_comp_xx (np.array): 2D array containing harmonic Raman frequency and intensities (xx component) computed at 0 K.
+            self.Ram_HO_0K_tot (numpy.ndarray): Harmonic Raman frequency and
+                intensity (total) of each mode, computed at 0 K, shape (nmode, 2).
+            self.Ram_HO_0K_par (numpy.ndarray): Harmonic Raman frequency and
+                intensity (parallel) of each mode, computed at 0 K, shape
+                (nmode, 2).
+            self.Ram_HO_0K_per (numpy.ndarray): Harmonic Raman frequency and
+                intensity (perpendicular) of each mode, computed at 0 K, shape
+                (nmode, 2).
+            self.Ram_HO_0K_comp_xx (numpy.ndarray): Harmonic Raman frequency
+                and intensity (xx component) of each mode, computed at 0 K,
+                shape (nmode, 2).
 
         Note:
             Please, note that for the sake of brevity, only the xx component attributes have been listed here, but the yy, zz, xy, xz, yz components are available as well.
@@ -2141,18 +2192,20 @@ class Crystal_output:
         cell.
 
         Returns:
-            self (Crystal_output): New attributes listed below. All empty
-            arrays when the output has no ADP section.
-            self.adp_temperature (np.array): ntemp temperatures. Unit: K.
-            self.adp_active_modes (np.array): ntemp counts of the modes
-                included at each temperature.
-            self.adp (np.array): ntemp\\*natom\\*3\\*3 ADP tensors, cartesian.
-                Unit: Angstrom^2.
-            self.adp_principal (np.array): ntemp\\*natom\\*3 principal values of
-                each displacement ellipsoid. Unit: Angstrom^2.
-            self.adp_axes (np.array): ntemp\\*natom\\*3\\*3 rotation tensors,
-                whose rows are the ellipsoid's principal axes in cartesian
-                coordinates.
+            self (Crystal_output): New attributes listed below, all empty
+                arrays when the output has no ADP section.
+            self.adp_temperature (numpy.ndarray): Temperatures, shape (ntemp,).
+                Unit: K.
+            self.adp_active_modes (numpy.ndarray): Count of the modes included
+                at each temperature, shape (ntemp,).
+            self.adp (numpy.ndarray): ADP tensors, cartesian, shape (ntemp,
+                natom, 3, 3). Unit: Angstrom^2.
+            self.adp_principal (numpy.ndarray): Principal values of each
+                displacement ellipsoid, shape (ntemp, natom, 3). Unit:
+                Angstrom^2.
+            self.adp_axes (numpy.ndarray): Rotation tensors, whose rows are the
+                ellipsoid's principal axes in cartesian coordinates, shape
+                (ntemp, natom, 3, 3).
         """
         import re
 
@@ -2267,9 +2320,9 @@ class Crystal_output:
 
         Returns:
             self (Crystal_output): New attributes listed below.
-            self.PES_single(np.array): 2D array containing single-mode anharmonic force constants (col 1: mode; cols 2-3: cubic and quartic single-mode terms of the PES, respectively).
-            self.PES_couple(np.array): 2D array containing anharmonic force constants coupling two phonon modes (col 1: mode I; col 2: mode J; cols 3-7: two-mode anharmonic force constants of type IIJ, IJJ, IIIJ, IJJJ and IIJJ, respectively.)
-            self.PES_triplet(np.array): 2D array containing anharmonic force constant coupling three phonon modes (col 1: mode I; col 2: mode J; col 3: mode K; cols 4-7: three-mode anharmonic force constants of type IJK, IIJK, IJJK and IJKK, respectively)
+            self.PES_single (numpy.ndarray): 2D array containing single-mode anharmonic force constants (col 1: mode; cols 2-3: cubic and quartic single-mode terms of the PES, respectively).
+            self.PES_couple (numpy.ndarray): 2D array containing anharmonic force constants coupling two phonon modes (col 1: mode I; col 2: mode J; cols 3-7: two-mode anharmonic force constants of type IIJ, IJJ, IIIJ, IJJJ and IIJJ, respectively.)
+            self.PES_triplet (numpy.ndarray): 2D array containing anharmonic force constant coupling three phonon modes (col 1: mode I; col 2: mode J; col 3: mode K; cols 4-7: three-mode anharmonic force constants of type IJK, IIJK, IJJK and IJKK, respectively)
         """
 
         import re
@@ -2336,23 +2389,23 @@ class Crystal_output:
 
         Returns:
             self (Crystal_output): New attributes listed below.
-            self.VCI_label(np.array): Label of each state, as printed by
+            self.VCI_label (numpy.ndarray): Label of each state, as printed by
                 CRYSTAL. It restarts from 1 in every symmetry block, so it
                 identifies a state only together with self.VCI_irrep.
-            self.VCI_state(np.array): 3D array of the printed contributions to
+            self.VCI_state (numpy.ndarray): 3D array of the printed contributions to
                 each state (axis 0), holding their configuration index (axis 1
                 index 0) and the corresponding VCI coefficient (axis 1 index
                 1). States printing fewer contributions than the longest one
                 are padded with a null configuration index.
-            self.VCI_energy(np.array): Energy of each state relative to the
+            self.VCI_energy (numpy.ndarray): Energy of each state relative to the
                 zero point energy, in cm^-1.
             self.VCI_nconfs(int): Total number of configurations.
-            self.VCI_list_conf(np.array): 2D array of the occupation number
+            self.VCI_list_conf (numpy.ndarray): 2D array of the occupation number
                 vector of every configuration.
             self.VCI_basis(str): Zeroth-order basis the VCI expansion is built
                 on, either 'HO' (VCI@HO) or 'VSCF' (VCI@VSCF).
             self.VCI_zpe(float): Vibrational zero point energy in cm^-1.
-            self.VCI_irrep(np.array): Irrep the VCI matrix block each state
+            self.VCI_irrep (numpy.ndarray): Irrep the VCI matrix block each state
                 comes from, 0 when symmetry is not exploited.
             self.VCI_sym_conf(dict): Configuration list of each irrep, keyed by
                 irrep. The configuration indices held by self.VCI_state are
@@ -2510,43 +2563,43 @@ class Crystal_output:
 
         Returns:
             self (Crystal_output): New attributes listed below.
-            self.IR_HO_0K (np.array): 2D array containing harmonic IR frequency and intensities computed at 0 K.
-            self.IR_HO_T (np.array): 2D array containing harmonic IR frequency and intensities computed at temperature T.
-            self.IR_VSCF_0K (np.array): 2D array containing VSCF IR frequency and intensities computed at 0 K.
-            self.IR_VSCF_T (np.array): 2D array containing VSCF IR frequency and intensities computed at temperature T.
-            self.IR_VCI_0K (np.array): 2D array containing VCI IR frequency and intensities computed at 0 K.
-            self.IR_VCI_T (np.array): 2D array containing VCI IR frequency and intensities computed at temperature T.
+            self.IR_HO_0K (numpy.ndarray): 2D array containing harmonic IR frequency and intensities computed at 0 K.
+            self.IR_HO_T (numpy.ndarray): 2D array containing harmonic IR frequency and intensities computed at temperature T.
+            self.IR_VSCF_0K (numpy.ndarray): 2D array containing VSCF IR frequency and intensities computed at 0 K.
+            self.IR_VSCF_T (numpy.ndarray): 2D array containing VSCF IR frequency and intensities computed at temperature T.
+            self.IR_VCI_0K (numpy.ndarray): 2D array containing VCI IR frequency and intensities computed at 0 K.
+            self.IR_VCI_T (numpy.ndarray): 2D array containing VCI IR frequency and intensities computed at temperature T.
 
-            self.Ram_HO_0K_tot (np.array): 2D array containing harmonic Raman frequency and intensities (total) computed at 0 K.
-            self.Ram_HO_0K_per (np.array): 2D array containing harmonic Raman frequency and intensities (perpendicular component ) computed at temperature 0 K.
-            self.Ram_HO_0K_par (np.array): 2D array containing harmonic Raman frequency and intensities (parallel component ) computed at temperature 0 K.
-            self.Ram_HO_T_tot (np.array): 2D array containing harmonic Raman frequency and intensities (total) computed at temperature T.
-            self.Ram_HO_T_per (np.array): 2D array containing harmonic Raman frequency and intensities (perpendicular component ) computed at temperature T.
-            self.Ram_HO_T_par (np.array): 2D array containing harmonic Raman frequency and intensities (parallel component ) computed at temperature T.
+            self.Ram_HO_0K_tot (numpy.ndarray): 2D array containing harmonic Raman frequency and intensities (total) computed at 0 K.
+            self.Ram_HO_0K_per (numpy.ndarray): 2D array containing harmonic Raman frequency and intensities (perpendicular component ) computed at temperature 0 K.
+            self.Ram_HO_0K_par (numpy.ndarray): 2D array containing harmonic Raman frequency and intensities (parallel component ) computed at temperature 0 K.
+            self.Ram_HO_T_tot (numpy.ndarray): 2D array containing harmonic Raman frequency and intensities (total) computed at temperature T.
+            self.Ram_HO_T_per (numpy.ndarray): 2D array containing harmonic Raman frequency and intensities (perpendicular component ) computed at temperature T.
+            self.Ram_HO_T_par (numpy.ndarray): 2D array containing harmonic Raman frequency and intensities (parallel component ) computed at temperature T.
 
-            self.Ram_VSCF_0K_tot (np.array): 2D array containing VSCF Raman frequency and intensities (total) computed at 0 K. self.Ram_VSCF_0K_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at 0 K.
-            self.Ram_VSCF_0K_par (np.array): 2D array containing VSCF Raman frequency and intensities (parallel component) computed at 0 K.
-            self.Ram_VSCF_T_tot (np.array): 2D array containing VSCF Raman frequency and intensities (total) computed at temperature T. self.Ram_VSCF_T_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at temperature T.
-            self.Ram_VSCF_T_par (np.array): 2D array containing VSCF Raman frequency and intensities (parallel component) computed at temperature T.
+            self.Ram_VSCF_0K_tot (numpy.ndarray): 2D array containing VSCF Raman frequency and intensities (total) computed at 0 K. self.Ram_VSCF_0K_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at 0 K.
+            self.Ram_VSCF_0K_par (numpy.ndarray): 2D array containing VSCF Raman frequency and intensities (parallel component) computed at 0 K.
+            self.Ram_VSCF_T_tot (numpy.ndarray): 2D array containing VSCF Raman frequency and intensities (total) computed at temperature T. self.Ram_VSCF_T_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at temperature T.
+            self.Ram_VSCF_T_par (numpy.ndarray): 2D array containing VSCF Raman frequency and intensities (parallel component) computed at temperature T.
 
-            self.Ram_VPT2_0K_tot (np.array): 2D array containing VPT2 Raman frequency and intensities (total) computed at 0 K. self.Ram_VPT2_0K_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at 0 K.
-            self.Ram_VPT2_0K_par (np.array): 2D array containing VPT2 Raman frequency and intensities (parallel component) computed at 0 K.
-            self.Ram_VPT2_T_tot (np.array): 2D array containing VPT2 Raman frequency and intensities (total) computed at temperature T. self.Ram_VPT2_T_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at temperature T.
-            self.Ram_VPT2_T_par (np.array): 2D array containing VPT2 Raman frequency and intensities (parallel component) computed at temperature T.
+            self.Ram_VPT2_0K_tot (numpy.ndarray): 2D array containing VPT2 Raman frequency and intensities (total) computed at 0 K. self.Ram_VPT2_0K_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at 0 K.
+            self.Ram_VPT2_0K_par (numpy.ndarray): 2D array containing VPT2 Raman frequency and intensities (parallel component) computed at 0 K.
+            self.Ram_VPT2_T_tot (numpy.ndarray): 2D array containing VPT2 Raman frequency and intensities (total) computed at temperature T. self.Ram_VPT2_T_per (array[float]): 2D numpy array containing VSCF Raman frequency and intensities (perpendicular component) computed at temperature T.
+            self.Ram_VPT2_T_par (numpy.ndarray): 2D array containing VPT2 Raman frequency and intensities (parallel component) computed at temperature T.
 
-            self.Ram_VCI_0K_tot (np.array): 2D array containing VCI Raman frequency and intensities (total) computed at 0 K.
-            self.Ram_VCI_0K_per (np.array): 2D array containing VCI Raman frequency and intensities (perpendicular component) computed at 0 K.
-            self.Ram_VCI_0K_par (np.array): 2D array containing VCI Raman frequency and intensities (parallel component) computed at 0 K.
-            self.Ram_VCI_T_tot (np.array): 2D array containing VCI Raman frequency and intensities (total) computed at temperature T.
-            self.Ram_VCI_T_per (np.array): 2D array containing VCI Raman frequency and intensities (perpendicular component) computed at temperature T.
-            self.Ram_VCI_T_par (np.array): 2D array containing VCI Raman frequency and intensities (parallel component) computed at temperature T.
+            self.Ram_VCI_0K_tot (numpy.ndarray): 2D array containing VCI Raman frequency and intensities (total) computed at 0 K.
+            self.Ram_VCI_0K_per (numpy.ndarray): 2D array containing VCI Raman frequency and intensities (perpendicular component) computed at 0 K.
+            self.Ram_VCI_0K_par (numpy.ndarray): 2D array containing VCI Raman frequency and intensities (parallel component) computed at 0 K.
+            self.Ram_VCI_T_tot (numpy.ndarray): 2D array containing VCI Raman frequency and intensities (total) computed at temperature T.
+            self.Ram_VCI_T_per (numpy.ndarray): 2D array containing VCI Raman frequency and intensities (perpendicular component) computed at temperature T.
+            self.Ram_VCI_T_par (numpy.ndarray): 2D array containing VCI Raman frequency and intensities (parallel component) computed at temperature T.
 
-            self.Ram_HO_0K_comp_xx (np.array): 2D array containing harmonic Raman frequency and intensities (xx component) computed at 0 K.
-            self.Ram_HO_T_comp_xx (np.array): 2D array containing harmonic Raman frequency and intensities (xx component) computed at temperature T.
-            self.Ram_VSCF_0K_comp_xx (np.array): 2D array containing VSCF Raman frequency and intensities (xx component) computed at 0 K.
-            self.Ram_VSCF_T_comp_xx (np.array): 2D array containing VSCF Raman frequency and intensities (xx component) computed at temperature T.
-            self.Ram_VCI_0K_comp_xx (np.array): 2D array containing VCI Raman frequency and intensities (xx component) computed at 0 K.
-            self.Ram_VCI_T_comp_xx (np.array): 2D array containing VCI Raman frequency and intensities (xx component) computed at temperature T.
+            self.Ram_HO_0K_comp_xx (numpy.ndarray): 2D array containing harmonic Raman frequency and intensities (xx component) computed at 0 K.
+            self.Ram_HO_T_comp_xx (numpy.ndarray): 2D array containing harmonic Raman frequency and intensities (xx component) computed at temperature T.
+            self.Ram_VSCF_0K_comp_xx (numpy.ndarray): 2D array containing VSCF Raman frequency and intensities (xx component) computed at 0 K.
+            self.Ram_VSCF_T_comp_xx (numpy.ndarray): 2D array containing VSCF Raman frequency and intensities (xx component) computed at temperature T.
+            self.Ram_VCI_0K_comp_xx (numpy.ndarray): 2D array containing VCI Raman frequency and intensities (xx component) computed at 0 K.
+            self.Ram_VCI_T_comp_xx (numpy.ndarray): 2D array containing VCI Raman frequency and intensities (xx component) computed at temperature T.
 
         Note:
             Please, note that for the sake of brevity, only the xx Raman component attributes have been listed here, but the yy, zz, xy, xz, yz components are available as well.
@@ -3224,13 +3277,13 @@ class Crystal_output:
 
         Returns:
             self.rangescan (list[float]): [first, last] displacement of the scan.
-            self.displac (np.array): Displacements the scan was run on.
-            self.anhpot (np.array): Scanned potential, cm^-1.
-            self.harmpot (np.array): Harmonic potential, cm^-1.
+            self.displac (numpy.ndarray): Displacements the scan was run on.
+            self.anhpot (numpy.ndarray): Scanned potential, cm^-1.
+            self.harmpot (numpy.ndarray): Harmonic potential, cm^-1.
             self.energy (list[float]): Anharmonic vibrational states, cm^-1. The first entry is the ground state (the ZPE printed by CRYSTAL).
             self.force_const (list[float]): Derivatives of the potential with respect to xi, cm^-1, ordered by (and indexed by) their order.
             self.harm_freq (float): Harmonic frequency of the scanned mode, cm^-1, negative if the mode is imaginary.
-            self.wf (np.array): Expansion coefficients of the anharmonic wavefunctions over the harmonic basis, (n_basis, n_states).
+            self.wf (numpy.ndarray): Expansion coefficients of the anharmonic wavefunctions over the harmonic basis, (n_basis, n_states).
             self.alpha (float): ALPHA constant printed in ANSCANWF.DAT.
         """
 
@@ -3324,7 +3377,7 @@ class Crystal_output:
         Extracts the elastic tensor from CRYSTAL output.
 
         Returns:
-            self.elatensor(np.array): Symmetrized 6x6 elastic tensor.
+            self.elatensor (numpy.ndarray): Symmetrized 6x6 elastic tensor.
         """
 
         import numpy as np
@@ -3375,15 +3428,15 @@ class Crystal_output:
 
         Returns:
             self (Crystal_output): New attributes listed below.
-            self.VvsE (np.array): numpy array containing the computed volumes and
+            self.VvsE (numpy.ndarray): numpy array containing the computed volumes and
                                   the corresponding energies in the first and second column respectively
-            self.murnaghan (np.array): numpy array containing the fitted thermodynamics
+            self.murnaghan (numpy.ndarray): numpy array containing the fitted thermodynamics
                                        functions with the Murnaghan Equation
-            self.bmurnaghan (np.array): numpy array containing the fitted thermodynamics
+            self.bmurnaghan (numpy.ndarray): numpy array containing the fitted thermodynamics
                                         functions with the Birch-Murnaghan Equation
-            self.pt (np.array): numpy array containing the fitted thermodynamics
+            self.pt (numpy.ndarray): numpy array containing the fitted thermodynamics
                                 functions with the Poirier-Tarantola Equation
-            self.vinet (np.array): numpy array containing the fitted thermodynamics
+            self.vinet (numpy.ndarray): numpy array containing the fitted thermodynamics
                                    functions with the Vinet Equation
         """
 
@@ -3560,13 +3613,14 @@ class Crystal_output:
             value_tol (float, optional): Largest difference between the absolute values (Angstrom or degrees) of an internal coordinate and its symmetry image, which tells apart internal coordinates on the same atoms, e.g. the two components of a linear bending. Default is 1e-3.
 
         Returns:
-            self (crystal_io.Crystal_output): New attributes listed below, and those set by _locmodes_symmetry()
-                self.bonds (pandas.DataFrame): Bonds: atoms, atom labels, cell index of atom 2 (as printed, e.g. '( 0-1 0)'), bond length [Angstrom], local force constant k^a [mdyn/A], local mass m^a [amu], local frequency w^a [cm^-1].
-                self.angle (pandas.DataFrame): Angles: atoms, atom labels, cell indices of atoms 2 and 3, angle [degrees], k^a [mdyn/A], k^a(d) [mdyn*A/rad^2], m^a [amu*A], w^a [cm^-1].
-                self.dih (pandas.DataFrame): Dihedrals: as self.angle, with atom 4.
-                self.cnm (pandas.DataFrame): CNM decomposition [%]: column 0 is the internal coordinate number, then one column per mode, in the order of self.cnm_modes.
-                self.cnm_modes (list[int]): Mode number of each CNM column of self.cnm.
-                self.ic_positions (np.ndarray): Cartesian coordinates of the atoms of the primitive cell, in Angstrom, as CRYSTAL stores them: the cell indices of the internal coordinates refer to these.
+            self (Crystal_output): New attributes listed below, and those set by
+                ``_locmodes_symmetry``.
+            self.bonds (pandas.DataFrame): Bonds: atoms, atom labels, cell index of atom 2 (as printed, e.g. '( 0-1 0)'), bond length [Angstrom], local force constant k^a [mdyn/A], local mass m^a [amu], local frequency w^a [cm^-1].
+            self.angle (pandas.DataFrame): Angles: atoms, atom labels, cell indices of atoms 2 and 3, angle [degrees], k^a [mdyn/A], k^a(d) [mdyn*A/rad^2], m^a [amu*A], w^a [cm^-1].
+            self.dih (pandas.DataFrame): Dihedrals: as self.angle, with atom 4.
+            self.cnm (pandas.DataFrame): CNM decomposition [%]: column 0 is the internal coordinate number, then one column per mode, in the order of self.cnm_modes.
+            self.cnm_modes (list[int]): Mode number of each CNM column of self.cnm.
+            self.ic_positions (numpy.ndarray): Cartesian coordinates of the atoms of the primitive cell, in Angstrom, as CRYSTAL stores them: the cell indices of the internal coordinates refer to these.
         """
         import re
 
@@ -3713,7 +3767,7 @@ class Crystal_output:
         internal coordinate is a group of its own.
 
         Args:
-            self (crystal_io.Crystal_output): Crystal output object, with self.cnm, self.cnm_modes and self.ic_positions set by get_locmodes().
+            self (Crystal_output): Crystal output object, with self.cnm, self.cnm_modes and self.ic_positions set by get_locmodes().
             symmetry (bool): Whether to run the symmetry analysis.
             symprec (float): Tolerance of the spglib symmetry search, in Angstrom.
             fc_tol (float): Largest force constant difference within a group.
@@ -3721,7 +3775,7 @@ class Crystal_output:
             value_tol (float): Largest difference between the absolute values of an internal coordinate and its symmetry image.
 
         Returns:
-            self (crystal_io.Crystal_output): New attributes listed below
+            self (Crystal_output): New attributes listed below.
                 self.ic_groups (list[list[int]]): Internal coordinate numbers of each group, sorted; the first is the representative.
                 self.cnm_sym (pandas.DataFrame): CNM contributions [%] summed over each group. Index: mode numbers. Columns: representative and atomic labels, e.g. '1 NO'.
                 self.ic_spacegroup (str): Space group found by spglib, None without symmetry.
@@ -3784,7 +3838,11 @@ class Crystal_output:
         self.dih), one dict each.
 
         Returns:
-            list[dict]: Keys 'num' (int), 'kind' ('L', 'A' or 'D'), 'atoms' (list[int], 0-based), 'cells' (np.array, n x 3, the first point in cell 0 0 0), 'elements' (list[str]), 'value' (float, Angstrom or degrees) and 'fc' (float, k^a for bonds, k^a(d) otherwise).
+            ics (list[dict]): Keys 'num' (int), 'kind' ('L', 'A' or 'D'),
+                'atoms' (list[int], 0-based), 'cells' (numpy.ndarray of shape
+                (n, 3), the first point in cell 0 0 0), 'elements' (list[str]),
+                'value' (float, Angstrom or degrees) and 'fc' (float, k^a for
+                bonds, k^a(d) otherwise).
         """
         import re
 
@@ -3923,8 +3981,8 @@ class Crystal_output:
         Split the groups whose force constants differ by more than fc_tol.
 
         Returns:
-            list[list[int]]: The groups after the split.
-            int: Number of groups that were split.
+            split_groups (list[list[int]]): The groups after the split.
+            n_split (int): Number of groups that were split.
         """
         import numpy as np
 
@@ -4013,7 +4071,7 @@ class Properties_input:
         Returns the bands block for a bands calculation.
 
         Args:
-            k_path (list or HighSymmKpath): k-path for bands calculation.
+            k_path (list | pymatgen.symmetry.bandstructure.HighSymmKpath): k-path for bands calculation.
             n_kpoints (int): Number of k-points along the path.
             first_band (int): Index of the first band.
             last_band (int): Index of the last band.
@@ -4085,8 +4143,8 @@ class Properties_input:
 
         Args:
             n_points (int): Number of points in the DOS plot (default is 200).
-            band_range (list or tuple): Range of bands to include in the DOS calculation (default is None).
-            e_range (list or tuple): Energy range for the DOS calculation (default is None).
+            band_range (list | tuple): Range of bands to include in the DOS calculation (default is None).
+            e_range (list | tuple): Energy range for the DOS calculation (default is None).
             plotting_option (int): DOS plotting options (default is 2).
             poly (int): Degree of the polynomial for smearing (default is 12).
             print_option (int): Properties printing options (default is 1).
@@ -4137,8 +4195,8 @@ class Properties_input:
             proj_type (str): Type of projection ("atom" or "site", default is "atom").
             output_file (str): Output file name (default is None).
             n_points (int): Number of points in the DOS plot (default is 200).
-            band_range (list or tuple): Range of bands to include in the DOS calculation (default is None).
-            e_range (list or tuple): Energy range for the DOS calculation (default is None).
+            band_range (list | tuple): Range of bands to include in the DOS calculation (default is None).
+            e_range (list | tuple): Energy range for the DOS calculation (default is None).
             plotting_option (int): DOS plotting options (default is 2).
             poly (int): Degree of the polynomial for smearing (default is 12).
             print_option (int): Properties printing options (default is 1).
@@ -4251,7 +4309,7 @@ class Properties_output:
         Args:
             properties_output (str): Properties output file.
         Returns:
-            Properties_output: Updated Properties_output object.
+            self (Properties_output): Updated Properties_output object.
         """
         import os
 
@@ -4348,7 +4406,7 @@ class Properties_output:
         Args:
             properties_output (str): Properties output file.
         Returns:
-            Properties_output: Updated Properties_output object.
+            self (Properties_output): Updated Properties_output object.
         """
         import re
         import sys
@@ -4471,7 +4529,7 @@ class Properties_output:
         Args:
             properties_output (str): Path to the properties output file.
         Returns:
-            self: The modified object with extracted XRD spectrum data.
+            self (Properties_output): The modified object with extracted XRD spectrum data.
         """
         import re
         import sys
@@ -4547,7 +4605,7 @@ class Properties_output:
         Args:
             properties_output (str): Path to the properties output file.
         Returns:
-            self: Modified object with extracted density line data.
+            self (Properties_output): Modified object with extracted density line data.
         """
         import re
         import sys
@@ -4593,7 +4651,7 @@ class Properties_output:
         Args:
             properties_output (str): Path to the properties output file.
         Returns:
-            self: Modified object with extracted Seebeck coefficient data.
+            self (Properties_output): Modified object with extracted Seebeck coefficient data.
         """
         import re
         import sys
@@ -4673,7 +4731,7 @@ class Properties_output:
         Args:
             properties_output (str): Path to the properties output file.
         Returns:
-            self: Modified object with extracted electrical conductivity data.
+            self (Properties_output): Modified object with extracted electrical conductivity data.
         """
         import re
         import sys
@@ -4753,7 +4811,7 @@ class Properties_output:
         Args:
             properties_output (str): Path to the properties output file.
         Returns:
-            self: Modified object with extracted Laplacian profile data.
+            self (Properties_output): Modified object with extracted Laplacian profile data.
         """
         import re
 
@@ -4819,7 +4877,7 @@ class Properties_output:
         Args:
             properties_output (str): Path to the properties output file.
         Returns:
-            self: Modified object with extracted density profile data.
+            self (Properties_output): Modified object with extracted density profile data.
         """
         import re
 
@@ -4885,7 +4943,7 @@ class Properties_output:
             properties_output (str): Properties output file.
             which_prop (str): Density property selected by the user: "m" (magnetization), "j" (spin current), "J" (spin current density)
         Returns:
-            Properties_output (str): fort.25 output file.
+            self (Properties_output): Updated Properties_output object.
         """
 
         import numpy as np
@@ -5084,7 +5142,7 @@ class Properties_output:
         Args:
             properties_output (str): Path to the fort.25 file.
         Returns:
-            self: Modified object with extracted ECHG data.
+            self (Properties_output): Modified object with extracted ECHG data.
         """
         import numpy as np
 
@@ -5135,7 +5193,7 @@ class Properties_output:
             properties_output1 (str): Path to first fort.25 file.
             properties_output2 (str): Path to second fort.25 file.
         Returns:
-            self: Modified object with extracted ECHG data.
+            self (Properties_output): Modified object with extracted ECHG data.
         """
 
         out1 = Properties_output().read_cry_ECHG(properties_output1)
@@ -5159,7 +5217,7 @@ class Properties_output:
         Args:
             properties_output (str): Properties output file.
         Returns:
-            Properties_output: Updated Properties_output object.
+            self (Properties_output): Updated Properties_output object.
         """
         import re
 
@@ -5363,22 +5421,22 @@ class Properties_output:
 
     def topond_viz_file(self, cp_type='ALL', add_atoms=False, file_type="xyz"):
         """Given the existence of TOPOND TRHO DataFrames, write files
-         with the critical points (CP) coordinates for further
-         visualization.
+        with the critical points (CP) coordinates for further
+        visualization.
 
-         Args:
-             cp_type (str): Generate file for a given type CP.
-                    Options: "ALL" to include all CP in the system,
-                             "BCP" for Bond CPs,
-                             "RCP" for Ring CPs,
-                             "CCP" for Cage CPs,
-                             "NNA" for Nuclear/Non-Nuclear Atractors.
-             add_atoms (bool): Include the Nuclei atoms read from the
-                    TOPOND output in the same file.
-             file_type (str): Type of output file to be generated.
+        Args:
+            cp_type (str): Generate file for a given type CP.
+                Options: "ALL" to include all CP in the system,
+                "BCP" for Bond CPs,
+                "RCP" for Ring CPs,
+                "CCP" for Cage CPs,
+                "NNA" for Nuclear/Non-Nuclear Atractors.
+            add_atoms (bool): Include the Nuclei atoms read from the
+                TOPOND output in the same file.
+            file_type (str): Type of output file to be generated.
 
-         Returns:
-             ase_obj: ASE object.
+        Returns:
+            ase_obj (ase.Atoms): ASE object.
         """
         import sys
 
@@ -5481,7 +5539,7 @@ class Properties_output:
         Args:
             properties_output (str): Properties output file.
         Returns:
-            Properties_output: Updated Properties_output object.
+            self (Properties_output): Updated Properties_output object.
         """
         import re
 
@@ -5705,22 +5763,22 @@ class Properties_output:
 
     def topond_viz_tlap_file(self, cp_type='+3', add_atoms=False, file_type="xyz"):
         """Given the existence of TOPOND TLAP DataFrames, write files
-         with the critical points (CP) coordinates for further
-         visualization.
+        with the critical points (CP) coordinates for further
+        visualization.
 
-         Args:
-             cp_type (str): Generate file for a given type CP.
-                    Options: 'ALL' to include all CP in the system,
-                             '+3' for CPs with +3 signature,
-                             '+1' for CPs with +1 signature,
-                             '-1' for CPs with -1 signature,
-                             '+1' for CPs with -3 signature.
-             add_atoms (bool): Include the Nuclei atoms read from the
-                    TOPOND output in the same file.
-             file_type (str): Type of output file to be generated.
+        Args:
+            cp_type (str): Generate file for a given type CP.
+                Options: 'ALL' to include all CP in the system,
+                '+3' for CPs with +3 signature,
+                '+1' for CPs with +1 signature,
+                '-1' for CPs with -1 signature,
+                '-3' for CPs with -3 signature.
+            add_atoms (bool): Include the Nuclei atoms read from the
+                TOPOND output in the same file.
+            file_type (str): Type of output file to be generated.
 
-         Returns:
-             ase_obj: The generated ASE object.
+        Returns:
+            ase_obj (ase.Atoms): The generated ASE object.
         """
         import sys
 
@@ -5946,11 +6004,10 @@ class Crystal_density():
         Read density profile data from a CRYSTAL .f98 file.
         Args:
             fort98_unit (str): File containing the formatted density matrix.
-        Returns:
-            None
+
         Note:
-        This is a work in progress. If you are interested in this functionality,
-        please open an Issue on GitHub.
+            This is a work in progress. If you are interested in this functionality,
+            please open an Issue on GitHub.
         """
         self.file_name = fort98_unit
         self.is_irr = True
@@ -6222,8 +6279,7 @@ def cry_combine_density(density1, density2, density3, new_density='new_density.f
         density3 (str): Density matrix file for the whole system.
         new_density (str, optional): Name of the new density matrix (default is "new_density.f98").
         spin_pol (bool, optional): Specifies if the system is spin polarized (default is False).
-    Returns:
-        None
+
     Note:
         This is a work in progress. If you are interested in this functionality,
         please open an Issue on GitHub.
@@ -6329,8 +6385,6 @@ def write_cry_density(fort98_name, new_p, new_fort98):
         new_p (list): New density matrix.
         new_fort98 (str): Name of the new density matrix file.
 
-        Returns:
-        None
     Note:
         This is a work in progress. If you are interested in this functionality,
         please open an Issue on GitHub.
@@ -6404,7 +6458,7 @@ class External_unit:
             external_unit(str): Path of the IRSPEC.DAT file.
 
         Returns:
-            self: Modified object to be read by plot_cry_irspec().
+            self (External_unit): Modified object to be read by plot_cry_irspec().
         """
         import numpy as np
 
@@ -6441,7 +6495,7 @@ class External_unit:
             external_unit(str): Path of the RAMSPEC.DAT file.
 
         Returns:
-            self : Modified object to be read by plot_cry_ramspec().
+            self (External_unit): Modified object to be read by plot_cry_ramspec().
         """
         import numpy as np
 

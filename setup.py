@@ -7,7 +7,7 @@ long_description = (pathlib.Path(__file__).parent / "README.md").read_text(encod
 
 setuptools.setup(
     name="CRYSTALClear",
-    version="0.2.18",
+    version="0.2.19",
     author="CRYSTAL devs",
     author_email="crystalunito@gmail.com",
     description="Python framework for the CRYSTAL code.",

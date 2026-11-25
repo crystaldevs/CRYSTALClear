@@ -257,8 +257,8 @@ class Geom(BlockBASE):
         Args:
             sg (int): Space group number. Parameter IGR in the manual
             latt (list): Minimal set of crystallographic cell parameters
-            atom (list): Natom \* 4 list of conventional atomic number and 3D 
-                fractional coordinates.
+            atom (list[list]): Conventional atomic number and 3D fractional
+                coordinates, shape (natom, 4).
             IFLAG (int): See the manual
             IFHR (int): See the manual
             IFSO (int): See the manual
@@ -421,7 +421,8 @@ class Geom(BlockBASE):
         Supercell by 'SUPERCEL' keyword
 
         Args:
-            mx (array | list | str): ndimen \* ndimen matrix, [] or ''
+            mx (numpy.ndarray | list | str): Matrix, shape (ndimen, ndimen),
+                [] or ''
         """
         shape, value = super(Geom, self).set_matrix(mx)
         self._sp_matrix = super(Geom, self).assign_keyword('SUPERCEL', shape, value)
@@ -456,7 +457,7 @@ class Geom(BlockBASE):
 
         Args:
             NDISP (int): See manual
-            atom (list): NDISP\*4 list. Including LB, DX, DY, DZ
+            atom (list[list]): LB, DX, DY, DZ, shape (NDISP, 4).
         """
         shape, value = super(Geom, self).set_list(NDISP, atom)
         self._atomdisp = super(Geom, self).assign_keyword('ATOMDISP', shape, value)
@@ -467,7 +468,7 @@ class Geom(BlockBASE):
 
         Args:
             NINS (int): See manual
-            atom (list): NINS\*4 list. Including NA, X, Y, Z
+            atom (list[list]): NA, X, Y, Z, shape (NINS, 4).
         """
         shape, value = super(Geom, self).set_list(NINS, atom)
         self._atominse = super(Geom, self).assign_keyword('ATOMINSE', shape, value)
@@ -481,7 +482,7 @@ class Geom(BlockBASE):
 
         Args:
             NL (int): See manual
-            atom (list): NL\*1 list. Including LB
+            atom (list[int]): LB, one per atom to remove: NL of them.
         """
         shape, value = super(Geom, self).set_list(NL, atom)
         self._atomremo = super(Geom, self).assign_keyword('ATOMREMO', shape, value)
@@ -495,8 +496,8 @@ class Geom(BlockBASE):
             the one to set 0D geometry.
 
         Args:
-            NMOL (int)
-            atom (list[list[int]]): NMOL\*4 list. See CRYSTAL manual.
+            NMOL (int): Number of molecules to isolate.
+            atom (list[list[int]]): Shape (NMOL, 4). See CRYSTAL manual.
         """
         shape, value = super(Geom, self).set_list(NMOL, atom)
         self._moleiso = super(Geom, self).assign_keyword('MOLECULE', shape, value)
@@ -868,9 +869,9 @@ class BasisSet(BlockBASE):
             name (str): Basis set's name.
             element (list[str] | list[int] | list[list[str | int, int]]): List
                 of elements, specified by either atomic number or label. When
-                a nelement\*2 list is used, the second entry is recognized as
+                a list of shape (nelement, 2) is used, the second entry is recognized as
                 conventional atomic numbers.
-            filename (None | str): If not None, print basis set definitions to
+            filename (str | None): If not None, print basis set definitions to
                 a text file
             append (bool): Whether to cover old entries. If the old entry
                 contains 'BASISSET', it will be removed anyway.
@@ -899,7 +900,7 @@ class BasisSet(BlockBASE):
                 line '99 0' is needed but not 'END'.
             fmt (str): Format of basis set string. if not 'crystal', this
                 method calls `Basis Set Exchange API <https://molssi-bse.github.io/basis_set_exchange/index.html>`_ to convert it.
-            filename (None | str): See ``from_bse``
+            filename (str | None): See ``from_bse``
             append (bool): See ``from_bse``
         """
         from CRYSTALClear.base.basisset import BasisSetBASE
@@ -916,11 +917,11 @@ class BasisSet(BlockBASE):
         Basis set from a file
 
         Args:
-            file (file): A formatted text file with basis set definitions. The
+            file (str): A formatted text file with basis set definitions. The
                 ending line '99 0' is needed but not 'END'.
             fmt (str): Format of basis set string. if not 'crystal', this
                 method calls `Basis Set Exchange API <https://molssi-bse.github.io/basis_set_exchange/index.html>`_ to convert it.
-            filename (None | str): See ``from_bse``
+            filename (str | None): See ``from_bse``
             append (bool): See ``from_bse``
         """
         from CRYSTALClear.base.basisset import BasisSetBASE
@@ -939,7 +940,7 @@ class BasisSet(BlockBASE):
         Args:
             bs_obj (BasisSetBASE): A CRYSTALClear.base.basisset.BasisSetBASE
                 object.
-            filename (None | str): See ``from_bse``
+            filename (str | None): See ``from_bse``
             append (bool): See ``from_bse``
         """
         self._check_bs(append)
