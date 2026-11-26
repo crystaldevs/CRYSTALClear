@@ -608,7 +608,7 @@ def plot_compare_cry_bands(bands, energy_range, not_scaled, linestl, linewidth,
 
 
 def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
-                  linewidth, title, beta, energy_range, dos_range, prj):
+                  linewidth, title, beta, energy_range, dos_range, prj, fill=True):
     """
     The base function to plot electron / phonon density of states.
 
@@ -626,6 +626,7 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
         energy_range (tuple): The energy range (xmin, xmax) for the x-axis.
         dos_range (tuple): The density of states range (ymin, ymax) for the y-axis.
         prj (list | None): The projection(s) to plot.
+        fill (bool): Shade the area between each curve and zero.
 
     Returns:
         fig (matplotlib.figure.Figure): The figure.
@@ -647,14 +648,16 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
     # Plot for overlap == True
     if overlap == True:
 
-        # Error check on color for color in overlap == true and default list of color
+        # How many curves are drawn: every projection, or those in prj
+        n_drawn = doss.n_proj if prj is None else len(prj)
+
+        # Error check on color for color in overlap == true and default list of color:
+        # one colour per curve drawn, from matplotlib's colour cycle
         if (not isinstance(color, list)) and (doss.n_proj > 1):
             warnings.warn(
                 'When overlap is true color has to be a list!', stacklevel=2)
-            color = ['blue', 'indigo', 'midgrey', 'crimson']
-            if (len(color) < doss.n_proj) or (len(color) < len(prj)):
-                raise ValueError(
-                    'When overlap is true color has to be a list!')
+            cycle = plt.rcParams['axes.prop_cycle'].by_key().get('color', ['C0'])
+            color = [cycle[i % len(cycle)] for i in range(n_drawn)]
 
         # Error check on labels for overlap == true
         if labels is not None:
@@ -700,7 +703,7 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
                         if len(labels) > len(prj):
                             raise ValueError(
                                 'The number of labels is greater than the number of projections required!')
-                        elif len(color) < len(prj):
+                        elif len(labels) < len(prj):
                             raise ValueError(
                                 'The number of labels is less than the number of projections required!')
 
@@ -718,9 +721,12 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
                         if len(linestl) > len(prj):
                             raise ValueError(
                                 'The number of linestl is greater than the number of projections required!')
-                        elif len(color) < len(prj):
+                        elif len(linestl) < len(prj):
                             raise ValueError(
                                 'The number of linestl is less than the number of projections required!')
+
+        # Legend entries, one per curve drawn; none when no labels are given
+        names = labels if labels is not None else [None] * n_drawn
 
         # Creation of the figure
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize)
@@ -735,8 +741,10 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
         # Determination of xmin, xmax, ymin, and ymax
         xmin = np.amin(dx)
         xmax = np.amax(dx)
-        ymin = np.amin(doss.doss[1:, :, :])
-        ymax = np.amax(doss.doss[1:, :, :])
+        # From the curves drawn only: column 0 holds the energies
+        drawn = doss.doss[:, 1:doss.n_proj+1] if prj is None else doss.doss[:, prj]
+        ymin = np.amin(drawn)
+        ymax = np.amax(drawn)
 
         # Plot of all projections
         if prj == None:
@@ -746,10 +754,10 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
                     if doss.n_proj > 1:
                         if linestl is None:
                             ax.plot(dx, doss.doss[:, projection], color=color[projection-1],
-                                    label=labels[projection-1], linewidth=linewidth)
+                                    label=names[projection-1], linewidth=linewidth)
                         else:
                             ax.plot(dx, doss.doss[:, projection], color=color[projection-1],
-                                    label=labels[projection-1], linestyle=linestl[projection-1], linewidth=linewidth)
+                                    label=names[projection-1], linestyle=linestl[projection-1], linewidth=linewidth)
                     else:
                         ax.plot(dx, doss.doss[:, projection],
                                 color=color, linewidth=linewidth)
@@ -757,9 +765,9 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
                     if beta == accepted_beta[0]:
                         if doss.n_proj > 1:
                             ax.plot(dx_alpha, doss.doss[:, projection, 0], color=color[projection-1],
-                                    label=labels[projection-1], linestyle='-', linewidth=linewidth)
+                                    label=names[projection-1], linestyle='-', linewidth=linewidth)
                             ax.plot(dx_beta, -doss.doss[:, projection, 1], color=color[projection-1],
-                                    label=labels[projection-1], linestyle='--', linewidth=linewidth)
+                                    label=names[projection-1], linestyle='--', linewidth=linewidth)
                         else:
                             ax.plot(dx_alpha, doss.doss[:, projection, 0],
                                     linestyle='-', linewidth=linewidth)
@@ -768,9 +776,9 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
                     elif beta == accepted_beta[1]:
                         if doss.n_proj > 1:
                             ax.plot(dx_alpha, doss.doss[:, projection, 0], color=color[projection-1],
-                                    label=labels[projection-1], linestyle='-', linewidth=linewidth)
+                                    label=names[projection-1], linestyle='-', linewidth=linewidth)
                             ax.plot(dx_beta, doss.doss[:, projection, 1], color=color[projection-1],
-                                    label=labels[projection-1], linestyle='--', linewidth=linewidth)
+                                    label=names[projection-1], linestyle='--', linewidth=linewidth)
 
                         else:
                             ax.plot(dx_alpha, doss.doss[:, projection, 0], color=color,
@@ -785,10 +793,10 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
                     if doss.n_proj > 1:
                         if linestl is None:
                             ax.plot(dx, doss.doss[:, projection], color=color[index],
-                                    label=labels[index], linewidth=linewidth)
+                                    label=names[index], linewidth=linewidth)
                         else:
                             ax.plot(dx, doss.doss[:, projection], color=color[index],
-                                    label=labels[index], linestyle=linestl[index], linewidth=linewidth)
+                                    label=names[index], linestyle=linestl[index], linewidth=linewidth)
                     else:
                         ax.plot(dx, doss.doss[:, projection],
                                 color=color, linewidth=linewidth)
@@ -796,9 +804,9 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
                     if beta == accepted_beta[0]:
                         if doss.n_proj > 1:
                             ax.plot(dx_alpha, doss.doss[:, projection, 0], color=color[index],
-                                    label=labels[index], linestyle='-', linewidth=linewidth)
+                                    label=names[index], linestyle='-', linewidth=linewidth)
                             ax.plot(dx_beta, -doss.doss[:, projection, 1], color=color[index],
-                                    label=labels[index], linestyle='--', linewidth=linewidth)
+                                    label=names[index], linestyle='--', linewidth=linewidth)
                         else:
                             ax.plot(dx_alpha, doss.doss[:, projection, 0],
                                     linestyle='-', linewidth=linewidth)
@@ -807,9 +815,9 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
                     elif beta == accepted_beta[1]:
                         if doss.n_proj > 1:
                             ax.plot(dx_alpha, doss.doss[:, projection, 0], color=color[index],
-                                    label=labels[index], linestyle='-', linewidth=linewidth)
+                                    label=names[index], linestyle='-', linewidth=linewidth)
                             ax.plot(dx_beta, doss.doss[:, projection, 1], color=color[index],
-                                    label=labels[index], linestyle='--', linewidth=linewidth)
+                                    label=names[index], linestyle='--', linewidth=linewidth)
                         else:
                             ax.plot(dx_alpha, doss.doss[:, projection, 0], color=color,
                                     linestyle='-', linewidth=linewidth)
@@ -990,6 +998,8 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
         xmax = energy_range[1]
     plt.xlim(xmin, xmax)
 
+    if fill:
+        _fill_dos(ax)
     if title is not None:
         fig.suptitle(title)
     if labels is not None:
@@ -998,8 +1008,35 @@ def plot_cry_doss(doss, color, fermi, overlap, labels, figsize, linestl,
     return fig, ax
 
 
+def _fill_dos(ax, vertical=False, alpha=0.3):
+    """
+    Shade the area between each DOS curve and zero, in the curve's colour.
+
+    Args:
+        ax (matplotlib.axes.Axes | list | numpy.ndarray): The axes holding the curves.
+        vertical (bool): True when the DOS runs along x and the energy along y, as
+            beside a band structure.
+        alpha (float): Opacity of the shading.
+    """
+    import numpy as np
+
+    for axes in np.ravel(np.asarray(ax, dtype=object)):
+        for line in list(axes.get_lines()):
+            x = np.asarray(line.get_xdata(), dtype=float)
+            y = np.asarray(line.get_ydata(), dtype=float)
+            if len(x) <= 2:  # the Fermi level and the zero line
+                continue
+            style = dict(color=line.get_color(), alpha=alpha, linewidth=0,
+                         zorder=line.get_zorder() - 0.1)
+            if vertical:
+                axes.fill_betweenx(y, 0, x, **style)
+            else:
+                axes.fill_between(x, 0, y, **style)
+
+
 def plot_cry_es(bands, doss, k_labels, color_bd, color_doss, fermi, energy_range, linestl_bd,
-                linestl_doss, linewidth, prj, figsize, labels, dos_range, title, dos_beta, legend):
+                linestl_doss, linewidth, prj, figsize, labels, dos_range, title, dos_beta, legend,
+                fill=True):
     """
     The base function to plot electron / phonon band structure + DOS
 
@@ -1021,6 +1058,7 @@ def plot_cry_es(bands, doss, k_labels, color_bd, color_doss, fermi, energy_range
         title (str | None): Title of the figure
         dos_beta (str): Beta state for the density of states plot ('up' or 'down')
         legend (bool): Enables or disables the legend
+        fill (bool): Shade the area between each DOS curve and zero.
 
     Returns:
         fig (matplotlib.figure.Figure): Figure object containing the plotted data
@@ -1295,6 +1333,8 @@ def plot_cry_es(bands, doss, k_labels, color_bd, color_doss, fermi, energy_range
         ymax = energy_range[1]
 
     plt.ylim(ymin, ymax)
+    if fill:
+        _fill_dos(ax[1], vertical=True)
     if legend:
         plt.legend()
 

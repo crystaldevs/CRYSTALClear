@@ -172,3 +172,6 @@ pyrightconfig.json
 
 ### macOS ###
 .DS_Store
+
+# Generated at build time from the GitHub releases (docs_src/conf.py).
+docs_src/release-notes.rst

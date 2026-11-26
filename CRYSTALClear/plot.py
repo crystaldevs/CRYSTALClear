@@ -541,6 +541,40 @@ def plot_vecfield2D_J(header, dens_JX, dens_JY, dens_JZ, quivscale, levels=150):
 
 # --------------------------------BAND STRUCTURES------------------------------#
 
+
+def _label_panels(fig, ax, xlabel=None, ylabel=None, fontsize=None):
+    """
+    Label the axes of a plot that may have several panels.
+
+    A label that belongs to one panel goes on that panel's axes, where
+    ``ax.set_xlabel``/``ax.set_ylabel`` reads and changes it. A label shared by
+    a bottom row or a left column of several panels goes on the figure, as one
+    label beside all of them.
+
+    Args:
+        fig (matplotlib.figure.Figure): The figure.
+        ax (matplotlib.axes.Axes | list | numpy.ndarray): Its axes.
+        xlabel (str | None): Label of the x axis.
+        ylabel (str | None): Label of the y axis.
+        fontsize (int | None): Font size of the labels. ``None`` keeps
+            matplotlib's default for axis labels.
+    """
+    import numpy as np
+
+    axes = list(np.ravel(np.asarray(ax, dtype=object)))
+    style = {} if fontsize is None else {'fontsize': fontsize}
+    for text, edge, set_one, set_all in (
+            (xlabel, 'is_last_row', 'set_xlabel', fig.supxlabel),
+            (ylabel, 'is_first_col', 'set_ylabel', fig.supylabel)):
+        if text is None:
+            continue
+        panels = [a for a in axes if getattr(a.get_subplotspec(), edge)()]
+        if len(panels) == 1:
+            getattr(panels[0], set_one)(text, **style)
+        else:
+            set_all(text, **style)
+
+
 def plot_phonon_band(bands, unit='cm-1', k_labels=None, mode='single',
                      not_scaled=False, freq_range=None, k_range=None,
                      color='blue', labels=None, linestl='-', linewidth=1,
@@ -620,9 +654,9 @@ def plot_phonon_band(bands, unit='cm-1', k_labels=None, mode='single',
                              color=color, fermi=line_freq0, k_range=k_range, labels=labels,
                              figsize=figsize, scheme=scheme, sharex=sharex, sharey=sharey, fermialpha=1, fermiwidth=0)
     if is_thz == True:
-        fig.supylabel('Frequency (THz)', fontsize=fontsize)
+        _label_panels(fig, ax, ylabel='Frequency (THz)', fontsize=fontsize)
     else:
-        fig.supylabel('Frequency (cm$^{-1}$)', fontsize=fontsize)
+        _label_panels(fig, ax, ylabel='Frequency (cm$^{-1}$)', fontsize=fontsize)
 
     return fig, ax
 
@@ -703,9 +737,9 @@ def plot_electron_band(bands, unit='eV', k_labels=None, mode='single',
                              color=color, fermi=fermi, fermiwidth=fermiwidth, fermialpha=fermialpha, k_range=k_range, labels=labels,
                              figsize=figsize, scheme=scheme, sharex=sharex, sharey=sharey)
     if is_ev == True:
-        fig.supylabel('$E-E_{F}$ (eV)', fontsize=fontsize)
+        _label_panels(fig, ax, ylabel='$E-E_{F}$ (eV)', fontsize=fontsize)
     else:
-        fig.supylabel('$E-E_{F}$ (Hartree)', fontsize=fontsize)
+        _label_panels(fig, ax, ylabel='$E-E_{F}$ (Hartree)', fontsize=fontsize)
 
     return fig, ax
 
@@ -716,7 +750,7 @@ def plot_electron_band(bands, unit='eV', k_labels=None, mode='single',
 def plot_electron_dos(doss, unit='eV', beta='up', overlap=False, prj=None,
                       energy_range=None, dos_range=None, color='blue',
                       labels=None, linestl=None, linewidth=1, fermi='forestgreen',
-                      title=None, figsize=None):
+                      title=None, figsize=None, fill=True):
     """
     A wrapper of plot_cry_doss for electron density of states.
 
@@ -740,6 +774,7 @@ def plot_electron_dos(doss, unit='eV', beta='up', overlap=False, prj=None,
         fermi (str): Color of Fermi level line.
         title (str): Title of the plot.
         figsize (list[float]): Figure size, [width, height].
+        fill (bool): Shade the area between each DOS curve and zero.
 
     Returns:
         fig (matplotlib.figure.Figure): The figure.
@@ -780,13 +815,11 @@ def plot_electron_dos(doss, unit='eV', beta='up', overlap=False, prj=None,
     fig, ax = plot_cry_doss(doss, color=color, fermi=fermi, overlap=overlap,
                             labels=labels, figsize=figsize, linestl=linestl,
                             linewidth=linewidth, title=title, beta=beta,
-                            energy_range=energy_range, dos_range=dos_range, prj=prj)
+                            energy_range=energy_range, dos_range=dos_range, prj=prj, fill=fill)
     if is_ev == True:
-        fig.supylabel('DOS (states/eV)')
-        fig.supxlabel('Energy (eV)')
+        _label_panels(fig, ax, xlabel='Energy (eV)', ylabel='DOS (states/eV)')
     else:
-        fig.supylabel('DOS (states/Hartree)')
-        fig.supxlabel('Energy (Hartree)')
+        _label_panels(fig, ax, xlabel='Energy (Hartree)', ylabel='DOS (states/Hartree)')
 
     return fig, ax
 
@@ -794,7 +827,7 @@ def plot_electron_dos(doss, unit='eV', beta='up', overlap=False, prj=None,
 def plot_phonon_dos(doss, unit='cm-1', overlap=False, prj=None,
                     freq_range=None, dos_range=None, color='blue',
                     labels=None, linestl=None, linewidth=1, line_freq0=None,
-                    title=None, figsize=None):
+                    title=None, figsize=None, fill=True):
     """
     A wrapper of plot_cry_doss for electron density of states.
 
@@ -817,6 +850,7 @@ def plot_phonon_dos(doss, unit='cm-1', overlap=False, prj=None,
         line_freq0 (str): Color of frequency = 0 line.
         title (str): Title of the plot.
         figsize (list[float]): Figure size, [width, height].
+        fill (bool): Shade the area between each DOS curve and zero.
 
     Returns:
         fig (matplotlib.figure.Figure): The figure.
@@ -860,14 +894,12 @@ def plot_phonon_dos(doss, unit='cm-1', overlap=False, prj=None,
     fig, ax = plot_cry_doss(doss, color=color, fermi=line_freq0, overlap=overlap,
                             labels=labels, figsize=figsize, linestl=linestl,
                             linewidth=linewidth, title=title, beta='up',
-                            energy_range=freq_range, dos_range=dos_range, prj=prj)
+                            energy_range=freq_range, dos_range=dos_range, prj=prj, fill=fill)
 
     if is_thz == True:
-        fig.supylabel('DOS (states/THz)')
-        fig.supxlabel('Frequency (THz)')
+        _label_panels(fig, ax, xlabel='Frequency (THz)', ylabel='DOS (states/THz)')
     else:
-        fig.supylabel('DOS (states/cm$^{-1}$)')
-        fig.supxlabel('Frequency (cm$^{-1}$)')
+        _label_panels(fig, ax, xlabel='Frequency (cm$^{-1}$)', ylabel='DOS (states/cm$^{-1}$)')
 
     return fig, ax
 
@@ -879,7 +911,7 @@ def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down'
                           dos_prj=None, energy_range=None, dos_range=None,
                           color_band='blue', color_dos='blue', labels=None, linestl_band='-',
                           linestl_dos=None, linewidth=1, fermi='forestgreen',
-                          title=None, figsize=None, legend=False):
+                          title=None, figsize=None, legend=False, fill=True):
     """
     A wrapper of plot_cry_es for electron band structure + dos. For spin-polarized cases, beta state.
 
@@ -907,6 +939,7 @@ def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down'
         title (str): Title of the plot.
         figsize (list[float]): Size of the figure in inches (width, height).
         legend (bool): Enables or disables the legend of the density of states (DOS).
+        fill (bool): Shade the area between each DOS curve and zero.
 
     Returns:
         fig (matplotlib.figure.Figure): The figure.
@@ -951,11 +984,12 @@ def plot_electron_banddos(bands, doss, unit='eV', k_labels=None, dos_beta='down'
                           color_doss=color_dos, fermi=fermi, energy_range=energy_range,
                           linestl_bd=linestl_band, linestl_doss=linestl_dos,
                           linewidth=linewidth, prj=dos_prj, figsize=figsize, labels=labels,
-                          dos_range=dos_range, title=title, dos_beta=dos_beta, legend=legend)
+                          dos_range=dos_range, title=title, dos_beta=dos_beta, legend=legend,
+                          fill=fill)
     if is_ev == True:
-        fig.supylabel('Energy (eV)')
+        _label_panels(fig, ax, ylabel='Energy (eV)')
     else:
-        fig.supylabel('Energy (Hartree)')
+        _label_panels(fig, ax, ylabel='Energy (Hartree)')
 
     return fig, ax
 
@@ -964,7 +998,7 @@ def plot_phonon_banddos(bands, doss, unit='cm-1', k_labels=None, dos_prj=None,
                         freq_range=None, dos_max_range=None, color_band='blue',
                         color_dos='blue', labels=None, linestl_band='-',
                         linestl_dos=None, linewidth=1, freq0_line=None,
-                        title=None, figsize=None):
+                        title=None, figsize=None, legend=False, fill=True):
     """
     A wrapper of plot_cry_es for phonon band structure + dos. Only one pair is permitted.
 
@@ -979,7 +1013,8 @@ def plot_phonon_banddos(bands, doss, unit='cm-1', k_labels=None, dos_prj=None,
         dos_prj (list): Index of selected projection. Consistent with the index of the 2nd dimension
             of doss.doss.
         freq_range (list): A list of two values representing the frequency range to be plotted.
-        dos_max_range (float): Maximum DOS range for the y-axis.
+        dos_max_range (float | list[float]): Upper end of the DOS axis, which then starts
+            at 0, or its [min, max].
         color_band (str): Color of the phonon bands in the plot.
         color_dos (str): Color of the density of states (DOS) in the plot.
         labels (list): A list of labels for the plot legend.
@@ -989,6 +1024,8 @@ def plot_phonon_banddos(bands, doss, unit='cm-1', k_labels=None, dos_prj=None,
         freq0_line (str): Color of the frequency=0 line.
         title (str): Title of the plot.
         figsize (list[float]): Size of the figure in inches (width, height).
+        legend (bool): Enables or disables the legend.
+        fill (bool): Shade the area between each DOS curve and zero.
 
     Returns:
         fig (matplotlib.figure.Figure): The figure.
@@ -1029,18 +1066,24 @@ def plot_phonon_banddos(bands, doss, unit='cm-1', k_labels=None, dos_prj=None,
             bands.bands[:, :, :] = cm_to_thz(bands.bands[:, :, :])
         bands.unit = unit
 
-    if line_freq0 == None:
-        line_freq0 = (1., 0., 0., 0.)  # Transparent
+    if freq0_line == None:
+        freq0_line = (1., 0., 0., 0.)  # Transparent
+
+    if dos_max_range is None or isinstance(dos_max_range, (list, tuple)):
+        dos_range = dos_max_range
+    else:
+        dos_range = [0., dos_max_range]
 
     fig, ax = plot_cry_es(bands=bands, doss=doss, k_labels=k_labels, color_bd=color_band,
-                          color_doss=color_dos, fermi=line_freq0, energy_range=energy_range,
+                          color_doss=color_dos, fermi=freq0_line, energy_range=freq_range,
                           linestl_bd=linestl_band, linestl_doss=linestl_dos,
                           linewidth=linewidth, prj=dos_prj, figsize=figsize, labels=labels,
-                          dos_max_range=dos_max_range, title=title, dos_beta='up')
+                          dos_range=dos_range, title=title, dos_beta='up', legend=legend,
+                          fill=fill)
     if is_thz == True:
-        fig.supylabel('Frequency (THz)')
+        _label_panels(fig, ax, ylabel='Frequency (THz)')
     else:
-        fig.supylabel('Frequency (cm$^{-1}$)')
+        _label_panels(fig, ax, ylabel='Frequency (cm$^{-1}$)')
 
     return fig, ax
 
