@@ -26,14 +26,16 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v2
+      # ubuntu-latest (24.04) has no Python 3.9 builds; the docs build on any
+      # supported version.
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.12"
       # Runs a single command using the runners shell
       # - name: Run a one-line script
       #   run: echo Hello, world!
