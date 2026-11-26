@@ -14,7 +14,7 @@
 <p align="center">
   <a href="https://pypi.org/project/CRYSTALClear/"><img src="https://img.shields.io/pypi/v/CRYSTALClear" alt="PyPI version"></a>
   <a href="https://github.com/crystaldevs/CRYSTALClear/actions/workflows/documentation.yml"><img src="https://github.com/crystaldevs/CRYSTALClear/actions/workflows/documentation.yml/badge.svg" alt="Documentation build"></a>
-  <img src="https://img.shields.io/badge/python-3.9%2B-blue" alt="Python 3.9+">
+  <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/plots-matplotlib-11557c" alt="matplotlib">
   <img src="https://img.shields.io/badge/structures-pymatgen-orange" alt="pymatgen">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
