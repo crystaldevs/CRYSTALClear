@@ -1,0 +1,406 @@
+/* CRYSTALClear on top of sphinx-book-theme.
+ *
+ * The same colours as CRYSTALLine's site, so the two read as one family:
+ * CRYSTAL's cyan, taken deep enough to carry white text and to read as text on
+ * white, and the green of the logo. Text and fills are two colours: a link is
+ * cyan text on the page, a button white text on cyan, and one shade cannot be
+ * right for both in the dark mode.
+ */
+
+:root,
+html[data-theme="light"] {
+  /* As text: 5.8:1 on white. */
+  --crystal-cyan: #0b6f88;
+  --crystal-cyan-bright: #127f9c;
+  /* As a fill under white text: 4.6:1. */
+  --crystal-fill: #127f9c;
+  --crystal-fill-hover: #0b6f88;
+  --crystal-ink: #14212b;
+
+  --pst-color-primary: var(--crystal-cyan);
+  --pst-color-link: var(--crystal-cyan);
+  --pst-color-link-hover: var(--crystal-cyan-bright);
+  --pst-color-inline-code: #0f6a80;
+  --crystal-surface: #f5fbfd;
+  --crystal-border: rgba(23, 149, 181, 0.22);
+  /* The theme hovers table rows in purple, which belongs to no other part of
+   * the site: a tint of the logo's cyan instead. */
+  --pst-color-table-row-hover-bg: #dff1f7;
+  /* Notes — the API reference has many — in the cyan, not the theme's blue. */
+  --pst-color-info: var(--crystal-fill);
+  --pst-color-info-bg: #e3f3f7;
+}
+
+html[data-theme="dark"] {
+  --crystal-cyan: #4cc3df;
+  --crystal-cyan-bright: #6fd4ea;
+  /* White text on #4cc3df is 2:1; buttons keep the deep cyan. */
+  --crystal-fill: #127f9c;
+  --crystal-fill-hover: #0f7591;
+  --crystal-ink: #e6f1f5;
+
+  --pst-color-primary: var(--crystal-cyan);
+  --pst-color-link: var(--crystal-cyan);
+  --pst-color-link-hover: var(--crystal-cyan-bright);
+  --pst-color-inline-code: #8fd9ea;
+  --crystal-surface: rgba(69, 194, 221, 0.06);
+  --crystal-border: rgba(69, 194, 221, 0.25);
+  --pst-color-table-row-hover-bg: #1d3c47;
+  --pst-color-info: var(--crystal-cyan);
+  --pst-color-info-bg: #16323b;
+}
+
+/* ── text ───────────────────────────────────────────────────────────── */
+/* The default measure is narrow for API signatures and notebook output. */
+.bd-main .bd-content .bd-article-container { max-width: 60rem; }
+
+h1, h2, h3 { color: var(--crystal-ink); }
+
+h2 {
+  border-bottom: 2px solid var(--crystal-border);
+  padding-bottom: 0.25rem;
+  margin-top: 2.5rem;
+}
+
+/* Tables read as data here, so they get a tinted header rather than the
+ * theme's near-invisible default. */
+table.docutils thead th {
+  background: var(--crystal-surface);
+  border-bottom: 2px solid var(--crystal-border) !important;
+}
+
+/* ── the API reference ──────────────────────────────────────────────── */
+/* Each class and function opens with its signature on a tinted band, edged in
+ * the logo's cyan, so a long module page can be scanned by its entries. */
+dl.py > dt.sig {
+  background: var(--crystal-surface);
+  border-left: 3px solid var(--crystal-fill);
+  border-radius: 0 6px 6px 0;
+  padding: 0.35rem 0.6rem;
+}
+
+dl.py.class > dt.sig { border-left-width: 5px; }
+
+dl.py > dt.sig .sig-name { color: var(--crystal-cyan); }
+
+/* ── notebooks ──────────────────────────────────────────────────────── */
+/* The example notebooks' cells, framed like the rest of the site rather than
+ * in nbsphinx's grey. */
+div.nbinput.container div.input_area {
+  border: 1px solid var(--crystal-border);
+  border-radius: 8px;
+}
+
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+  color: var(--crystal-cyan);
+  opacity: 0.8;
+}
+
+/* ── the logo in dark mode ──────────────────────────────────────────── */
+/* pydata-sphinx-theme paints a white background behind images in dark mode,
+ * so that dark line art stays readable — right for the notebooks' plots,
+ * which are drawn for white, but the logo is a transparent PNG with a variant
+ * of its own for the dark, and came out in a white box. */
+html[data-theme="dark"] .navbar-brand img {
+  background-color: transparent !important;
+}
+
+/* ── the landing page ───────────────────────────────────────────────── */
+/* Its title is for Sphinx, the sidebar and screen readers: the logo carries
+ * it on the page. Scoped to the heading — a class on the section would hide
+ * the whole page with it. */
+section#crystalclear > h1 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.cc-hero {
+  text-align: center;
+  padding: 1.5rem 0 1rem;
+}
+
+.cc-hero .cc-logo {
+  max-width: min(460px, 85%);
+  margin: 0 auto 1.4rem;
+}
+
+.cc-logo-dark { display: none; }
+html[data-theme="dark"] .cc-logo-light { display: none; }
+html[data-theme="dark"] .cc-logo-dark { display: block; }
+html[data-theme="dark"] .cc-hero .cc-logo { background-color: transparent !important; }
+
+.cc-hero .cc-tagline {
+  font-size: 1.3rem;
+  line-height: 1.5;
+  max-width: 42rem;
+  margin: 0 auto 1.4rem;
+  color: var(--crystal-ink);
+}
+
+.cc-hero .cc-tagline strong { color: var(--crystal-cyan); }
+
+/* The install line, under the tagline like a command to take away. */
+.cc-hero pre.cc-install {
+  display: inline-block;
+  margin: 0 auto 1.4rem;
+  padding: 0.55rem 1.2rem;
+  background: var(--crystal-surface);
+  border: 1px solid var(--crystal-border);
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.cc-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+}
+
+.cc-btn {
+  display: inline-block;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  border: 1px solid var(--crystal-cyan);
+  color: var(--crystal-cyan) !important;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.cc-btn:hover,
+.cc-btn-primary {
+  background-color: var(--crystal-fill);
+  border-color: var(--crystal-fill);
+  color: #fff !important;
+}
+
+.cc-btn-primary:hover { background-color: var(--crystal-fill-hover); }
+
+/* The notebooks, as cards that carry one of their own figures. */
+/* Three across: five notebooks fill two rows, three and two, where a column
+ * count left to the width put four on one row and one alone under them. */
+.cc-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+@media (max-width: 900px) {
+  .cc-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+  .cc-gallery { grid-template-columns: minmax(0, 1fr); }
+}
+
+.cc-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--crystal-border);
+  border-radius: 12px;
+  background: var(--crystal-surface);
+  padding: 0.6rem 0.6rem 0.9rem;
+  text-decoration: none !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cc-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(12, 45, 60, 0.16);
+}
+
+.cc-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
+  margin-bottom: 0.7rem;
+}
+
+.cc-card-title {
+  color: var(--crystal-cyan);
+  font-weight: 600;
+  padding: 0 0.3rem;
+}
+
+.cc-card-text {
+  color: var(--pst-color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  padding: 0.25rem 0.3rem 0;
+}
+
+/* ── the introduction ───────────────────────────────────────────────── */
+/* The opening paragraph: set apart by the space after it, at the body's own
+ * size — set larger, it read as a different text from the rest. */
+.cc-lead {
+  margin: 0.5rem 0 1.5rem;
+}
+
+/* From CRYSTAL's files to a figure, in four steps joined by arrows; stacked
+ * on a narrow screen, with the arrows turned to point down. */
+.cc-flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0.4rem;
+  margin: 1rem 0 1.2rem;
+}
+
+.cc-step {
+  flex: 1 1 0;
+  min-width: 0;
+  border: 1px solid var(--crystal-border);
+  border-radius: 10px;
+  background: var(--crystal-surface);
+  padding: 0.7rem 0.8rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.cc-step-label {
+  display: block;
+  color: var(--crystal-cyan);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+/* A class or function name is read whole: never broken across lines. */
+.cc-step code { font-size: 0.8rem; white-space: nowrap; }
+
+.cc-arrow {
+  flex: 0 0 1.2rem;
+  align-self: center;
+  height: 1.2rem;
+  background: var(--crystal-cyan);
+  clip-path: polygon(0 30%, 55% 30%, 55% 0, 100% 50%, 55% 100%, 55% 70%, 0 70%);
+}
+
+@media (max-width: 760px) {
+  .cc-flow { flex-direction: column; }
+  .cc-arrow { transform: rotate(90deg); }
+}
+
+/* What it covers: one tile per field, each naming the functions behind it. */
+.cc-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+@media (max-width: 640px) {
+  .cc-tiles { grid-template-columns: minmax(0, 1fr); }
+}
+
+.cc-tile {
+  border: 1px solid var(--crystal-border);
+  border-left: 4px solid var(--crystal-fill);
+  border-radius: 10px;
+  background: var(--crystal-surface);
+  padding: 0.9rem 1rem 0.8rem;
+}
+
+.cc-tile-wide { grid-column: 1 / -1; }
+
+.cc-tile h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.4rem;
+  color: var(--crystal-cyan);
+}
+
+.cc-tile p { margin: 0 0 0.6rem; font-size: 0.93rem; line-height: 1.5; }
+
+.cc-tile-api {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0 !important;
+}
+
+.cc-tile-api code { font-size: 0.78rem; }
+
+.cc-tile-api a { text-decoration: none; }
+.cc-tile-api a code {
+  color: var(--crystal-cyan);
+  border: 1px solid var(--crystal-border);
+  background: transparent;
+}
+.cc-tile-api a:hover code { background: var(--crystal-fill); color: #fff; border-color: var(--crystal-fill); }
+
+/* ── installation, usage, citation ──────────────────────────────────── */
+.cc-reference {
+  border: 1px solid var(--crystal-border);
+  border-top: 4px solid var(--crystal-fill);
+  border-radius: 10px;
+  background: var(--crystal-surface);
+  padding: 0.4rem 1.1rem 0.6rem;
+  min-width: 0;
+}
+
+.cc-reference p.rubric {
+  color: var(--crystal-cyan);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0.6rem 0 0.4rem;
+}
+
+
+.cc-reference { border-top: none; border-left: 4px solid var(--crystal-fill); margin: 1rem 0 1.5rem; }
+.cc-reference p.rubric { font-size: 1.15rem; line-height: 1.4; color: var(--crystal-ink); }
+
+.cc-buttons-left { justify-content: flex-start; margin: 0.8rem 0 0.4rem; }
+
+/* Usage: the three steps carry their number, as in the diagram above them. */
+section#read-a-file > h2::before,
+section#extract-what-you-need > h2::before,
+section#plot-it > h2::before {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  margin-right: 0.6rem;
+  border-radius: 50%;
+  background: var(--crystal-fill);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  vertical-align: 0.15em;
+}
+
+section#read-a-file > h2::before { content: "1"; }
+section#extract-what-you-need > h2::before { content: "2"; }
+section#plot-it > h2::before { content: "3"; }
+
+/* The classes of crystal_io and what each reads. */
+table.cc-classes { width: 100%; }
+table.cc-classes td:first-child code { color: var(--crystal-cyan); white-space: nowrap; }
+
+/* Docutils calls these blocks "container", which is also Bootstrap's class for
+ * a page container: it took their padding away and ran the text into the
+ * edge. Put back, more specifically than Bootstrap sets it. */
+.bd-content div.cc-reference.container {
+  padding: 0.4rem 1.2rem 0.8rem;
+  max-width: none;
+}
+
+/* The card's title is its own heading, not a rule across the page. */
+.cc-reference p.rubric { border-bottom: none; }
+
+/* BibTeX is copied, not read across: wrap its long author line rather than
+ * hide most of it behind a scrollbar. */
+div.highlight-bibtex pre { white-space: pre-wrap; }
